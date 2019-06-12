@@ -16,7 +16,7 @@ import 'pos_string.dart';
 
 /// Network printer
 class Printer {
-  Printer(this._socket) {
+  Printer._internal(this._socket) {
     reset();
   }
 
@@ -29,7 +29,7 @@ class Printer {
   static Future<Printer> connect(String host,
       {int port = 9100, Duration timeout}) {
     return Socket.connect(host, port, timeout: timeout).then((socket) {
-      return Printer(socket);
+      return Printer._internal(socket);
     });
   }
 
