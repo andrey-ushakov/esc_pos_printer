@@ -10,7 +10,6 @@ class PosString {
     this.height = PosTextSize.size1,
     this.width = PosTextSize.size1,
     this.fontType = PosFontType.fontA,
-    this.linesAfter = 0,
   });
 
   String text;
@@ -21,7 +20,6 @@ class PosString {
   PosTextSize height = PosTextSize.size1;
   PosTextSize width = PosTextSize.size1;
   PosFontType fontType = PosFontType.fontA;
-  int linesAfter = 0;
 
   @override
   String toString() {

@@ -26,6 +26,7 @@ const cFontB = '${esc}M1'; // Font B
 const cAlignLeft = '${esc}a0'; // Left justification
 const cAlignCenter = '${esc}a1'; // Centered
 const cAlignRight = '${esc}a2'; // Right justification
+const cPos = '$esc\$'; // Set absolute print position [nL] [nH]
 
 // Print
 const cFeedN = '${esc}d'; // Print and feed n lines [N]

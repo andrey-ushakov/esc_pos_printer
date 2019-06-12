@@ -30,7 +30,13 @@ class Printer {
     _socket.destroy();
   }
 
-  void println(PosString data) {
+  /// colInd range: 0..11
+  void _print(PosString data, {int colInd = 0, int linesAfter = 0}) {
+    final int pos = colInd == 0 ? 0 : (512 * colInd / 11 - 1).round();
+    final hexStr = pos.toRadixString(16).padLeft(3, '0');
+    final hexPair = HEX.decode(hexStr);
+    // print('dec: $pos \t hex: $hexStr \t pair $hexPair');
+
     _socket.write(data.bold ? cBoldOn : cBoldOff);
     _socket.write(data.reverse ? cReverseOn : cReverseOff);
     _socket.write(data.underline ? cUnderline1dot : cUnderlineOff);
@@ -45,9 +51,20 @@ class Printer {
           ..add(PosTextSize.decSize(data.height, data.width)),
       ),
     );
+    // Position
+    _socket.add(
+      Uint8List.fromList(
+        List.from(cPos.codeUnits)..addAll([hexPair[1], hexPair[0]]),
+      ),
+    );
 
-    _socket.writeln(data.text);
-    emptyLines(data.linesAfter);
+    _socket.write(data.text);
+  }
+
+  void println(PosString data, {int linesAfter = 0}) {
+    _print(data, linesAfter: linesAfter);
+    _socket.writeln();
+    emptyLines(linesAfter);
     reset();
   }
 
@@ -66,19 +83,11 @@ class Printer {
 
     for (int i = 0; i < cols.length; ++i) {
       final colInd = cols.sublist(0, i).fold(0, (int sum, cur) => sum + cur);
-      _printCol(colInd, data[i]);
+      _print(data[i], colInd: colInd);
     }
 
     _socket.writeln();
-  }
-
-  void _printCol(int i, PosString data) {
-    final int pos = i == 0 ? 0 : (512 * i / 11 - 1).round();
-    final hexStr = pos.toRadixString(16).padLeft(3, '0');
-    final hexPair = HEX.decode(hexStr);
-    // print('dec: $pos \t hex: $hexStr \t pair $hexPair');
-    _socket.add(Uint8List.fromList([0x1b, 0x24, hexPair[1], hexPair[0]]));
-    _socket.write(data);
+    reset();
   }
 
   void beep(
