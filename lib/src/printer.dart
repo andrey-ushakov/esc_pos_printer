@@ -1,8 +1,23 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'commands.dart';
 
-enum TextAlign { left, center, right }
-enum CutMode { normal, partial, full }
+enum PosTextAlign { left, center, right }
+enum PosCutMode { normal, partial, full }
+
+class PosTextSizeHeight {
+  final value;
+  const PosTextSizeHeight._internal(this.value);
+  static const normal = const PosTextSizeHeight._internal(0x00);
+  static const double = const PosTextSizeHeight._internal(0x10);
+}
+
+class PosTextSizeWidth {
+  final value;
+  const PosTextSizeWidth._internal(this.value);
+  static const normal = const PosTextSizeWidth._internal(0x00);
+  static const double = const PosTextSizeWidth._internal(0x20);
+}
 
 /// Abstract printer.
 class Printer {
@@ -46,22 +61,24 @@ class Printer {
     bool bold = false,
     bool reverse = false,
     bool underline = false,
-    TextAlign align = TextAlign.left,
-    int charHeight = -1, // TODO replace by font size
-    int charWidth = -1,
+    PosTextAlign align = PosTextAlign.left,
+    PosTextSizeHeight height = PosTextSizeHeight.normal,
+    PosTextSizeWidth width = PosTextSizeWidth.normal,
     int linesAfter = 0,
   }) {
     _socket.write(bold ? cBoldOn : cBoldOff);
     _socket.write(reverse ? cReverseOn : cReverseOff);
     _socket.write(underline ? cUnderline1dot : cUnderlineOff);
-    _socket.write(align == TextAlign.left
+    _socket.write(align == PosTextAlign.left
         ? cAlignLeft
-        : (align == TextAlign.center ? cAlignCenter : cAlignRight));
+        : (align == PosTextAlign.center ? cAlignCenter : cAlignRight));
 
-    if (charHeight > 0 && charWidth > 0) {
-      var n = 16 * (charWidth - 1) + (charHeight - 1);
-      _socket.writeAll([cSizeN, n]);
-    }
+    // Font size
+    _socket.add(
+      Uint8List.fromList(
+        List.from(cSizeESCn.codeUnits)..add(height.value + width.value),
+      ),
+    );
 
     _socket.writeln(text);
     emptyLines(linesAfter);
@@ -80,19 +97,27 @@ class Printer {
 
   void feed(int n) {
     if (n >= 0 && n <= 255) {
-      _socket.writeAll([cFeedN, n.toString()]);
+      _socket.add(
+        Uint8List.fromList(
+          List.from(cFeedN.codeUnits)..add(n),
+        ),
+      );
     }
   }
 
   void reverseFeed(int n) {
-    _socket.writeAll([cReverseFeedN, n.toString()]);
+    _socket.add(
+      Uint8List.fromList(
+        List.from(cReverseFeedN.codeUnits)..add(n),
+      ),
+    );
   }
 
-  void cut({CutMode mode = CutMode.normal}) {
+  void cut({PosCutMode mode = PosCutMode.normal}) {
     _socket.write('\n\n\n\n\n');
-    if (mode == CutMode.partial) {
+    if (mode == PosCutMode.partial) {
       _socket.write(cCutPart);
-    } else if (mode == CutMode.full) {
+    } else if (mode == PosCutMode.full) {
       _socket.write(cCutFull);
     } else {
       _socket.write(cCut);

@@ -12,7 +12,8 @@ const cCutPart = '${esc}m'; // Execute paper partial cut.
 // Character
 const cReverseOn = '${gs}B1'; // Turn white/black reverse print mode on
 const cReverseOff = '${gs}B0'; // Turn white/black reverse print mode off
-const cSizeN = '$gs!'; // Select character size [N]
+const cSizeGSn = '$gs!'; // Select character size [N]
+const cSizeESCn = '$esc!'; // Select character size [N]
 const cUnderlineOff = '$esc-0'; // Turns off underline mode
 const cUnderline1dot = '$esc-1'; // Turns on underline mode (1-dot thick)
 const cUnderline2dots = '$esc-2'; // Turns on underline mode (2-dots thick)
