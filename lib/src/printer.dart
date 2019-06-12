@@ -40,30 +40,15 @@ class Printer {
     _socket.destroy();
   }
 
-  // void writeAll(Iterable objects, [String separator = '']) {
-  //   socket.writeAll(objects, separator);
-  // }
-
-  // void writeLine([Object obj = '']) {
-  //   socket.writeln(obj);
-  // }
-
-  // void write(Object obj) {
-  //   socket.write(obj);
-  // }
-
-  // TODO charHeight, charWidth range ?
-
-  // TODO should be ended by \n
   void println(
-    Object text, {
+    String text, {
     bool bold = false,
     bool reverse = false,
     bool underline = false,
     TextAlign align = TextAlign.left,
-    int charHeight = -1,
+    int charHeight = -1, // TODO replace by font size
     int charWidth = -1,
-    int linesAfter = -1,
+    int linesAfter = 0,
   }) {
     _socket.write(bold ? cBoldOn : cBoldOff);
     _socket.write(reverse ? cReverseOn : cReverseOff);
@@ -78,15 +63,18 @@ class Printer {
     }
 
     _socket.writeln(text);
-
-    feed(linesAfter);
-
-    // reset all to default
+    emptyLines(linesAfter);
     reset();
   }
 
   void reset() {
     _socket.write(cInit);
+  }
+
+  void emptyLines(int n) {
+    if (n > 0) {
+      _socket.write(List.filled(n, '\n').join());
+    }
   }
 
   void feed(int n) {
