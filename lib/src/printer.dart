@@ -26,8 +26,8 @@ class Printer {
   ///
   /// The argument [timeout] is used to specify the maximum allowed time to wait
   /// for a connection to be established.
-  static Future<Printer> connect(host, int port,
-      {sourceAddress, Duration timeout}) {
+  static Future<Printer> connect(host,
+      {int port = 9100, sourceAddress, Duration timeout}) {
     return Socket.connect(host, port,
             sourceAddress: sourceAddress, timeout: timeout)
         .then((socket) {
