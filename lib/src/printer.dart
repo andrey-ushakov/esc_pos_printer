@@ -2,6 +2,7 @@ import 'dart:io';
 import 'commands.dart';
 
 enum TextAlign { left, center, right }
+enum CutMode { normal, partial, full }
 
 /// Abstract printer.
 class Printer {
@@ -87,8 +88,14 @@ class Printer {
     _socket.writeAll([cReverseFeedN, n.toString()]);
   }
 
-  void cut() {
+  void cut({CutMode mode = CutMode.normal}) {
     _socket.write('\n\n\n\n\n');
-    _socket.write(cCut);
+    if (mode == CutMode.partial) {
+      _socket.write(cCutPart);
+    } else if (mode == CutMode.full) {
+      _socket.write(cCutFull);
+    } else {
+      _socket.write(cCut);
+    }
   }
 }
