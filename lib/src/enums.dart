@@ -1,5 +1,5 @@
 enum PosTextAlign { left, center, right }
-enum PosCutMode { normal, partial, full }
+enum PosCutMode { full, partial }
 enum PosFontType { fontA, fontB }
 
 class PosTextSize {

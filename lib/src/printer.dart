@@ -105,14 +105,12 @@ class Printer {
     );
   }
 
-  void cut({PosCutMode mode = PosCutMode.normal}) {
+  void cut({PosCutMode mode = PosCutMode.full}) {
     _socket.write('\n\n\n\n\n');
     if (mode == PosCutMode.partial) {
       _socket.write(cCutPart);
-    } else if (mode == PosCutMode.full) {
-      _socket.write(cCutFull);
     } else {
-      _socket.write(cCut);
+      _socket.write(cCutFull);
     }
   }
 }
