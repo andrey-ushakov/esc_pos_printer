@@ -1,3 +1,7 @@
-## [0.0.1] - TODO: Add release date.
+## [0.9.0]
 
-* TODO: Describe initial release.
+* Initial release.
+* Added basic functions (cut paper, write line, ...)
+* Text styling (bold, underline, reverted, ...)
+* Text align
+* Table row printing (up to 12 columns)
