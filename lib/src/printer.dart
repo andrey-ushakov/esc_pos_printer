@@ -1,11 +1,3 @@
-/*
- * esc_pos_printer
- * Created by Andrey Ushakov
- * 
- * Copyright (c) 2019. All rights reserved.
- * See LICENSE for distribution and usage details.
- */
-
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:hex/hex.dart';
@@ -38,9 +30,7 @@ class Printer {
     _socket.destroy();
   }
 
-  /// Generic print for internal use
-  ///
-  /// [colInd] range: 0..11
+  /// colInd range: 0..11
   void _print(PosString data, {int colInd = 0, int linesAfter = 0}) {
     final int pos = colInd == 0 ? 0 : (512 * colInd / 11 - 1).round();
     final hexStr = pos.toRadixString(16).padLeft(3, '0');
@@ -71,7 +61,6 @@ class Printer {
     _socket.write(data.text);
   }
 
-  /// Prints one line of styled text
   void println(PosString data, {int linesAfter = 0}) {
     _print(data, linesAfter: linesAfter);
     _socket.writeln();
@@ -79,23 +68,6 @@ class Printer {
     reset();
   }
 
-  /// Print a row.
-  ///
-  /// A row contains up to 12 columns. A column has a width between 1 and 12.
-  /// Total width of columns in one row must be equal 12.
-  ///
-  /// [cols] parameter is used to define the row structure (each integer value is one column width).
-  /// [data] parameter is used to define the column data (text, align inside of the column and styles).
-  /// Column data is represented by [PosString] class.
-  ///
-  /// ```dart
-  /// printer.printRow(
-  ///   [3, 6, 3],
-  ///   [ PosString('col3'),
-  ///     PosString('col6'),
-  ///     PosString('col3') ],
-  /// );
-  /// ```
   void printRow(List<int> cols, List<PosString> data) {
     final validRange = cols.every((val) => val >= 1 && val <= 12);
     if (!validRange) {
@@ -118,15 +90,13 @@ class Printer {
     reset();
   }
 
-  /// Beeps [n] times
-  ///
-  /// Beep [duration] could be between 50 and 450 ms.
-  void beep({int n = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
-    if (n <= 0) {
+  void beep(
+      {int count = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
+    if (count <= 0) {
       return;
     }
 
-    int beepCount = n;
+    int beepCount = count;
     if (beepCount > 9) {
       beepCount = 9;
     }
@@ -137,26 +107,19 @@ class Printer {
       ),
     );
 
-    beep(n: n - 9, duration: duration);
+    beep(count: count - 9, duration: duration);
   }
 
-  /// Clear the buffer and reset text styles
   void reset() {
     _socket.write(cInit);
   }
 
-  /// Skips [n] lines
-  ///
-  /// Similar to [feed] but uses an alternative command
   void emptyLines(int n) {
     if (n > 0) {
       _socket.write(List.filled(n, '\n').join());
     }
   }
 
-  /// Skips [n] lines
-  ///
-  /// Similar to [emptyLines] but uses an alternative command
   void feed(int n) {
     if (n >= 0 && n <= 255) {
       _socket.add(
@@ -167,7 +130,6 @@ class Printer {
     }
   }
 
-  /// Reverse feed for [n] lines (if supported by the priner)
   void reverseFeed(int n) {
     _socket.add(
       Uint8List.fromList(
@@ -176,9 +138,6 @@ class Printer {
     );
   }
 
-  /// Cut the paper
-  ///
-  /// [mode] is used to define the full or partial cut (if supported by the priner)
   void cut({PosCutMode mode = PosCutMode.full}) {
     _socket.write('\n\n\n\n\n');
     if (mode == PosCutMode.partial) {

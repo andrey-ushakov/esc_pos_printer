@@ -1,8 +1,8 @@
 name: esc_pos_printer
-description: ESC/POS (thermal, receipt) printing for Flutter & Dart.
-version: 0.9.0
-author: Andrey Ushakov
-homepage: https://github.com/andrey-ushakov/esc_pos_printer
+description: A new Flutter package project.
+version: 0.0.1
+author:
+homepage:
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

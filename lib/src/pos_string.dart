@@ -1,14 +1,5 @@
-/*
- * esc_pos_printer
- * Created by Andrey Ushakov
- * 
- * Copyright (c) 2019. All rights reserved.
- * See LICENSE for distribution and usage details.
- */
-
 import 'enums.dart';
 
-/// A string with styles
 class PosString {
   PosString(
     this.text, {

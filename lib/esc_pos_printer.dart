@@ -1,6 +1,6 @@
 /*
  * esc_pos_printer
- * Created by Andrey Ushakov
+ * Created by Andrey U
  * 
  * See LICENSE for distribution and usage details.
  */
