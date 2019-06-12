@@ -1,7 +1,9 @@
+/*
+ * esc_pos_printer
+ * Created by Andrey U
+ * 
+ * See LICENSE for distribution and usage details.
+ */
 library esc_pos_printer;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export './src/printer.dart';
