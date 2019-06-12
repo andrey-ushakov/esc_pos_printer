@@ -7,4 +7,5 @@
 library esc_pos_printer;
 
 export './src/enums.dart';
+export './src/exceptions.dart';
 export './src/printer.dart';

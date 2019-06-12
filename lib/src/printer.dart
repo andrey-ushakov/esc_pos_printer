@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:hex/hex.dart';
 import 'commands.dart';
 import 'enums.dart';
+import 'exceptions.dart';
 
 /// Printer.
 class Printer {
@@ -55,6 +57,36 @@ class Printer {
     _socket.writeln(text);
     emptyLines(linesAfter);
     reset();
+  }
+
+  void printRow(List<int> cols, List<String> data) {
+    final validRange = cols.every((val) => val >= 1 && val <= 12);
+    if (!validRange) {
+      throw PosRowException('Column width should be between 1..12');
+    }
+    final validSum = cols.fold(0, (int sum, cur) => sum + cur) == 12;
+    if (!validSum) {
+      throw PosRowException('Total columns width must be equal 12');
+    }
+    if (cols.length != data.length) {
+      throw PosRowException("Columns number doesn't equal to data number");
+    }
+
+    for (int i = 0; i < cols.length; ++i) {
+      final colInd = cols.sublist(0, i).fold(0, (int sum, cur) => sum + cur);
+      _printCol(colInd, data[i]);
+    }
+
+    _socket.writeln();
+  }
+
+  void _printCol(int i, String data) {
+    final int pos = i == 0 ? 0 : (512 * i / 11 - 1).round();
+    final hexStr = pos.toRadixString(16).padLeft(3, '0');
+    final hexPair = HEX.decode(hexStr);
+    // print('dec: $pos \t hex: $hexStr \t pair $hexPair');
+    _socket.add(Uint8List.fromList([0x1b, 0x24, hexPair[1], hexPair[0]]));
+    _socket.write(data);
   }
 
   void beep(
