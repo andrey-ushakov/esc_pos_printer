@@ -4,8 +4,9 @@ import 'package:hex/hex.dart';
 import 'commands.dart';
 import 'enums.dart';
 import 'exceptions.dart';
+import 'pos_string.dart';
 
-/// Printer.
+/// Network printer
 class Printer {
   Printer(this._socket) {
     reset();
@@ -29,37 +30,28 @@ class Printer {
     _socket.destroy();
   }
 
-  void println(
-    String text, {
-    bool bold = false,
-    bool reverse = false,
-    bool underline = false,
-    PosTextAlign align = PosTextAlign.left,
-    PosTextSize height = PosTextSize.size1,
-    PosTextSize width = PosTextSize.size1,
-    PosFontType fontType = PosFontType.fontA,
-    int linesAfter = 0,
-  }) {
-    _socket.write(bold ? cBoldOn : cBoldOff);
-    _socket.write(reverse ? cReverseOn : cReverseOff);
-    _socket.write(underline ? cUnderline1dot : cUnderlineOff);
-    _socket.write(align == PosTextAlign.left
+  void println(PosString data) {
+    _socket.write(data.bold ? cBoldOn : cBoldOff);
+    _socket.write(data.reverse ? cReverseOn : cReverseOff);
+    _socket.write(data.underline ? cUnderline1dot : cUnderlineOff);
+    _socket.write(data.align == PosTextAlign.left
         ? cAlignLeft
-        : (align == PosTextAlign.center ? cAlignCenter : cAlignRight));
-    _socket.write(fontType == PosFontType.fontA ? cFontA : cFontB);
+        : (data.align == PosTextAlign.center ? cAlignCenter : cAlignRight));
+    _socket.write(data.fontType == PosFontType.fontA ? cFontA : cFontB);
     // Text size
     _socket.add(
       Uint8List.fromList(
-        List.from(cSizeGSn.codeUnits)..add(PosTextSize.decSize(height, width)),
+        List.from(cSizeGSn.codeUnits)
+          ..add(PosTextSize.decSize(data.height, data.width)),
       ),
     );
 
-    _socket.writeln(text);
-    emptyLines(linesAfter);
+    _socket.writeln(data.text);
+    emptyLines(data.linesAfter);
     reset();
   }
 
-  void printRow(List<int> cols, List<String> data) {
+  void printRow(List<int> cols, List<PosString> data) {
     final validRange = cols.every((val) => val >= 1 && val <= 12);
     if (!validRange) {
       throw PosRowException('Column width should be between 1..12');
@@ -80,7 +72,7 @@ class Printer {
     _socket.writeln();
   }
 
-  void _printCol(int i, String data) {
+  void _printCol(int i, PosString data) {
     final int pos = i == 0 ? 0 : (512 * i / 11 - 1).round();
     final hexStr = pos.toRadixString(16).padLeft(3, '0');
     final hexPair = HEX.decode(hexStr);

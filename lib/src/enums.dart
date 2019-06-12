@@ -31,20 +31,3 @@ class PosBeepDuration {
   static const beep400ms = PosBeepDuration._internal(8);
   static const beep450ms = PosBeepDuration._internal(9);
 }
-
-// class PosCol {
-//   const PosCol._internal(this.value);
-//   final int value;
-//   static const col1 = PosCol._internal(1);
-//   static const col2 = PosCol._internal(2);
-//   static const col3 = PosCol._internal(3);
-//   static const col4 = PosCol._internal(4);
-//   static const col5 = PosCol._internal(5);
-//   static const col6 = PosCol._internal(6);
-//   static const col7 = PosCol._internal(7);
-//   static const col8 = PosCol._internal(8);
-//   static const col9 = PosCol._internal(9);
-//   static const col10 = PosCol._internal(10);
-//   static const col11 = PosCol._internal(11);
-//   static const col12 = PosCol._internal(12);
-// }
