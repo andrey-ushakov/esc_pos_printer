@@ -1,42 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'commands.dart';
+import 'enums.dart';
 
-enum PosTextAlign { left, center, right }
-enum PosCutMode { normal, partial, full }
-enum PosFontType { fontA, fontB }
-
-class PosTextSize {
-  final int value;
-  const PosTextSize._internal(this.value);
-  static const size1 = const PosTextSize._internal(1);
-  static const size2 = const PosTextSize._internal(2);
-  static const size3 = const PosTextSize._internal(3);
-  static const size4 = const PosTextSize._internal(4);
-  static const size5 = const PosTextSize._internal(5);
-  static const size6 = const PosTextSize._internal(6);
-  static const size7 = const PosTextSize._internal(7);
-  static const size8 = const PosTextSize._internal(8);
-
-  static int decSize(PosTextSize height, PosTextSize width) =>
-      16 * (width.value - 1) + (height.value - 1);
-}
-
-class PosBeepDuration {
-  final int value;
-  const PosBeepDuration._internal(this.value);
-  static const beep50ms = const PosBeepDuration._internal(1);
-  static const beep100ms = const PosBeepDuration._internal(2);
-  static const beep150ms = const PosBeepDuration._internal(3);
-  static const beep200ms = const PosBeepDuration._internal(4);
-  static const beep250ms = const PosBeepDuration._internal(5);
-  static const beep300ms = const PosBeepDuration._internal(6);
-  static const beep350ms = const PosBeepDuration._internal(7);
-  static const beep400ms = const PosBeepDuration._internal(8);
-  static const beep450ms = const PosBeepDuration._internal(9);
-}
-
-/// Abstract printer.
+/// Printer.
 class Printer {
   Printer(this._socket) {
     reset();
@@ -44,26 +11,13 @@ class Printer {
 
   final Socket _socket;
 
-  /// Creates a new socket connection to the printer.
-  ///
-  /// [host] can either be a [String] or an [InternetAddress]. If [host] is a
-  /// [String], [connect] will perform a [InternetAddress.lookup] and try
-  /// all returned [InternetAddress]es, until connected. Unless a
-  /// connection was established, the error from the first failing connection is
-  /// returned.
-  ///
-  /// The argument [sourceAddress] can be used to specify the local
-  /// address to bind when making the connection. `sourceAddress` can either
-  /// be a `String` or an `InternetAddress`. If a `String` is passed it must
-  /// hold a numeric IP address.
+  /// Creates a new socket connection to the network printer.
   ///
   /// The argument [timeout] is used to specify the maximum allowed time to wait
   /// for a connection to be established.
-  static Future<Printer> connect(host,
-      {int port = 9100, sourceAddress, Duration timeout}) {
-    return Socket.connect(host, port,
-            sourceAddress: sourceAddress, timeout: timeout)
-        .then((socket) {
+  static Future<Printer> connect(String host,
+      {int port = 9100, Duration timeout}) {
+    return Socket.connect(host, port, timeout: timeout).then((socket) {
       return Printer(socket);
     });
   }
