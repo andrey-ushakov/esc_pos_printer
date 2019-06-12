@@ -5,18 +5,20 @@ import 'commands.dart';
 enum PosTextAlign { left, center, right }
 enum PosCutMode { normal, partial, full }
 
-class PosTextSizeHeight {
-  final value;
-  const PosTextSizeHeight._internal(this.value);
-  static const normal = const PosTextSizeHeight._internal(0x00);
-  static const double = const PosTextSizeHeight._internal(0x10);
-}
+class PosTextSize {
+  final int value;
+  const PosTextSize._internal(this.value);
+  static const size1 = const PosTextSize._internal(1);
+  static const size2 = const PosTextSize._internal(2);
+  static const size3 = const PosTextSize._internal(3);
+  static const size4 = const PosTextSize._internal(4);
+  static const size5 = const PosTextSize._internal(5);
+  static const size6 = const PosTextSize._internal(6);
+  static const size7 = const PosTextSize._internal(7);
+  static const size8 = const PosTextSize._internal(8);
 
-class PosTextSizeWidth {
-  final value;
-  const PosTextSizeWidth._internal(this.value);
-  static const normal = const PosTextSizeWidth._internal(0x00);
-  static const double = const PosTextSizeWidth._internal(0x20);
+  static int decSize(PosTextSize height, PosTextSize width) =>
+      16 * (width.value - 1) + (height.value - 1);
 }
 
 /// Abstract printer.
@@ -62,8 +64,8 @@ class Printer {
     bool reverse = false,
     bool underline = false,
     PosTextAlign align = PosTextAlign.left,
-    PosTextSizeHeight height = PosTextSizeHeight.normal,
-    PosTextSizeWidth width = PosTextSizeWidth.normal,
+    PosTextSize height = PosTextSize.size1,
+    PosTextSize width = PosTextSize.size1,
     int linesAfter = 0,
   }) {
     _socket.write(bold ? cBoldOn : cBoldOff);
@@ -73,10 +75,10 @@ class Printer {
         ? cAlignLeft
         : (align == PosTextAlign.center ? cAlignCenter : cAlignRight));
 
-    // Font size
+    // Text size
     _socket.add(
       Uint8List.fromList(
-        List.from(cSizeESCn.codeUnits)..add(height.value + width.value),
+        List.from(cSizeGSn.codeUnits)..add(PosTextSize.decSize(height, width)),
       ),
     );
 

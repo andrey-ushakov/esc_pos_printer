@@ -11,6 +11,8 @@ main() {
     printer.println('Align left', align: PosTextAlign.left);
     printer.println('Align center', align: PosTextAlign.center);
     printer.println('Align right', align: PosTextAlign.right);
+    printer.println('Text size 2',
+        height: PosTextSize.size2, width: PosTextSize.size2);
 
     printer.cut();
 
