@@ -4,6 +4,7 @@ import 'commands.dart';
 
 enum PosTextAlign { left, center, right }
 enum PosCutMode { normal, partial, full }
+enum PosFontType { fontA, fontB }
 
 class PosTextSize {
   final int value;
@@ -19,6 +20,20 @@ class PosTextSize {
 
   static int decSize(PosTextSize height, PosTextSize width) =>
       16 * (width.value - 1) + (height.value - 1);
+}
+
+class PosBeepDuration {
+  final int value;
+  const PosBeepDuration._internal(this.value);
+  static const beep50ms = const PosBeepDuration._internal(1);
+  static const beep100ms = const PosBeepDuration._internal(2);
+  static const beep150ms = const PosBeepDuration._internal(3);
+  static const beep200ms = const PosBeepDuration._internal(4);
+  static const beep250ms = const PosBeepDuration._internal(5);
+  static const beep300ms = const PosBeepDuration._internal(6);
+  static const beep350ms = const PosBeepDuration._internal(7);
+  static const beep400ms = const PosBeepDuration._internal(8);
+  static const beep450ms = const PosBeepDuration._internal(9);
 }
 
 /// Abstract printer.
@@ -66,6 +81,7 @@ class Printer {
     PosTextAlign align = PosTextAlign.left,
     PosTextSize height = PosTextSize.size1,
     PosTextSize width = PosTextSize.size1,
+    PosFontType fontType = PosFontType.fontA,
     int linesAfter = 0,
   }) {
     _socket.write(bold ? cBoldOn : cBoldOff);
@@ -74,7 +90,7 @@ class Printer {
     _socket.write(align == PosTextAlign.left
         ? cAlignLeft
         : (align == PosTextAlign.center ? cAlignCenter : cAlignRight));
-
+    _socket.write(fontType == PosFontType.fontA ? cFontA : cFontB);
     // Text size
     _socket.add(
       Uint8List.fromList(
@@ -85,6 +101,26 @@ class Printer {
     _socket.writeln(text);
     emptyLines(linesAfter);
     reset();
+  }
+
+  void beep(
+      {int count = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
+    if (count <= 0) {
+      return;
+    }
+
+    int beepCount = count;
+    if (beepCount > 9) {
+      beepCount = 9;
+    }
+
+    _socket.add(
+      Uint8List.fromList(
+        List.from(cBeep.codeUnits)..addAll([beepCount, duration.value]),
+      ),
+    );
+
+    beep(count: count - 9, duration: duration);
   }
 
   void reset() {

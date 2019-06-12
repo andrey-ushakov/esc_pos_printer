@@ -3,6 +3,7 @@ const gs = '\x1D';
 
 // Miscellaneous
 const cInit = '$esc@'; // Initialize printer
+const cBeep = '${esc}B'; // Beeper [count] [duration]
 
 // Mech. Control
 const cCut = '${gs}V0'; // Cut paper
@@ -19,6 +20,8 @@ const cUnderline1dot = '$esc-1'; // Turns on underline mode (1-dot thick)
 const cUnderline2dots = '$esc-2'; // Turns on underline mode (2-dots thick)
 const cBoldOn = '${esc}E1'; // Turn emphasized mode on
 const cBoldOff = '${esc}E0'; // Turn emphasized mode off
+const cFontA = '${esc}M0'; // Font A
+const cFontB = '${esc}M1'; // Font B
 
 // Print Position
 const cAlignLeft = '${esc}a0'; // Left justification
