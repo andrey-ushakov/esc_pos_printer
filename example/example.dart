@@ -1,5 +1,4 @@
 import 'package:esc_pos_printer/esc_pos_printer.dart';
-import 'package:esc_pos_printer/src/printer.dart';
 
 void main() {
   Printer.connect('192.168.0.123').then((printer) {
