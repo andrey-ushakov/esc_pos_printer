@@ -1,3 +1,11 @@
+/*
+ * esc_pos_printer
+ * Created by Andrey Ushakov
+ * 
+ * Copyright (c) 2019. All rights reserved.
+ * See LICENSE for distribution and usage details.
+ */
+
 const esc = '\x1B';
 const gs = '\x1D';
 
