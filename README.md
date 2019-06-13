@@ -4,6 +4,9 @@ The library allows to print receipts using a ESC/POS (usually thermal) network p
 
 It can be used in [Flutter](https://flutter.dev/) or [Dart](https://dart.dev/) projects. In Flutter, both Android and iOS are supported.
 
+[pub.dev page](https://pub.dev/packages/esc_pos_printer)
+| [Documentation](https://pub.dev/documentation/esc_pos_printer/latest/)
+
 ## Features
 
 * Connect to Wi-Fi printers

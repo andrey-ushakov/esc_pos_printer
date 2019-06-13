@@ -1,4 +1,4 @@
-## [0.9.0]
+## [0.9.0] - [0.9.1]
 
 * Initial release
 * Added basic functions (cut paper, write line, ...)
