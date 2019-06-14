@@ -11,7 +11,6 @@ import 'dart:typed_data';
 import 'package:hex/hex.dart';
 import 'commands.dart';
 import 'enums.dart';
-import 'exceptions.dart';
 import 'pos_column.dart';
 import 'pos_styles.dart';
 
@@ -99,7 +98,7 @@ class Printer {
   void printRow(List<PosColumn> cols) {
     final validSum = cols.fold(0, (int sum, col) => sum + col.width) == 12;
     if (!validSum) {
-      throw PosRowException('Total columns width must be equal to 12');
+      throw Exception('Total columns width must be equal to 12');
     }
 
     for (int i = 0; i < cols.length; ++i) {
