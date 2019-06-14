@@ -8,10 +8,9 @@
 
 import 'enums.dart';
 
-/// A string with styles
-class PosString {
-  PosString(
-    this.text, {
+/// Text styles
+class PosStyles {
+  const PosStyles({
     this.bold = false,
     this.reverse = false,
     this.underline = false,
@@ -21,17 +20,11 @@ class PosString {
     this.fontType = PosFontType.fontA,
   });
 
-  String text;
-  bool bold = false;
-  bool reverse = false;
-  bool underline = false;
-  PosTextAlign align = PosTextAlign.left;
-  PosTextSize height = PosTextSize.size1;
-  PosTextSize width = PosTextSize.size1;
-  PosFontType fontType = PosFontType.fontA;
-
-  @override
-  String toString() {
-    return text;
-  }
+  final bool bold;
+  final bool reverse;
+  final bool underline;
+  final PosTextAlign align;
+  final PosTextSize height;
+  final PosTextSize width;
+  final PosFontType fontType;
 }

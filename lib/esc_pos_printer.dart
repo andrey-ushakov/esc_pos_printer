@@ -8,5 +8,5 @@ library esc_pos_printer;
 
 export './src/enums.dart';
 export './src/exceptions.dart';
-export './src/pos_string.dart';
+export './src/pos_styles.dart';
 export './src/printer.dart';

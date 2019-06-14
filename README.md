@@ -2,12 +2,14 @@
 
 The library allows to print receipts using a ESC/POS (usually thermal) network printer.
 
-It can be used in [Flutter](https://flutter.dev/) or [Dart](https://dart.dev/) projects. In Flutter, both Android and iOS are supported.
-
 [[pub.dev page]](https://pub.dev/packages/esc_pos_printer)
 | [[Documentation]](https://pub.dev/documentation/esc_pos_printer/latest/)
 
+It can be used in [Flutter](https://flutter.dev/) or [Dart](https://dart.dev/) projects. In Flutter, both Android and iOS are supported.
+
 To discover existing printers in your subnet, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of ESC/POS printers by default listen on port 9100.
+
+USB and Bluetooth printers support will be added later.
 
 ## Features
 
@@ -20,32 +22,56 @@ To discover existing printers in your subnet, consider using [ping_discover_netw
 * Beeping (with different duration)
 * Paper feed, reverse feed
 
-**Note**: Your printer may not support some of the presented features (especially for underline styles, partial/full paper cutting, reverse feed, ...).
+**Note**: Your printer may not support some of presented features (especially for underline styles, partial/full paper cutting, reverse feed, ...).
 
 ## Getting Started
 
 ```dart
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 
-Printer.connect('192.168.0.123').then((printer) {
-    printer.println(PosString('Normal text'));
-    printer.println(PosString('Bold text', bold: true));
-    printer.println(PosString('Reverse text', reverse: true));
-    printer.println(PosString('Underlined text', underline: true));
-    printer.println(PosString('Align center', align: PosTextAlign.center));
-    printer.printRow([3, 6, 3],
-      [
-        PosString('col3'),
-        PosString('col6'),
-        PosString('col3', underline: true)
-      ],
-    );
-    printer.println(PosString('Text size 200%',
-        height: PosTextSize.size2, width: PosTextSize.size2));
+Printer.connect('192.168.0.123', port: 9100).then((printer) {
+    printer.println('Normal text');
+    printer.println('Bold text', styles: PosStyles(bold: true));
+    printer.println('Reverse text', styles: PosStyles(reverse: true));
+    printer.println('Underlined text',
+        styles: PosStyles(underline: true), linesAfter: 1);
+    printer.println('Align left', styles: PosStyles(align: PosTextAlign.left));
+    printer.println('Align center',
+        styles: PosStyles(align: PosTextAlign.center));
+    printer.println('Align right',
+        styles: PosStyles(align: PosTextAlign.right), linesAfter: 1);
+    
+    printer.println('Text size 200%',
+        styles: PosStyles(
+          height: PosTextSize.size2,
+          width: PosTextSize.size2,
+        ));
 
     printer.cut();
     printer.disconnect();
   });
+```
+
+Print table:
+
+```dart
+printer.printRow([
+      PosColumn(
+        text: 'col3',
+        width: 3,
+        styles: PosStyles(align: PosTextAlign.center, underline: true),
+      ),
+      PosColumn(
+        text: 'col6',
+        width: 6,
+        styles: PosStyles(align: PosTextAlign.center, underline: true),
+      ),
+      PosColumn(
+        text: 'col3',
+        width: 3,
+        styles: PosStyles(align: PosTextAlign.center, underline: true),
+      ),
+    ]);
 ```
 
 ## TODO
@@ -53,6 +79,7 @@ Printer.connect('192.168.0.123').then((printer) {
 * Print images
 * Print barcodes
 * Print QR codes
-* Example project for Flutter (print a receipt template)
 * Turn 90° clockwise rotation mode on/off
-* Discover active Wi-Fi printers
+* Flutter example: print a demo receipt
+* Flutter example: discover active Wi-Fi printers
+* USB, Bluetooth printers support
