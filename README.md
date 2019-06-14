@@ -4,8 +4,10 @@ The library allows to print receipts using a ESC/POS (usually thermal) network p
 
 It can be used in [Flutter](https://flutter.dev/) or [Dart](https://dart.dev/) projects. In Flutter, both Android and iOS are supported.
 
-[pub.dev page](https://pub.dev/packages/esc_pos_printer)
-| [Documentation](https://pub.dev/documentation/esc_pos_printer/latest/)
+[[pub.dev page]](https://pub.dev/packages/esc_pos_printer)
+| [[Documentation]](https://pub.dev/documentation/esc_pos_printer/latest/)
+
+To discover existing printers in your subnet, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of ESC/POS printers by default listen on port 9100.
 
 ## Features
 
