@@ -1,3 +1,10 @@
+## [1.0.0]
+
+* Removed PosString class
+* Added PosStyles and PosColumn classes
+* Updated examples and readme
+
+
 ## [0.9.0] - [0.9.1]
 
 * Initial release
