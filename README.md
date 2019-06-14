@@ -52,7 +52,7 @@ Printer.connect('192.168.0.123', port: 9100).then((printer) {
   });
 ```
 
-Print table:
+Print table row:
 
 ```dart
 printer.printRow([

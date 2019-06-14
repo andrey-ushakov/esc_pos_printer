@@ -1,3 +1,7 @@
+## [1.0.1]
+
+* exported PosColumn
+
 ## [1.0.0]
 
 * Removed PosString class

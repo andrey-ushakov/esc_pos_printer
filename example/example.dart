@@ -1,5 +1,4 @@
 import 'package:esc_pos_printer/esc_pos_printer.dart';
-import 'package:esc_pos_printer/src/pos_column.dart';
 
 void main() {
   // To discover existing printers in your subnet, consider using
