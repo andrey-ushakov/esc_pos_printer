@@ -8,9 +8,7 @@
 
 import 'dart:io';
 import 'dart:typed_data';
-// import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:hex/hex.dart';
-
 import 'commands.dart';
 import 'enums.dart';
 import 'exceptions.dart';
@@ -49,7 +47,7 @@ class Printer {
   /// [colInd] range: 0..11
   void _print(
     String text, {
-    PosStyles styles,
+    PosStyles styles = const PosStyles(),
     int colInd = 0,
     int linesAfter = 0,
   }) {
@@ -83,7 +81,11 @@ class Printer {
   }
 
   /// Prints one line of styled text
-  void println(String text, {PosStyles styles, int linesAfter = 0}) {
+  void println(
+    String text, {
+    PosStyles styles = const PosStyles(),
+    int linesAfter = 0,
+  }) {
     _print(text, styles: styles, linesAfter: linesAfter);
     _socket.writeln();
     emptyLines(linesAfter);
@@ -103,7 +105,7 @@ class Printer {
     for (int i = 0; i < cols.length; ++i) {
       final colInd =
           cols.sublist(0, i).fold(0, (int sum, col) => sum + col.width);
-      _print(cols[i].text, colInd: colInd);
+      _print(cols[i].text, styles: cols[i].styles, colInd: colInd);
     }
 
     _socket.writeln();
