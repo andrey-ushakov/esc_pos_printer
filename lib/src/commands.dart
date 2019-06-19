@@ -29,6 +29,9 @@ const cBoldOn = '${esc}E1'; // Turn emphasized mode on
 const cBoldOff = '${esc}E0'; // Turn emphasized mode off
 const cFontA = '${esc}M0'; // Font A
 const cFontB = '${esc}M1'; // Font B
+const cTurn90On = '${esc}V1'; // Turn 90° clockwise rotation mode on
+const cTurn90Off = '${esc}V0'; // Turn 90° clockwise rotation mode off
+const cCodeTable = '${esc}t'; // Select character code table [N]
 
 // Print Position
 const cAlignLeft = '${esc}a0'; // Left justification
@@ -39,6 +42,3 @@ const cPos = '$esc\$'; // Set absolute print position [nL] [nH]
 // Print
 const cFeedN = '${esc}d'; // Print and feed n lines [N]
 const cReverseFeedN = '${esc}e'; // Print and reverse feed n lines [N]
-
-// Code table
-const cCodeTable = '${esc}t'; // Select character code table [N]
