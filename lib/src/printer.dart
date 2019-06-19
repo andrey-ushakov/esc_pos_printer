@@ -21,6 +21,7 @@ class Printer {
   }
 
   final Socket _socket;
+  PosCodeTable _codeTable = PosCodeTable.pc437;
 
   /// Creates a new socket connection to the network printer.
   ///
@@ -39,6 +40,15 @@ class Printer {
   /// Disconnect from the printer
   void disconnect() {
     _socket.destroy();
+  }
+
+  void setCodeTable(PosCodeTable codeTable) {
+    _codeTable = codeTable;
+    _socket.add(
+      Uint8List.fromList(
+        List.from(cCodeTable.codeUnits)..add(codeTable.value),
+      ),
+    );
   }
 
   /// Generic print for internal use
@@ -136,6 +146,7 @@ class Printer {
   /// Clear the buffer and reset text styles
   void reset() {
     _socket.write(cInit);
+    setCodeTable(_codeTable);
   }
 
   /// Skips [n] lines
