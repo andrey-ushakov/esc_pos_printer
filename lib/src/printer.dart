@@ -90,6 +90,11 @@ class Printer {
     _socket.write(text);
   }
 
+  /// Sens raw command(s)
+  void sendRaw(List<int> cmd) {
+    _socket.add(Uint8List.fromList(List.from(cmd)));
+  }
+
   /// Prints one line of styled text
   void println(
     String text, {

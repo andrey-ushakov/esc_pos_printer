@@ -77,7 +77,7 @@ printer.printRow([
 ```
 
 ## TODO
-* Add raw print function
+* ~~Add raw print function~~
 * Print images
 * Print barcodes
 * Print QR codes
@@ -85,4 +85,4 @@ printer.printRow([
 * Flutter example: print a demo receipt
 * ~~Flutter example: discover active Wi-Fi printers~~
 * USB, Bluetooth printers support
-* *Add encoding commands*
+* ~~Add encoding commands~~
