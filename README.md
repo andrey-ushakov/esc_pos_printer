@@ -1,5 +1,7 @@
 # esc_pos_printer
 
+![Pub](https://img.shields.io/pub/v/esc_pos_printer.svg)
+
 The library allows to print receipts using a ESC/POS (usually thermal) network printer.
 
 [[pub.dev page]](https://pub.dev/packages/esc_pos_printer)

@@ -39,3 +39,6 @@ const cPos = '$esc\$'; // Set absolute print position [nL] [nH]
 // Print
 const cFeedN = '${esc}d'; // Print and feed n lines [N]
 const cReverseFeedN = '${esc}e'; // Print and reverse feed n lines [N]
+
+// Code table
+const cCodeTable = '${esc}t'; // Select character code table [N]

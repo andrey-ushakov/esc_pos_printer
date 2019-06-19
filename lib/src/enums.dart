@@ -39,3 +39,32 @@ class PosBeepDuration {
   static const beep400ms = PosBeepDuration._internal(8);
   static const beep450ms = PosBeepDuration._internal(9);
 }
+
+class PosCodeTable {
+  const PosCodeTable._internal(this.value);
+  final int value;
+
+  /// PC437 - U.S.A., Standard Europe
+  static const pc437 = PosCodeTable._internal(0);
+
+  /// Katakana
+  static const katakana = PosCodeTable._internal(1);
+
+  /// PC850 Multilingual
+  static const pc850 = PosCodeTable._internal(2);
+
+  /// PC860 - Portuguese
+  static const pc860 = PosCodeTable._internal(3);
+
+  /// PC863 - Canadian-French
+  static const pc863 = PosCodeTable._internal(4);
+
+  /// PC865 - Nordic
+  static const pc865 = PosCodeTable._internal(5);
+
+  /// PC866 - Cyrillic #2
+  static const pc866 = PosCodeTable._internal(17);
+
+  /// Space page
+  static const spacePage = PosCodeTable._internal(255);
+}
