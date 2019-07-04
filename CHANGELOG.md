@@ -1,4 +1,7 @@
 ## [1.0.2]
+* Added code page support
+
+## [1.0.2]
 * Send raw command(s)
 * Turn 90° clockwise rotation mode on/off
 * Flutter example: discover active Wi-Fi printers

@@ -89,7 +89,12 @@ class Printer {
       ),
     );
 
-    _socket.write(cKanjiCancel);
+    // Cancel Kanji mode if code table is selected
+    if (_codeTable != null || styles.codeTable != null) {
+      _socket.write(cKanjiCancel);
+    }
+
+    // Set local code table
     if (styles.codeTable != null) {
       _socket.add(
         Uint8List.fromList(
@@ -98,7 +103,6 @@ class Printer {
       );
     }
     _socket.write(text);
-    // TOOD Kanji set
   }
 
   /// Sens raw command(s)
