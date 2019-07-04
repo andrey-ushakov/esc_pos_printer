@@ -6,6 +6,9 @@ void main() {
   // Note that most of ESC/POS printers by default listen on port 9100.
   Printer.connect('192.168.0.123', port: 9100).then((printer) {
     printer.println('Normal text');
+    printer.println('Special symbols: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+        styles: PosStyles(codeTable: PosCodeTable.westEur));
+
     printer.println('Bold text', styles: PosStyles(bold: true));
     printer.println('Reverse text', styles: PosStyles(reverse: true));
     printer.println('Underlined text',
