@@ -62,6 +62,7 @@ class Printer {
     PosStyles styles = const PosStyles(),
     int colInd = 0,
     int linesAfter = 0,
+    bool cancelKanji = true,
   }) {
     final int pos = colInd == 0 ? 0 : (512 * colInd / 11 - 1).round();
     final hexStr = pos.toRadixString(16).padLeft(3, '0');
@@ -89,9 +90,10 @@ class Printer {
       ),
     );
 
-    // Cancel Kanji mode if code table is selected
-    if (_codeTable != null || styles.codeTable != null) {
+    // Cancel Kanji mode
+    if (cancelKanji) {
       _socket.write(cKanjiCancel);
+      // TODO encode string
     }
 
     // Set local code table
@@ -115,8 +117,14 @@ class Printer {
     String text, {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
+    bool cancelKanji = true,
   }) {
-    _print(text, styles: styles, linesAfter: linesAfter);
+    _print(
+      text,
+      styles: styles,
+      linesAfter: linesAfter,
+      cancelKanji: cancelKanji,
+    );
     _socket.writeln();
     emptyLines(linesAfter);
     reset();
