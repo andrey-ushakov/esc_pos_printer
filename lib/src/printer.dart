@@ -6,6 +6,7 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:hex/hex.dart';
@@ -93,7 +94,6 @@ class Printer {
     // Cancel Kanji mode
     if (cancelKanji) {
       _socket.write(cKanjiCancel);
-      // TODO encode string
     }
 
     // Set local code table
@@ -104,11 +104,19 @@ class Printer {
         ),
       );
     }
-    _socket.write(text);
+
+    if (cancelKanji) {
+      _socket.add(latin1.encode(text));
+    } else {
+      _socket.write(text);
+    }
   }
 
   /// Sens raw command(s)
-  void sendRaw(List<int> cmd) {
+  void sendRaw(List<int> cmd, {bool cancelKanji = true}) {
+    if (cancelKanji) {
+      _socket.write(cKanjiCancel);
+    }
     _socket.add(Uint8List.fromList(List.from(cmd)));
   }
 
