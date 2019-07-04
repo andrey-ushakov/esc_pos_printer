@@ -19,6 +19,7 @@ class PosStyles {
     this.height = PosTextSize.size1,
     this.width = PosTextSize.size1,
     this.fontType = PosFontType.fontA,
+    this.codeTable,
   });
 
   final bool bold;
@@ -29,4 +30,5 @@ class PosStyles {
   final PosTextSize height;
   final PosTextSize width;
   final PosFontType fontType;
+  final PosCodeTable codeTable;
 }

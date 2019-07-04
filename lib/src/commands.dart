@@ -8,6 +8,7 @@
 
 const esc = '\x1B';
 const gs = '\x1D';
+const fs = '\x1C';
 
 // Miscellaneous
 const cInit = '$esc@'; // Initialize printer
@@ -32,6 +33,7 @@ const cFontB = '${esc}M1'; // Font B
 const cTurn90On = '${esc}V1'; // Turn 90° clockwise rotation mode on
 const cTurn90Off = '${esc}V0'; // Turn 90° clockwise rotation mode off
 const cCodeTable = '${esc}t'; // Select character code table [N]
+const cKanjiCancel = '$fs.'; // Cancel Kanji character mode
 
 // Print Position
 const cAlignLeft = '${esc}a0'; // Left justification

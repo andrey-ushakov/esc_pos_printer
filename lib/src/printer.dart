@@ -21,7 +21,7 @@ class Printer {
   }
 
   final Socket _socket;
-  PosCodeTable _codeTable = PosCodeTable.pc437;
+  PosCodeTable _codeTable;
 
   /// Creates a new socket connection to the network printer.
   ///
@@ -42,13 +42,16 @@ class Printer {
     _socket.destroy();
   }
 
-  void setCodeTable(PosCodeTable codeTable) {
+  /// Set global code table which will be used instead of the default printer's code table
+  void setGlobalCodeTable(PosCodeTable codeTable) {
     _codeTable = codeTable;
-    _socket.add(
-      Uint8List.fromList(
-        List.from(cCodeTable.codeUnits)..add(codeTable.value),
-      ),
-    );
+    if (codeTable != null) {
+      _socket.add(
+        Uint8List.fromList(
+          List.from(cCodeTable.codeUnits)..add(codeTable.value),
+        ),
+      );
+    }
   }
 
   /// Generic print for internal use
@@ -63,7 +66,6 @@ class Printer {
     final int pos = colInd == 0 ? 0 : (512 * colInd / 11 - 1).round();
     final hexStr = pos.toRadixString(16).padLeft(3, '0');
     final hexPair = HEX.decode(hexStr);
-    // print('dec: $pos \t hex: $hexStr \t pair $hexPair');
 
     _socket.write(styles.bold ? cBoldOn : cBoldOff);
     _socket.write(styles.turn90 ? cTurn90On : cTurn90Off);
@@ -87,7 +89,16 @@ class Printer {
       ),
     );
 
+    _socket.write(cKanjiCancel);
+    if (styles.codeTable != null) {
+      _socket.add(
+        Uint8List.fromList(
+          List.from(cCodeTable.codeUnits)..add(styles.codeTable.value),
+        ),
+      );
+    }
     _socket.write(text);
+    // TOOD Kanji set
   }
 
   /// Sens raw command(s)
@@ -104,6 +115,32 @@ class Printer {
     _print(text, styles: styles, linesAfter: linesAfter);
     _socket.writeln();
     emptyLines(linesAfter);
+    reset();
+  }
+
+  /// Print selected code table.
+  ///
+  /// If [codeTable] is null, global code table is used.
+  /// If global code table is null, default printer code table is used.
+  void printCodeTable({PosCodeTable codeTable}) {
+    _socket.write(cKanjiCancel);
+
+    if (codeTable != null) {
+      _socket.add(
+        Uint8List.fromList(
+          List.from(cCodeTable.codeUnits)..add(codeTable.value),
+        ),
+      );
+    }
+
+    final List<int> list = [];
+    for (int i = 0; i < 256; i++) {
+      list.add(i);
+    }
+
+    _socket.add(
+      Uint8List.fromList(List.from(list)),
+    );
     reset();
   }
 
@@ -152,7 +189,7 @@ class Printer {
   /// Clear the buffer and reset text styles
   void reset() {
     _socket.write(cInit);
-    setCodeTable(_codeTable);
+    setGlobalCodeTable(_codeTable);
   }
 
   /// Skips [n] lines
