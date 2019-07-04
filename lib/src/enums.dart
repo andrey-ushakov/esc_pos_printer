@@ -62,8 +62,20 @@ class PosCodeTable {
   /// PC865 - Nordic
   static const pc865 = PosCodeTable._internal(5);
 
+  /// Western Europe
+  static const westEur = PosCodeTable._internal(6);
+
+  /// Greek
+  static const greek = PosCodeTable._internal(7);
+
   /// PC866 - Cyrillic #2
   static const pc866 = PosCodeTable._internal(17);
+
+  /// PC852 - Latin2
+  static const pc852 = PosCodeTable._internal(18);
+
+  /// WPC1252 - Latin1
+  static const wpc1252 = PosCodeTable._internal(71);
 
   /// Space page
   static const spacePage = PosCodeTable._internal(255);
