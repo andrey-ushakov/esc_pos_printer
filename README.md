@@ -82,7 +82,6 @@ printer.printRow([
 * Print barcodes
 * Print QR codes
 * ~~Turn 90° clockwise rotation mode on/off~~
-* Flutter example: print a demo receipt
 * ~~Flutter example: discover active Wi-Fi printers~~
-* USB, Bluetooth printers support
+* USB printers support
 * ~~Add encoding commands~~
