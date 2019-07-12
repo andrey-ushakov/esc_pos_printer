@@ -68,6 +68,18 @@ class PosCodeTable {
   /// Greek
   static const greek = PosCodeTable._internal(7);
 
+  /// PC737 - Greek
+  static const pc737 = PosCodeTable._internal(64);
+
+  /// PC851 - Greek
+  static const pc851 = PosCodeTable._internal(65);
+
+  /// PC869 - Greek
+  static const pc869 = PosCodeTable._internal(66);
+
+  /// PC928 - Greek
+  static const pc928 = PosCodeTable._internal(67);
+
   /// PC866 - Cyrillic #2
   static const pc866 = PosCodeTable._internal(17);
 

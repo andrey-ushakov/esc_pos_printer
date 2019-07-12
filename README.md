@@ -11,8 +11,6 @@ It can be used in [Flutter](https://flutter.dev/) or [Dart](https://dart.dev/) p
 
 To discover existing printers in your subnet, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of ESC/POS printers by default listen on port 9100.
 
-USB and Bluetooth printers support will be added later.
-
 ## Features
 
 * Connect to Wi-Fi printers
@@ -33,6 +31,8 @@ import 'package:esc_pos_printer/esc_pos_printer.dart';
 
 Printer.connect('192.168.0.123', port: 9100).then((printer) {
     printer.println('Normal text');
+    printer.println('Special symbols: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+        styles: PosStyles(codeTable: PosCodeTable.westEur));
     printer.println('Bold text', styles: PosStyles(bold: true));
     printer.println('Reverse text', styles: PosStyles(reverse: true));
     printer.println('Underlined text',
