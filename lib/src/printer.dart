@@ -55,6 +55,10 @@ class Printer {
     }
   }
 
+  double _colIndToPosition(int colInd) {
+    return colInd == 0 ? 0 : (512 * colInd / 11 - 1);
+  }
+
   /// Generic print for internal use
   ///
   /// [colInd] range: 0..11
@@ -64,18 +68,34 @@ class Printer {
     int colInd = 0,
     int linesAfter = 0,
     bool cancelKanji = true,
+    int colWidth = 12,
   }) {
-    final int pos = colInd == 0 ? 0 : (512 * colInd / 11 - 1).round();
-    final hexStr = pos.toRadixString(16).padLeft(3, '0');
+    const charLen = 11.625; // 48 symbols per line
+    double fromPos = _colIndToPosition(colInd);
+
+    // Align
+    if (colWidth == 12) {
+      _socket.write(styles.align == PosTextAlign.left
+          ? cAlignLeft
+          : (styles.align == PosTextAlign.center ? cAlignCenter : cAlignRight));
+    } else {
+      final double toPos = _colIndToPosition(colInd + colWidth) - 11;
+      final double textLen = text.length * charLen;
+
+      if (styles.align == PosTextAlign.right) {
+        fromPos = toPos - textLen;
+      } else if (styles.align == PosTextAlign.center) {
+        fromPos = fromPos + (toPos - fromPos) / 2 - textLen / 2;
+      }
+    }
+
+    final hexStr = fromPos.round().toRadixString(16).padLeft(3, '0');
     final hexPair = HEX.decode(hexStr);
 
     _socket.write(styles.bold ? cBoldOn : cBoldOff);
     _socket.write(styles.turn90 ? cTurn90On : cTurn90Off);
     _socket.write(styles.reverse ? cReverseOn : cReverseOff);
     _socket.write(styles.underline ? cUnderline1dot : cUnderlineOff);
-    _socket.write(styles.align == PosTextAlign.left
-        ? cAlignLeft
-        : (styles.align == PosTextAlign.center ? cAlignCenter : cAlignRight));
     _socket.write(styles.fontType == PosFontType.fontA ? cFontA : cFontB);
     // Text size
     _socket.add(
@@ -177,7 +197,12 @@ class Printer {
     for (int i = 0; i < cols.length; ++i) {
       final colInd =
           cols.sublist(0, i).fold(0, (int sum, col) => sum + col.width);
-      _print(cols[i].text, styles: cols[i].styles, colInd: colInd);
+      _print(
+        cols[i].text,
+        styles: cols[i].styles,
+        colInd: colInd,
+        colWidth: cols[i].width,
+      );
     }
 
     _socket.writeln();

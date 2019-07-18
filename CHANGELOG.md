@@ -1,4 +1,7 @@
 ## [1.1.0]
+* Fixed columns alignment bug
+
+## [1.1.0]
 * Added code page support
 
 ## [1.0.2]
