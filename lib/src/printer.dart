@@ -79,7 +79,7 @@ class Printer {
           ? cAlignLeft
           : (styles.align == PosTextAlign.center ? cAlignCenter : cAlignRight));
     } else {
-      final double toPos = _colIndToPosition(colInd + colWidth) - 11;
+      final double toPos = _colIndToPosition(colInd + colWidth) - 5;
       final double textLen = text.length * charLen;
 
       if (styles.align == PosTextAlign.right) {

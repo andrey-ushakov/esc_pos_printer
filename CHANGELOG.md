@@ -1,3 +1,6 @@
+## [1.1.2]
+* Better alignment
+
 ## [1.1.1]
 * Fixed columns alignment bug
 

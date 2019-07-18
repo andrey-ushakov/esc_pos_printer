@@ -1,6 +1,6 @@
 name: esc_pos_printer
 description: The library allows to print receipts using a ESC/POS (usually thermal) network printer. It can be used in Flutter or Dart projects. In Flutter, both Android and iOS are supported.
-version: 1.1.1
+version: 1.1.2
 author: Andrey Ushakov <flutter@tablemi.com>
 homepage: https://github.com/andrey-ushakov/esc_pos_printer
 
