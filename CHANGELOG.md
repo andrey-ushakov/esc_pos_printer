@@ -1,4 +1,4 @@
-## [1.1.0]
+## [1.1.1]
 * Fixed columns alignment bug
 
 ## [1.1.0]
