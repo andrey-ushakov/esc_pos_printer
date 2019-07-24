@@ -137,7 +137,7 @@ class Printer {
     if (cancelKanji) {
       _socket.write(cKanjiCancel);
     }
-    _socket.add(Uint8List.fromList(List.from(cmd)));
+    _socket.add(Uint8List.fromList(cmd));
   }
 
   /// Prints one line of styled text
@@ -179,9 +179,11 @@ class Printer {
     }
 
     _socket.add(
-      Uint8List.fromList(List.from(list)),
+      Uint8List.fromList(list),
     );
-    reset();
+
+    // Back to initial code table
+    setGlobalCodeTable(_codeTable);
   }
 
   /// Print a row.
