@@ -5,8 +5,10 @@ void main() {
   // ping_discover_network package (https://pub.dev/packages/ping_discover_network).
   // Note that most of ESC/POS printers by default listen on port 9100.
   Printer.connect('192.168.0.123', port: 9100).then((printer) {
-    printer.println('Normal text');
-    printer.println('Special symbols: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+    printer.println('Regular symbols: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
+    printer.println('Special symbols 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+        styles: PosStyles(codeTable: PosCodeTable.westEur));
+    printer.println('Special symbols 2: blåbærgrød',
         styles: PosStyles(codeTable: PosCodeTable.westEur));
 
     printer.println('Bold text', styles: PosStyles(bold: true));
