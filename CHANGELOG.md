@@ -1,3 +1,7 @@
+## [1.1.3]
+* printCodeTable bug fixed
+* updated test print example 
+
 ## [1.1.2]
 * Better alignment
 

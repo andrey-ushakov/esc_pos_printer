@@ -30,8 +30,8 @@ To discover existing printers in your subnet, consider using [ping_discover_netw
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 
 Printer.connect('192.168.0.123', port: 9100).then((printer) {
-    printer.println('Normal text');
-    printer.println('Special symbols: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+    printer.println('Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
+    printer.println('Special: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
         styles: PosStyles(codeTable: PosCodeTable.westEur));
     printer.println('Bold text', styles: PosStyles(bold: true));
     printer.println('Reverse text', styles: PosStyles(reverse: true));
