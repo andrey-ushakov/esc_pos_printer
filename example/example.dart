@@ -1,11 +1,14 @@
+import 'dart:io';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
+import 'package:image/image.dart';
 
 void main() {
   // To discover existing printers in your subnet, consider using
   // ping_discover_network package (https://pub.dev/packages/ping_discover_network).
   // Note that most of ESC/POS printers by default listen on port 9100.
   Printer.connect('192.168.0.123', port: 9100).then((printer) {
-    printer.println('Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
+    printer.println(
+        'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
     printer.println('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
         styles: PosStyles(codeTable: PosCodeTable.westEur));
     printer.println('Special 2: blåbærgrød',
@@ -42,6 +45,10 @@ void main() {
           height: PosTextSize.size2,
           width: PosTextSize.size2,
         ));
+
+    const String filename = './logo.png';
+    final Image image = decodeImage(File(filename).readAsBytesSync());
+    printer.printImage(image);
 
     printer.cut();
     printer.disconnect();

@@ -1,15 +1,23 @@
+## [1.2.0]
+* printing images (beta)
+  
+
 ## [1.1.3]
 * printCodeTable bug fixed
 * updated test print example 
 
+
 ## [1.1.2]
 * Better alignment
+
 
 ## [1.1.1]
 * Fixed columns alignment bug
 
+
 ## [1.1.0]
 * Added code page support
+
 
 ## [1.0.2]
 * Send raw command(s)

@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:hex/hex.dart';
+import 'package:image/image.dart';
 import 'commands.dart';
 import 'enums.dart';
 import 'pos_column.dart';
@@ -280,5 +281,80 @@ class Printer {
     } else {
       _socket.write(cCutFull);
     }
+  }
+
+  /// Generate multiple bytes for a number: In lower and higher parts, or more parts as needed.
+  ///
+  /// [value] Input number
+  /// [bytesNb] The number of bytes to output (1 - 4)
+  List<int> _intLowHigh(int value, int bytesNb) {
+    final dynamic maxInput = 256 << (bytesNb * 8) - 1;
+
+    if (bytesNb < 1 || bytesNb > 4) {
+      throw Exception('Can only output 1-4 bytes');
+    }
+    if (value < 0 || value > maxInput) {
+      throw Exception(
+          'Number too large. Can only output up to $maxInput in $bytesNb bytes');
+    }
+
+    final List<int> res = <int>[];
+    int buf = value;
+    for (int i = 0; i < bytesNb; ++i) {
+      res.add(buf % 256);
+      buf = buf ~/ 256;
+    }
+    return res;
+  }
+
+  List<int> _convert1bit(List<int> bytes) {
+    final List<int> res = [];
+    for (int i = 0; i < bytes.length; i += 8) {
+      res.add(bytes[i]);
+    }
+    return res;
+  }
+
+  /// Print image
+  ///
+  /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
+  void printImage(Image image) {
+    const bool highDensityHorizontal = true;
+    const bool highDensityVertical = true;
+
+    final int widthPx = image.width;
+    final int heightPx = image.height;
+
+    final int widthBytes = (widthPx + 7) ~/ 8;
+    const int densityByte =
+        (highDensityVertical ? 0 : 1) + (highDensityHorizontal ? 0 : 2);
+
+    final List<int> header = List.from(cImgPrint.codeUnits);
+    header.add(densityByte);
+    header.addAll(_intLowHigh(widthBytes, 2));
+    header.addAll(_intLowHigh(heightPx, 2));
+
+    final xL = header[4];
+    final xH = header[5];
+
+    final newWidth = (xL + xH * 256) * 8;
+    final Image imgResized =
+        copyResize(image, width: newWidth, height: image.height);
+
+    final Image imgGreyscale = grayscale(imgResized);
+    final Image imgInvert = invert(imgGreyscale);
+
+    final bytes = imgInvert.getBytes(format: Format.luminance);
+
+    final res = _convert1bit(bytes);
+
+    // print('img w * h (src): $widthPx * $heightPx');
+    // print('img w * h (new): ${imgResized.width} * ${imgResized.height}');
+    // print('source bytes: ${bytes.length}');
+    // print('= target bytes: ${(xL + xH * 256) * (header[6] + header[7] * 256)}');
+    // print('= to print bytes: ${res.length}');
+    // print(header);
+
+    sendRaw(List.from(header)..addAll(res));
   }
 }

@@ -76,9 +76,20 @@ printer.printRow([
     ]);
 ```
 
+Print image:
+
+```dart
+import 'dart:io';
+import 'package:image/image.dart';
+
+const String filename = './logo.png';
+final Image image = decodeImage(File(filename).readAsBytesSync());
+printer.printImage(image);
+```
+
 ## TODO
 * ~~Add raw print function~~
-* Print images
+* ~~Print images~~
 * Print barcodes
 * Print QR codes
 * ~~Turn 90° clockwise rotation mode on/off~~
