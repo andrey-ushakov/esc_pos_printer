@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:typed_data';
+import 'package:flutter/material.dart' hide Image;
 import 'package:esc_pos_printer/esc_pos_printer.dart';
+import 'package:flutter/services.dart';
 import 'package:ping_discover_network/ping_discover_network.dart';
+import 'package:image/image.dart';
 import 'package:wifi/wifi.dart';
 
 void main() => runApp(MyApp());
@@ -87,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void testPrint(String printerIp, BuildContext ctx) {
     Printer.connect(printerIp,
             port: int.parse(portController.text), timeout: Duration(seconds: 5))
-        .then((printer) {
+        .then((printer) async {
       printer.println('Normal text');
       printer.println('Bold text', styles: PosStyles(bold: true));
       printer.println('Reverse text', styles: PosStyles(reverse: true));
@@ -123,6 +126,12 @@ class _MyHomePageState extends State<MyHomePage> {
             height: PosTextSize.size2,
             width: PosTextSize.size2,
           ));
+
+      // Print image
+      final ByteData data = await rootBundle.load('assets/logo.png');
+      final Uint8List bytes = data.buffer.asUint8List();
+      final Image image = decodeImage(bytes);
+      printer.printImage(image);
 
       printer.cut();
       printer.disconnect();
