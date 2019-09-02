@@ -341,10 +341,8 @@ class Printer {
     final Image imgResized =
         copyResize(image, width: newWidth, height: image.height);
 
-    final Image imgGreyscale = grayscale(imgResized);
-    final Image imgInvert = invert(imgGreyscale);
-
-    final bytes = imgInvert.getBytes(format: Format.luminance);
+    invert(imgResized);
+    final bytes = imgResized.getBytes(format: Format.luminance);
 
     final res = _convert1bit(bytes);
 
