@@ -371,8 +371,6 @@ class Printer {
 
     const int lineHeight = highDensityVertical ? 3 : 1;
     final List<List<int>> blobs = _toColumnFormat(imageRotated, lineHeight * 8);
-    print(blobs.length);
-    print(blobs[0].length);
 
     final int heightPx = imageRotated.height;
     const int densityByte =
