@@ -318,7 +318,8 @@ class Printer {
   /// Print image using GS v 0 (obsolete command)
   ///
   /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
-  void printImageRaster(Image image) {
+  void printImageRaster(Image imgSrc) {
+    final Image image = Image.from(imgSrc); // make a copy
     const bool highDensityHorizontal = true;
     const bool highDensityVertical = true;
 
@@ -359,27 +360,27 @@ class Printer {
   /// Print image using ESC *
   ///
   /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
-  void printImage(Image image) {
+  void printImage(Image imgSrc) {
+    final Image image = Image.from(imgSrc); // make a copy
     const bool highDensityHorizontal = true;
     const bool highDensityVertical = true;
 
     invert(image);
+    flip(image, Flip.horizontal);
     final Image imageRotated = copyRotate(image, 270);
-    // TODO(Andrey): Mirror image (FLIP_LEFT_RIGHT)
 
     const int lineHeight = highDensityVertical ? 3 : 1;
     final List<List<int>> blobs = _toColumnFormat(imageRotated, lineHeight * 8);
     print(blobs.length);
     print(blobs[0].length);
 
-    final int widthPx = imageRotated.width;
+    final int heightPx = imageRotated.height;
     const int densityByte =
         (highDensityHorizontal ? 1 : 0) + (highDensityVertical ? 32 : 0);
 
-    // header = ESC + b"*" + six.int2byte(density_byte) + _int_low_high(width_pixels, 2)
     final List<int> header = List.from(cBitImg.codeUnits);
     header.add(densityByte);
-    header.addAll(_intLowHigh(widthPx, 2));
+    header.addAll(_intLowHigh(heightPx, 2));
 
     // Adjust line spacing (for 16-unit line feeds): ESC 3 0x10 (HEX: 0x1b 0x33 0x10)
     sendRaw([27, 51, 16]);
@@ -398,7 +399,7 @@ class Printer {
     final int widthPx = image.width;
     final int heightPx = image.height;
     int left = 0;
-    List<List<int>> blobs = [];
+    final List<List<int>> blobs = [];
 
     int i = 0;
     // TODO(Andrey): We lose a part of image here -> use while(left < widthPx)
