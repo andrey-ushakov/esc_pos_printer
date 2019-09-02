@@ -46,4 +46,5 @@ const cFeedN = '${esc}d'; // Print and feed n lines [N]
 const cReverseFeedN = '${esc}e'; // Print and reverse feed n lines [N]
 
 // Bit Image
-const cImgPrint = '${gs}v0'; // Print raster bit image [obsolete command]
+const cRasterImg = '${gs}v0'; // Print raster bit image [obsolete command]
+const cBitImg = '$esc*'; // Set bit image mode

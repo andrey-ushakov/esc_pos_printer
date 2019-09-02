@@ -329,7 +329,7 @@ class Printer {
     const int densityByte =
         (highDensityVertical ? 0 : 1) + (highDensityHorizontal ? 0 : 2);
 
-    final List<int> header = List.from(cImgPrint.codeUnits);
+    final List<int> header = List.from(cRasterImg.codeUnits);
     header.add(densityByte);
     header.addAll(_intLowHigh(widthBytes, 2));
     header.addAll(_intLowHigh(heightPx, 2));
