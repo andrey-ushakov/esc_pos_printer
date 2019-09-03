@@ -46,12 +46,10 @@ void main() {
           width: PosTextSize.size2,
         ));
 
+    // Print image
     const String filename = './logo.png';
     final Image image = decodeImage(File(filename).readAsBytesSync());
-    // Print image
     printer.printImage(image);
-    // Print image (using an outdated command)
-    // printer.printImageRaster(image);
 
     printer.cut();
     printer.disconnect();

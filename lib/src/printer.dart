@@ -308,14 +308,6 @@ class Printer {
     return res;
   }
 
-  List<int> _convert1bit(List<int> bytes) {
-    final List<int> res = [];
-    for (int i = 0; i < bytes.length; i += 8) {
-      res.add(bytes[i]);
-    }
-    return res;
-  }
-
   /// Floyd–Steinberg dithering
   ///
   /// 1 pixel = 1 byte
@@ -332,7 +324,6 @@ class Printer {
 
     final List<int> ditherBytes = List.from(bytes);
 
-    int ind = 0;
     // from top to bottom, from left to right
     // TODO(Andrey): REPLACE by 1D LOOP
     for (int y = 0; y < height - 1; y++) {
@@ -357,8 +348,6 @@ class Printer {
         // (x + 1, y + 1)
         ditherBytes[index(x + 1, y + 1)] =
             ditherBytes[index(x + 1, y + 1)] + (quantError * 1 / 16).round();
-
-        ind++;
       }
     }
     // TODO(Andrey): FILL Last col + last row :
@@ -379,58 +368,6 @@ class Printer {
           Image.fromBytes(width, height, bytesPng, format: Format.rgba)));
 
     return ditherBytes;
-  }
-
-  /// Print image using GS v 0 (obsolete command)
-  ///
-  /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
-  void printImageRaster(Image imgSrc) {
-    final Image image = Image.from(imgSrc); // make a copy
-    const bool highDensityHorizontal = true;
-    const bool highDensityVertical = true;
-
-    final int widthPx = image.width;
-    final int heightPx = image.height;
-
-    final int widthBytes = (widthPx + 7) ~/ 8;
-    const int densityByte =
-        (highDensityVertical ? 0 : 1) + (highDensityHorizontal ? 0 : 2);
-
-    final List<int> header = List.from(cRasterImg.codeUnits);
-    header.add(densityByte);
-    header.addAll(_intLowHigh(widthBytes, 2));
-    header.addAll(_intLowHigh(heightPx, 2));
-
-    final xL = header[4];
-    final xH = header[5];
-
-    final newWidth = (xL + xH * 256) * 8;
-    final Image imgResized =
-        copyResize(image, width: newWidth, height: image.height);
-
-    grayscale(image);
-    invert(image);
-
-    final List<int> oneChannelBytes = [];
-    final List<int> buffer = image.getBytes(format: Format.rgb);
-    for (int i = 0; i < buffer.length; i += 3) {
-      oneChannelBytes.add(buffer[i]);
-    }
-
-    final List<int> ditherBytes =
-        ditherImage(oneChannelBytes, image.width, image.height);
-
-    final bytes = imgResized.getBytes(format: Format.luminance);
-    final res = _convert1bit(bytes);
-
-    // print('img w * h (src): $widthPx * $heightPx');
-    // print('img w * h (new): ${imgResized.width} * ${imgResized.height}');
-    // print('source bytes: ${bytes.length}');
-    // print('= target bytes: ${(xL + xH * 256) * (header[6] + header[7] * 256)}');
-    // print('= to print bytes: ${res.length}');
-    // print(header);
-
-    sendRaw(List.from(header)..addAll(res));
   }
 
   /// Print image using ESC *
