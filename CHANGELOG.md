@@ -1,3 +1,8 @@
+## [1.3.1]
+* Removed raw lib
+* Code refactoring
+
+
 ## [1.3.0]
 * Image printing method has been improved
 * Using ESC * command to print images instead of outdated GS v 0

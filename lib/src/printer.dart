@@ -11,7 +11,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:hex/hex.dart';
 import 'package:image/image.dart';
-import 'package:raw/raw.dart';
 import 'commands.dart';
 import 'enums.dart';
 import 'pos_column.dart';
@@ -311,7 +310,7 @@ class Printer {
   /// Floyd–Steinberg dithering
   ///
   /// 1 pixel = 1 byte
-  List<int> ditherImage(List<int> bytes, int width, int height) {
+  List<int> _ditherImage(List<int> bytes, int width, int height) {
     int index(int x, int y) {
       return x + y * width;
     }
@@ -370,6 +369,31 @@ class Printer {
     return ditherBytes;
   }
 
+  /// Replaces a single bit in a 32-bit unsigned integer.
+  int _transformUint32Bool(int uint32, int shift, bool newValue) {
+    return ((0xFFFFFFFF ^ (0x1 << shift)) & uint32) |
+        ((newValue ? 1 : 0) << shift);
+  }
+
+  /// Merges each 8 values (bits) into one byte
+  List<int> _packBitsIntoBytes(List<int> bytes) {
+    const pxPerLine = 8;
+    final List<int> res = <int>[];
+    const threshold = 127; // set the greyscale -> b/w threshold here
+    for (int i = 0; i < bytes.length; i += pxPerLine) {
+      int newVal = 0;
+      for (int j = 0; j < pxPerLine; j++) {
+        newVal = _transformUint32Bool(
+          newVal,
+          pxPerLine - j,
+          bytes[i + j] > threshold,
+        );
+      }
+      res.add(newVal ~/ 2);
+    }
+    return res;
+  }
+
   /// Print image using ESC *
   ///
   /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
@@ -388,24 +412,10 @@ class Printer {
     // Compress according to line density
     // Line height contains 8 or 24 pixels of src image
     // Each blobs[i] contains greyscale bytes [0-255]
-    const int pxPerLine = 24 ~/ lineHeight;
+    // const int pxPerLine = 24 ~/ lineHeight;
     for (int blobInd = 0; blobInd < blobs.length; blobInd++) {
       // print(blobs[blobInd].length);
-      // output 24 packed int with 24 b/w bits each
-      final List<int> newBlob = <int>[];
-      const threshold = 127; // set the greyscale -> b/w threshold here
-      for (int i = 0; i < blobs[blobInd].length; i += pxPerLine) {
-        int newVal = 0;
-        for (int j = 0; j < pxPerLine; j++) {
-          newVal = transformUint32Bool(
-            newVal,
-            pxPerLine - j,
-            blobs[blobInd][i + j] > threshold,
-          );
-        }
-        newBlob.add(newVal ~/ 2);
-      }
-      blobs[blobInd] = newBlob;
+      blobs[blobInd] = _packBitsIntoBytes(blobs[blobInd]);
     }
 
     final int heightPx = imageRotated.height;
