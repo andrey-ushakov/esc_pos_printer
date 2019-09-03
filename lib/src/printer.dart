@@ -324,13 +324,10 @@ class Printer {
       return x + y * width;
     }
 
-    print('\t\tditherImage:: bytes rgb: ${bytes.length}');
-
-    dynamic beforeBytes = <int>[];
+    final beforeBytes = <int>[];
     for (int i = 0; i < bytes.length; i++) {
       beforeBytes.add(bytes[i]);
       beforeBytes.add(bytes[i]);
-      // beforeBytes.add(bytes[i]);
     }
 
     final List<int> ditherBytes = List.from(bytes);
@@ -340,14 +337,6 @@ class Printer {
     // TODO(Andrey): REPLACE by 1D LOOP
     for (int y = 0; y < height - 1; y++) {
       for (int x = 0; x < width - 1; x++) {
-        // for (int i = 0; i < ditherBytes.length; ++i) {
-        // skip last column and last row
-        // if (i % width == 0 ||
-        //     (i + 1) % width == 0 ||
-        //     i >= ditherBytes.length - width) {
-        //   continue;
-        // }
-
         // old pixel
         final int oldPixel = ditherBytes[index(x, y)];
         final int newPixel = (oldPixel / 255).round() * 255;
@@ -376,7 +365,7 @@ class Printer {
     // image[:, -1] = 1
     // image[-1, :] = 1
 
-    print('\t\t $ind');
+    // print('\t\t $ind');
 
     final List<int> bytesPng = [];
     for (int i = 0; i < ditherBytes.length; i++) {
@@ -456,20 +445,15 @@ class Printer {
     flip(image, Flip.horizontal);
     final Image imageRotated = copyRotate(image, 270);
 
-    print(
-        'SRC size: ${imageRotated.width} x ${imageRotated.height} : ${imageRotated.getBytes(format: Format.luminance).length}');
-
     const int lineHeight = highDensityVertical ? 3 : 1;
     final List<List<int>> blobs = _toColumnFormat(imageRotated, lineHeight * 8);
 
-    print('blobs before compessing (bytes/blob): ${blobs[0].length}');
-
-    // Compress according to line density.
+    // Compress according to line density
     // Line height contains 8 or 24 pixels of src image
     // Each blobs[i] contains greyscale bytes [0-255]
     const int pxPerLine = 24 ~/ lineHeight;
     for (int blobInd = 0; blobInd < blobs.length; blobInd++) {
-      print(blobs[blobInd].length);
+      // print(blobs[blobInd].length);
       // output 24 packed int with 24 b/w bits each
       final List<int> newBlob = <int>[];
       const threshold = 127; // set the greyscale -> b/w threshold here
@@ -479,14 +463,12 @@ class Printer {
           newVal = transformUint32Bool(
             newVal,
             pxPerLine - j,
-            blobs[blobInd][i + j] >
-                threshold, // or < threshold to do the invert in one step
+            blobs[blobInd][i + j] > threshold,
           );
         }
         newBlob.add(newVal ~/ 2);
       }
       blobs[blobInd] = newBlob;
-      // print('=> ${blobs[blobInd].length}');
     }
 
     final int heightPx = imageRotated.height;
@@ -496,18 +478,12 @@ class Printer {
     final List<int> header = List.from(cBitImg.codeUnits);
     header.add(densityByte);
     header.addAll(_intLowHigh(heightPx, 2));
-
-    print('total blobs: ${blobs.length}');
-    print('blob len: ${blobs[0].length}'); // 576 --> 72
-    print(header);
+    // print(header);
 
     // Adjust line spacing (for 16-unit line feeds): ESC 3 0x10 (HEX: 0x1b 0x33 0x10)
     sendRaw([27, 51, 16]);
     for (int i = 0; i < blobs.length; ++i) {
-      // print(blobs[i]);
       sendRaw(List.from(header)..addAll(blobs[i])..addAll('\n'.codeUnits));
-
-      // [255, 255, 255, 255, 255, 255, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 255, 255, 255, 255, 255, 255]
     }
     // Reset line spacing: ESC 2 (HEX: 0x1b 0x32)
     sendRaw([27, 50]);
@@ -517,16 +493,24 @@ class Printer {
   ///
   /// [image] Image to extract from
   /// [lineHeight] Printed line height in dots
-  List<List<int>> _toColumnFormat(Image image, int lineHeight) {
-    final int widthPx = image.width;
+  List<List<int>> _toColumnFormat(Image imgSrc, int lineHeight) {
+    final Image image = Image.from(imgSrc); // make a copy
+
+    // Determine new width: closest integer that is divisible by lineHeight
+    final int widthPx = (image.width + lineHeight) - (image.width % lineHeight);
     final int heightPx = image.height;
+
+    // Create a black bottom layer
+    final biggerImage = copyResize(image, width: widthPx, height: heightPx);
+    fill(biggerImage, 0);
+    // Insert source image into bigger one
+    drawImage(biggerImage, image, dstX: 0, dstY: 0);
+
     int left = 0;
     final List<List<int>> blobs = [];
 
-    // TODO(Andrey): We lose a part of image here -> use while(left < widthPx)
-    while ((left - widthPx).abs() >= lineHeight) {
-      final Image slice = copyCrop(image, left, 0, lineHeight, heightPx);
-      // File('slice_$i.png')..writeAsBytesSync(encodePng(slice));
+    while (left < widthPx) {
+      final Image slice = copyCrop(biggerImage, left, 0, lineHeight, heightPx);
       final Uint8List bytes = slice.getBytes(format: Format.luminance);
       blobs.add(bytes);
       left += lineHeight;
