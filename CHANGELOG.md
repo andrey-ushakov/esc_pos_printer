@@ -1,10 +1,16 @@
+## [1.3.0]
+* Image printing method has been improved
+* Using ESC * command to print images instead of outdated GS v 0
+* Added print image Flutter example
+
+
 ## [1.2.0]
-* printing images (beta)
+* Printing images (beta)
   
 
 ## [1.1.3]
 * printCodeTable bug fixed
-* updated test print example 
+* Updated test print example 
 
 
 ## [1.1.2]
