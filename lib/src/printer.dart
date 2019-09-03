@@ -11,6 +11,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:hex/hex.dart';
 import 'package:image/image.dart';
+import 'package:raw/raw.dart';
 import 'commands.dart';
 import 'enums.dart';
 import 'pos_column.dart';
@@ -315,6 +316,82 @@ class Printer {
     return res;
   }
 
+  /// Floyd–Steinberg dithering
+  ///
+  /// 1 pixel = 1 byte
+  List<int> ditherImage(List<int> bytes, int width, int height) {
+    int index(int x, int y) {
+      return x + y * width;
+    }
+
+    print('\t\tditherImage:: bytes rgb: ${bytes.length}');
+
+    dynamic beforeBytes = <int>[];
+    for (int i = 0; i < bytes.length; i++) {
+      beforeBytes.add(bytes[i]);
+      beforeBytes.add(bytes[i]);
+      // beforeBytes.add(bytes[i]);
+    }
+
+    final List<int> ditherBytes = List.from(bytes);
+
+    int ind = 0;
+    // from top to bottom, from left to right
+    // TODO(Andrey): REPLACE by 1D LOOP
+    for (int y = 0; y < height - 1; y++) {
+      for (int x = 0; x < width - 1; x++) {
+        // for (int i = 0; i < ditherBytes.length; ++i) {
+        // skip last column and last row
+        // if (i % width == 0 ||
+        //     (i + 1) % width == 0 ||
+        //     i >= ditherBytes.length - width) {
+        //   continue;
+        // }
+
+        // old pixel
+        final int oldPixel = ditherBytes[index(x, y)];
+        final int newPixel = (oldPixel / 255).round() * 255;
+        final int quantError = oldPixel - newPixel;
+
+        // (x, y)
+        ditherBytes[index(x, y)] = newPixel;
+
+        // (x + 1, y)
+        ditherBytes[index(x + 1, y)] =
+            ditherBytes[index(x + 1, y)] + (quantError * 7 / 16).round();
+        // (x - 1, y + 1)
+        ditherBytes[index(x - 1, y + 1)] =
+            ditherBytes[index(x - 1, y + 1)] + (quantError * 3 / 16).round();
+        // (x, y + 1)
+        ditherBytes[index(x, y + 1)] =
+            ditherBytes[index(x, y + 1)] + (quantError * 5 / 16).round();
+        // (x + 1, y + 1)
+        ditherBytes[index(x + 1, y + 1)] =
+            ditherBytes[index(x + 1, y + 1)] + (quantError * 1 / 16).round();
+
+        ind++;
+      }
+    }
+    // TODO(Andrey): FILL Last col + last row :
+    // image[:, -1] = 1
+    // image[-1, :] = 1
+
+    print('\t\t $ind');
+
+    final List<int> bytesPng = [];
+    for (int i = 0; i < ditherBytes.length; i++) {
+      bytesPng.add(ditherBytes[i]);
+      bytesPng.add(ditherBytes[i]);
+      bytesPng.add(ditherBytes[i]);
+      bytesPng.add(255);
+    }
+    File('_dither.png')
+      ..writeAsBytesSync(encodePng(
+          Image.fromBytes(width, height, bytesPng, format: Format.rgba)));
+
+    return ditherBytes;
+  }
+
   /// Print image using GS v 0 (obsolete command)
   ///
   /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
@@ -342,9 +419,19 @@ class Printer {
     final Image imgResized =
         copyResize(image, width: newWidth, height: image.height);
 
-    invert(imgResized);
-    final bytes = imgResized.getBytes(format: Format.luminance);
+    grayscale(image);
+    invert(image);
 
+    final List<int> oneChannelBytes = [];
+    final List<int> buffer = image.getBytes(format: Format.rgb);
+    for (int i = 0; i < buffer.length; i += 3) {
+      oneChannelBytes.add(buffer[i]);
+    }
+
+    final List<int> ditherBytes =
+        ditherImage(oneChannelBytes, image.width, image.height);
+
+    final bytes = imgResized.getBytes(format: Format.luminance);
     final res = _convert1bit(bytes);
 
     // print('img w * h (src): $widthPx * $heightPx');
@@ -369,8 +456,38 @@ class Printer {
     flip(image, Flip.horizontal);
     final Image imageRotated = copyRotate(image, 270);
 
+    print(
+        'SRC size: ${imageRotated.width} x ${imageRotated.height} : ${imageRotated.getBytes(format: Format.luminance).length}');
+
     const int lineHeight = highDensityVertical ? 3 : 1;
     final List<List<int>> blobs = _toColumnFormat(imageRotated, lineHeight * 8);
+
+    print('blobs before compessing (bytes/blob): ${blobs[0].length}');
+
+    // Compress according to line density.
+    // Line height contains 8 or 24 pixels of src image
+    // Each blobs[i] contains greyscale bytes [0-255]
+    const int pxPerLine = 24 ~/ lineHeight;
+    for (int blobInd = 0; blobInd < blobs.length; blobInd++) {
+      print(blobs[blobInd].length);
+      // output 24 packed int with 24 b/w bits each
+      final List<int> newBlob = <int>[];
+      const threshold = 127; // set the greyscale -> b/w threshold here
+      for (int i = 0; i < blobs[blobInd].length; i += pxPerLine) {
+        int newVal = 0;
+        for (int j = 0; j < pxPerLine; j++) {
+          newVal = transformUint32Bool(
+            newVal,
+            pxPerLine - j,
+            blobs[blobInd][i + j] >
+                threshold, // or < threshold to do the invert in one step
+          );
+        }
+        newBlob.add(newVal ~/ 2);
+      }
+      blobs[blobInd] = newBlob;
+      // print('=> ${blobs[blobInd].length}');
+    }
 
     final int heightPx = imageRotated.height;
     const int densityByte =
@@ -380,10 +497,17 @@ class Printer {
     header.add(densityByte);
     header.addAll(_intLowHigh(heightPx, 2));
 
+    print('total blobs: ${blobs.length}');
+    print('blob len: ${blobs[0].length}'); // 576 --> 72
+    print(header);
+
     // Adjust line spacing (for 16-unit line feeds): ESC 3 0x10 (HEX: 0x1b 0x33 0x10)
     sendRaw([27, 51, 16]);
     for (int i = 0; i < blobs.length; ++i) {
+      // print(blobs[i]);
       sendRaw(List.from(header)..addAll(blobs[i])..addAll('\n'.codeUnits));
+
+      // [255, 255, 255, 255, 255, 255, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 192, 0, 3, 255, 255, 255, 255, 255, 255]
     }
     // Reset line spacing: ESC 2 (HEX: 0x1b 0x32)
     sendRaw([27, 50]);
@@ -399,15 +523,12 @@ class Printer {
     int left = 0;
     final List<List<int>> blobs = [];
 
-    int i = 0;
     // TODO(Andrey): We lose a part of image here -> use while(left < widthPx)
     while ((left - widthPx).abs() >= lineHeight) {
       final Image slice = copyCrop(image, left, 0, lineHeight, heightPx);
       // File('slice_$i.png')..writeAsBytesSync(encodePng(slice));
       final Uint8List bytes = slice.getBytes(format: Format.luminance);
-      blobs.add(_convert1bit(bytes));
-
-      i++;
+      blobs.add(bytes);
       left += lineHeight;
     }
 
