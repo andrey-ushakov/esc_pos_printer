@@ -469,16 +469,18 @@ class Printer {
   /// Print image using GS v 0 (obsolete command)
   ///
   /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
-  void printImageRaster(Image imgSrc) {
+  void printImageRaster(
+    Image imgSrc, {
+    bool highDensityHorizontal = true,
+    bool highDensityVertical = true,
+  }) {
     final Image image = Image.from(imgSrc); // make a copy
-    const bool highDensityHorizontal = true;
-    const bool highDensityVertical = true;
 
     final int widthPx = image.width;
     final int heightPx = image.height;
 
     final int widthBytes = (widthPx + 7) ~/ 8;
-    const int densityByte =
+    final int densityByte =
         (highDensityVertical ? 0 : 1) + (highDensityHorizontal ? 0 : 2);
 
     final List<int> header = List.from(cRasterImg.codeUnits);
@@ -498,13 +500,10 @@ class Printer {
       oneChannelBytes.add(buffer[i]);
     }
 
-    // print('after invert len: ${oneChannelBytes.length}');
-
     // Add some empty pixels at the end of each line (to make the width divisible by 8)
     final targetWidth = (widthPx + 8) - (widthPx % 8);
     final missingPx = targetWidth - widthPx;
     final extra = Uint8List(missingPx);
-    // print('curW: $widthPx, targetW: $targetWidth, missingPx: $missingPx');
     for (int i = 0; i < heightPx; i++) {
       final pos = (i * widthPx + widthPx) + i * missingPx;
       oneChannelBytes.insertAll(pos, extra);
