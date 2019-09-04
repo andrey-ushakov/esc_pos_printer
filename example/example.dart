@@ -50,6 +50,8 @@ void main() {
     const String filename = './logo.png';
     final Image image = decodeImage(File(filename).readAsBytesSync());
     printer.printImage(image);
+    // Print image using an alternative (obsolette) command
+    // printer.printImageRaster(image);
 
     printer.cut();
     printer.disconnect();
