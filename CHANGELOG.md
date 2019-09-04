@@ -1,3 +1,8 @@
+## [1.3.2]
+* Added alternative printImageRaster method using (GS v 0) obsolete command
+* Code refactoring
+
+
 ## [1.3.1]
 * Removed raw lib
 * Code refactoring
