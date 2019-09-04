@@ -362,9 +362,9 @@ class Printer {
       bytesPng.add(ditherBytes[i]);
       bytesPng.add(255);
     }
-    File('_dither.png')
-      ..writeAsBytesSync(encodePng(
-          Image.fromBytes(width, height, bytesPng, format: Format.rgba)));
+    // File('_dither.png')
+    //   ..writeAsBytesSync(encodePng(
+    //       Image.fromBytes(width, height, bytesPng, format: Format.rgba)));
 
     return ditherBytes;
   }
@@ -464,5 +464,66 @@ class Printer {
     }
 
     return blobs;
+  }
+
+  /// Print image using GS v 0 (obsolete command)
+  ///
+  /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
+  void printImageRaster(Image imgSrc) {
+    Image image = Image.from(imgSrc); // make a copy
+    const bool highDensityHorizontal = true;
+    const bool highDensityVertical = true;
+
+    final int widthPx = image.width;
+    final int heightPx = image.height;
+
+    final int widthBytes = (widthPx + 7) ~/ 8;
+    const int densityByte =
+        (highDensityVertical ? 0 : 1) + (highDensityHorizontal ? 0 : 2);
+
+    final List<int> header = List.from(cRasterImg.codeUnits);
+    header.add(densityByte);
+    header.addAll(_intLowHigh(widthBytes, 2));
+    header.addAll(_intLowHigh(heightPx, 2));
+
+    //////////////////// TODO REMOVE
+    final xL = header[4];
+    final xH = header[5];
+    final newWidth = (xL + xH * 256) * 8;
+    image = copyResize(image, width: newWidth, height: image.height);
+    // print('$newWidth');
+    //////////////////// REMOVE end
+
+    File('_1_source.png')..writeAsBytesSync(encodePng(image));
+    grayscale(image);
+    File('_2_gray.png')..writeAsBytesSync(encodePng(image));
+    invert(image);
+    File('_3_invert.png')..writeAsBytesSync(encodePng(image));
+
+    final List<int> oneChannelBytes = [];
+    final List<int> buffer = image.getBytes(format: Format.rgba);
+    for (int i = 0; i < buffer.length; i += 4) {
+      oneChannelBytes.add(buffer[i]);
+    }
+
+    print('after invert len: ${oneChannelBytes.length}');
+
+    // pack bits into bytes
+    final List<int> res = _packBitsIntoBytes(oneChannelBytes);
+
+    //   final List<int> ditherBytes =
+    //       ditherImage(oneChannelBytes, image.width, image.height);
+
+    //   final bytes = imgResized.getBytes(format: Format.luminance);
+    //   final res = _convert1bit(bytes);
+
+    // print('img w * h (src): $widthPx * $heightPx');
+    // print('img w * h (new): ${imgResized.width} * ${imgResized.height}');
+    // print('source bytes: ${bytes.length}');
+    // print('= target bytes: ${(xL + xH * 256) * (header[6] + header[7] * 256)}');
+    print('= to print bytes: ${res.length}');
+    print(header);
+
+    sendRaw(List.from(header)..addAll(res));
   }
 }
