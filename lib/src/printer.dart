@@ -470,7 +470,7 @@ class Printer {
   ///
   /// [image] is an instanse of class from [Image library](https://pub.dev/packages/image)
   void printImageRaster(Image imgSrc) {
-    Image image = Image.from(imgSrc); // make a copy
+    final Image image = Image.from(imgSrc); // make a copy
     const bool highDensityHorizontal = true;
     const bool highDensityVertical = true;
 
@@ -486,19 +486,11 @@ class Printer {
     header.addAll(_intLowHigh(widthBytes, 2));
     header.addAll(_intLowHigh(heightPx, 2));
 
-    //////////////////// TODO REMOVE
-    final xL = header[4];
-    final xH = header[5];
-    final newWidth = (xL + xH * 256) * 8;
-    image = copyResize(image, width: newWidth, height: image.height);
-    // print('$newWidth');
-    //////////////////// REMOVE end
-
-    File('_1_source.png')..writeAsBytesSync(encodePng(image));
+    // File('_1_source.png')..writeAsBytesSync(encodePng(image));
     grayscale(image);
-    File('_2_gray.png')..writeAsBytesSync(encodePng(image));
+    // File('_2_gray.png')..writeAsBytesSync(encodePng(image));
     invert(image);
-    File('_3_invert.png')..writeAsBytesSync(encodePng(image));
+    // File('_3_invert.png')..writeAsBytesSync(encodePng(image));
 
     final List<int> oneChannelBytes = [];
     final List<int> buffer = image.getBytes(format: Format.rgba);
@@ -506,9 +498,19 @@ class Printer {
       oneChannelBytes.add(buffer[i]);
     }
 
-    print('after invert len: ${oneChannelBytes.length}');
+    // print('after invert len: ${oneChannelBytes.length}');
 
-    // pack bits into bytes
+    // Add some empty pixels at the end of each line (to make the width divisible by 8)
+    final targetWidth = (widthPx + 8) - (widthPx % 8);
+    final missingPx = targetWidth - widthPx;
+    final extra = Uint8List(missingPx);
+    // print('curW: $widthPx, targetW: $targetWidth, missingPx: $missingPx');
+    for (int i = 0; i < heightPx; i++) {
+      final pos = (i * widthPx + widthPx) + i * missingPx;
+      oneChannelBytes.insertAll(pos, extra);
+    }
+
+    // Pack bits into bytes
     final List<int> res = _packBitsIntoBytes(oneChannelBytes);
 
     //   final List<int> ditherBytes =
@@ -521,8 +523,8 @@ class Printer {
     // print('img w * h (new): ${imgResized.width} * ${imgResized.height}');
     // print('source bytes: ${bytes.length}');
     // print('= target bytes: ${(xL + xH * 256) * (header[6] + header[7] * 256)}');
-    print('= to print bytes: ${res.length}');
-    print(header);
+    // print('= to print bytes: ${res.length}');
+    // print(header);
 
     sendRaw(List.from(header)..addAll(res));
   }
