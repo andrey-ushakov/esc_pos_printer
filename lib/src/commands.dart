@@ -48,3 +48,10 @@ const cReverseFeedN = '${esc}e'; // Print and reverse feed n lines [N]
 // Bit Image
 const cRasterImg = '${gs}v0'; // Print raster bit image [obsolete command]
 const cBitImg = '$esc*'; // Set bit image mode
+
+// Barcode
+const cBarcodeSelectPos = '${gs}H'; // Select print position of HRI characters
+const cBarcodeSelectFont = '${gs}f'; // Select font for HRI characters
+const cBarcodeSetH = '${gs}h'; // Set barcode height
+const cBarcodeSetW = '${gs}w'; // Set barcode width
+const cBarcodePrint = '${gs}k'; // Print barcode
