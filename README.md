@@ -19,6 +19,8 @@ To discover existing printers in your subnet, consider using [ping_discover_netw
 * Text styling:
   * size, align, bold, reverse, underline, different fonts, turn 90°
 * Print images
+* Print barcodes
+  * UPC-A, UPC-E, JAN13 (EAN13), JAN8 (EAN8), CODE39, ITF (Interleaved 2 of 5), CODABAR (NW-7)
 * Paper cut (partial, full)
 * Beeping (with different duration)
 * Paper feed, reverse feed
@@ -95,10 +97,16 @@ printer.printImage(image);
 printer.printImageRaster(image);
 ```
 
+Print barcode:
+```dart
+final List<int> barData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4];
+printer.printBarcode(Barcode.upcA(barData));
+```
+
 ## TODO
 * ~~Add raw print function~~
 * ~~Print images~~
-* Print barcodes
+* ~~Print barcodes~~
 * Print QR codes
 * ~~Turn 90° clockwise rotation mode on/off~~
 * ~~Flutter example: discover active Wi-Fi printers~~
