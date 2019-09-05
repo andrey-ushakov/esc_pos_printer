@@ -448,4 +448,38 @@ class Printer {
 
     sendRaw(List.from(header)..addAll(res));
   }
+
+  /// Print barcode
+  ///
+  /// [width] range and units are different depending on the printer model.
+  /// [height] range: 1 - 255. The units depend on the printer model.
+  /// Width, height, font, text position settings are effective until performing of ESC @, reset or power-off.
+  void printBarcode(
+    Barcode barcode, {
+    int width,
+    int height,
+    BarcodeFont font,
+    BarcodeText textPos = BarcodeText.below,
+  }) {
+    // Set text position
+    sendRaw(cBarcodeSelectPos.codeUnits + [textPos.value]);
+
+    // Set font
+    if (font != null) {
+      sendRaw(cBarcodeSelectFont.codeUnits + [font.value]);
+    }
+
+    // Set width
+    if (width >= 0) {
+      sendRaw(cBarcodeSetW.codeUnits + [width]);
+    }
+    // Set height
+    if (height >= 1 && height <= 255) {
+      sendRaw(cBarcodeSetH.codeUnits + [height]);
+    }
+
+    // Print barcode
+    final header = cBarcodePrint.codeUnits + [barcode.type.value];
+    sendRaw(header + barcode.data + [0]);
+  }
 }
