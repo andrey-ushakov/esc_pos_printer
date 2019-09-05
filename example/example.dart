@@ -53,6 +53,10 @@ void main() {
     // Print image using an alternative (obsolette) command
     // printer.printImageRaster(image);
 
+    // Print barcode
+    final List<int> barData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4];
+    printer.printBarcode(Barcode.upcA(barData));
+
     printer.cut();
     printer.disconnect();
   });

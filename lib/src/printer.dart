@@ -471,11 +471,11 @@ class Printer {
     }
 
     // Set width
-    if (width >= 0) {
+    if (width != null && width >= 0) {
       sendRaw(cBarcodeSetW.codeUnits + [width]);
     }
     // Set height
-    if (height >= 1 && height <= 255) {
+    if (height != null && height >= 1 && height <= 255) {
       sendRaw(cBarcodeSetH.codeUnits + [height]);
     }
 
