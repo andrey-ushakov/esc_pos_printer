@@ -6,6 +6,7 @@
  */
 library esc_pos_printer;
 
+export './src/barcode.dart';
 export './src/enums.dart';
 export './src/pos_column.dart';
 export './src/pos_styles.dart';

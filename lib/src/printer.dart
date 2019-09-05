@@ -11,6 +11,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:hex/hex.dart';
 import 'package:image/image.dart';
+import 'barcode.dart';
 import 'commands.dart';
 import 'enums.dart';
 import 'pos_column.dart';
