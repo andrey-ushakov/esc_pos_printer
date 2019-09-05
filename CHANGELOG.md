@@ -1,3 +1,7 @@
+## [1.4.0]
+* Print barcodes
+
+
 ## [1.3.2]
 * Added alternative printImageRaster method using (GS v 0) obsolete command
 * Code refactoring

@@ -112,3 +112,6 @@ printer.printBarcode(Barcode.upcA(barData));
 * ~~Flutter example: discover active Wi-Fi printers~~
 * USB printers support
 * ~~Add encoding commands~~
+
+## Test print
+![test receipt](https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt.jpg?raw=true)
