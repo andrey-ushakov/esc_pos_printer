@@ -114,4 +114,4 @@ printer.printBarcode(Barcode.upcA(barData));
 * ~~Add encoding commands~~
 
 ## Test print
-![test receipt](https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt.jpg?raw=true)
+<img src="https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt.jpg?raw=true" alt="test receipt" height="500"/>
