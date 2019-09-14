@@ -149,20 +149,24 @@ class Printer {
     String text, {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
-    bool kanjiOff = true,
+    bool containsChinese = false,
   }) {
-    _print(
-      text,
-      styles: styles,
-      kanjiOff: kanjiOff,
-    );
-    _socket.writeln();
-    emptyLines(linesAfter);
-    reset();
+    if (!containsChinese) {
+      _print(
+        text,
+        styles: styles,
+        kanjiOff: !containsChinese,
+      );
+      _socket.writeln();
+      emptyLines(linesAfter);
+      reset();
+    } else {
+      _printlnMixedKanji(text, styles: styles, linesAfter: linesAfter);
+    }
   }
 
   /// Prints one line of styled mixed (chinese and latin symbols) text
-  void printlnMixedKanji(
+  void _printlnMixedKanji(
     String text, {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,

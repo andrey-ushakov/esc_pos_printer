@@ -58,7 +58,7 @@ void main() {
     printer.printBarcode(Barcode.upcA(barData));
 
     // Print mixed (chinese + latin) text. Only for printers supporting Kanji mode
-    // printer.printlnMixedKanji(
+    // printer.println(
     //   'hello ! 中文字 # world @ éphémère &',
     //   styles: PosStyles(codeTable: PosCodeTable.westEur),
     // );
