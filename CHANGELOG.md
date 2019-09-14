@@ -1,3 +1,8 @@
+## [1.5.0]
+* printlnMixedKanji merged to println
+* Can print rows/cols with mixed chinese/non-chinese texts
+
+
 ## [1.4.1]
 * Print mixed (chinese + latin) text. Only for printers supporting Kanji mode
 
