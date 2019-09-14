@@ -69,7 +69,6 @@ class Printer {
     String text, {
     PosStyles styles = const PosStyles(),
     int colInd = 0,
-    int linesAfter = 0,
     bool kanjiOff = true,
     int colWidth = 12,
   }) {
@@ -155,7 +154,6 @@ class Printer {
     _print(
       text,
       styles: styles,
-      linesAfter: linesAfter,
       kanjiOff: kanjiOff,
     );
     _socket.writeln();
