@@ -9,6 +9,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:gbk_codec/gbk_codec.dart';
 import 'package:hex/hex.dart';
 import 'package:image/image.dart';
 import 'barcode.dart';
@@ -132,7 +133,7 @@ class Printer {
     if (cancelKanji) {
       _socket.add(latin1.encode(text));
     } else {
-      _socket.write(text);
+      _socket.add(gbk_bytes.encode(text));
     }
   }
 
