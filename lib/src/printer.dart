@@ -161,6 +161,50 @@ class Printer {
     reset();
   }
 
+  /// Prints one line of styled mixed (chinese and latin symbols) text
+  void printlnMixedKanji(
+    String text, {
+    PosStyles styles = const PosStyles(),
+    int linesAfter = 0,
+  }) {
+    // Break text into lexemes
+    final List<String> lexemes = [];
+    final List<bool> isLexemeChinese = [];
+    bool _isChinese(String ch) {
+      return ch.codeUnitAt(0) > 255 ? true : false;
+    }
+
+    int start = 0;
+    int end = 0;
+    bool curLexemeChinese = _isChinese(text[0]);
+    for (var i = 1; i < text.length; ++i) {
+      if (curLexemeChinese == _isChinese(text[i])) {
+        end += 1;
+      } else {
+        lexemes.add(text.substring(start, end + 1));
+        isLexemeChinese.add(curLexemeChinese);
+        start = i;
+        end = i;
+        curLexemeChinese = !curLexemeChinese;
+      }
+    }
+    lexemes.add(text.substring(start, end + 1));
+    isLexemeChinese.add(curLexemeChinese);
+
+    // Print each lexeme using codetable OR kanji
+    for (var i = 0; i < lexemes.length; ++i) {
+      _print(
+        lexemes[i],
+        styles: styles,
+        kanjiOff: !isLexemeChinese[i],
+      );
+    }
+
+    _socket.writeln();
+    emptyLines(linesAfter);
+    reset();
+  }
+
   /// Print selected code table.
   ///
   /// If [codeTable] is null, global code table is used.
