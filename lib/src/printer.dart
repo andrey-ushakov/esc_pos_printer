@@ -165,19 +165,14 @@ class Printer {
     }
   }
 
-  /// Prints one line of styled mixed (chinese and latin symbols) text
-  void _printlnMixedKanji(
-    String text, {
-    PosStyles styles = const PosStyles(),
-    int linesAfter = 0,
-  }) {
-    // Break text into lexemes
-    final List<String> lexemes = [];
-    final List<bool> isLexemeChinese = [];
+  /// Break text into chinese/non-chinese lexemes
+  List _getLexemes(String text) {
     bool _isChinese(String ch) {
       return ch.codeUnitAt(0) > 255 ? true : false;
     }
 
+    final List<String> lexemes = [];
+    final List<bool> isLexemeChinese = [];
     int start = 0;
     int end = 0;
     bool curLexemeChinese = _isChinese(text[0]);
@@ -194,6 +189,19 @@ class Printer {
     }
     lexemes.add(text.substring(start, end + 1));
     isLexemeChinese.add(curLexemeChinese);
+
+    return <dynamic>[lexemes, isLexemeChinese];
+  }
+
+  /// Prints one line of styled mixed (chinese and latin symbols) text
+  void _printlnMixedKanji(
+    String text, {
+    PosStyles styles = const PosStyles(),
+    int linesAfter = 0,
+  }) {
+    final list = _getLexemes(text);
+    final List<String> lexemes = list[0];
+    final List<bool> isLexemeChinese = list[1];
 
     // Print each lexeme using codetable OR kanji
     for (var i = 0; i < lexemes.length; ++i) {
@@ -250,12 +258,29 @@ class Printer {
     for (int i = 0; i < cols.length; ++i) {
       final colInd =
           cols.sublist(0, i).fold(0, (int sum, col) => sum + col.width);
-      _print(
-        cols[i].text,
-        styles: cols[i].styles,
-        colInd: colInd,
-        colWidth: cols[i].width,
-      );
+      if (!cols[i].containsChinese) {
+        _print(
+          cols[i].text,
+          styles: cols[i].styles,
+          colInd: colInd,
+          colWidth: cols[i].width,
+        );
+      } else {
+        final list = _getLexemes(cols[i].text);
+        final List<String> lexemes = list[0];
+        final List<bool> isLexemeChinese = list[1];
+
+        // Print each lexeme using codetable OR kanji
+        for (var j = 0; j < lexemes.length; ++j) {
+          _print(
+            lexemes[j],
+            styles: cols[i].styles,
+            colInd: colInd,
+            colWidth: cols[i].width,
+            kanjiOff: !isLexemeChinese[j],
+          );
+        }
+      }
     }
 
     _socket.writeln();

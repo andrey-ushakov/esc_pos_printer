@@ -12,6 +12,7 @@ import 'pos_styles.dart';
 class PosColumn {
   PosColumn({
     this.text = '',
+    this.containsChinese = false,
     this.width = 2,
     this.styles = const PosStyles(),
   }) {
@@ -21,6 +22,7 @@ class PosColumn {
   }
 
   String text;
+  bool containsChinese;
   int width;
   PosStyles styles;
 }
