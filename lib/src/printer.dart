@@ -70,7 +70,7 @@ class Printer {
     PosStyles styles = const PosStyles(),
     int colInd = 0,
     int linesAfter = 0,
-    bool cancelKanji = true,
+    bool kanjiOff = true,
     int colWidth = 12,
   }) {
     const charLen = 11.625; // 48 symbols per line
@@ -115,7 +115,7 @@ class Printer {
     );
 
     // Cancel Kanji mode
-    if (cancelKanji) {
+    if (kanjiOff) {
       _socket.write(cKanjiOff);
     } else {
       _socket.write(cKanjiOn);
@@ -130,7 +130,7 @@ class Printer {
       );
     }
 
-    if (cancelKanji) {
+    if (kanjiOff) {
       _socket.add(latin1.encode(text));
     } else {
       _socket.add(gbk_bytes.encode(text));
@@ -138,8 +138,8 @@ class Printer {
   }
 
   /// Sens raw command(s)
-  void sendRaw(List<int> cmd, {bool cancelKanji = true}) {
-    if (cancelKanji) {
+  void sendRaw(List<int> cmd, {bool kanjiOff = true}) {
+    if (kanjiOff) {
       _socket.write(cKanjiOff);
     }
     _socket.add(Uint8List.fromList(cmd));
@@ -150,13 +150,13 @@ class Printer {
     String text, {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
-    bool cancelKanji = true,
+    bool kanjiOff = true,
   }) {
     _print(
       text,
       styles: styles,
       linesAfter: linesAfter,
-      cancelKanji: cancelKanji,
+      kanjiOff: kanjiOff,
     );
     _socket.writeln();
     emptyLines(linesAfter);
