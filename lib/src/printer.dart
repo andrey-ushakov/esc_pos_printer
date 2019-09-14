@@ -115,7 +115,9 @@ class Printer {
 
     // Cancel Kanji mode
     if (cancelKanji) {
-      _socket.write(cKanjiCancel);
+      _socket.write(cKanjiOff);
+    } else {
+      _socket.write(cKanjiOn);
     }
 
     // Set local code table
@@ -137,7 +139,7 @@ class Printer {
   /// Sens raw command(s)
   void sendRaw(List<int> cmd, {bool cancelKanji = true}) {
     if (cancelKanji) {
-      _socket.write(cKanjiCancel);
+      _socket.write(cKanjiOff);
     }
     _socket.add(Uint8List.fromList(cmd));
   }
@@ -165,7 +167,7 @@ class Printer {
   /// If [codeTable] is null, global code table is used.
   /// If global code table is null, default printer code table is used.
   void printCodeTable({PosCodeTable codeTable}) {
-    _socket.write(cKanjiCancel);
+    _socket.write(cKanjiOff);
 
     if (codeTable != null) {
       _socket.add(
