@@ -1,3 +1,7 @@
+## [1.4.1]
+* Print mixed (chinese + latin) text. Only for printers supporting Kanji mode
+
+
 ## [1.4.0]
 * Print barcodes
 
