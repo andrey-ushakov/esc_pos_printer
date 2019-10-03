@@ -1,61 +1,169 @@
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:usb_serial/usb_serial.dart';
+import 'package:usb_serial/transaction.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+  _MyAppState createState() => _MyAppState();
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class _MyAppState extends State<MyApp> {
+  UsbPort _port;
+  String _status = 'Idle';
+  List<Widget> _ports = [];
+  final List<Widget> _serialData = [];
+  StreamSubscription<String> _subscription;
+  Transaction<String> _transaction;
+  int _deviceId;
+  final TextEditingController _textController = TextEditingController();
 
-  final String title;
+  Future<bool> _connectTo(dynamic device) async {
+    _serialData.clear();
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
+    if (_subscription != null) {
+      _subscription.cancel();
+      _subscription = null;
+    }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+    if (_transaction != null) {
+      _transaction.dispose();
+      _transaction = null;
+    }
 
-  void _incrementCounter() {
+    if (_port != null) {
+      _port.close();
+      _port = null;
+    }
+
+    if (device == null) {
+      _deviceId = null;
+      setState(() {
+        _status = 'Disconnected';
+      });
+      return true;
+    }
+
+    _port = await device.create();
+    if (!await _port.open()) {
+      setState(() {
+        _status = 'Failed to open port';
+      });
+      return false;
+    }
+
+    _deviceId = device.deviceId;
+    await _port.setDTR(true);
+    await _port.setRTS(true);
+    await _port.setPortParameters(
+        115200, UsbPort.DATABITS_8, UsbPort.STOPBITS_1, UsbPort.PARITY_NONE);
+
+    _transaction = Transaction.stringTerminated(
+        _port.inputStream, Uint8List.fromList([13, 10]));
+
+    _subscription = _transaction.stream.listen((String line) {
+      setState(() {
+        _serialData.add(Text(line));
+        if (_serialData.length > 20) {
+          _serialData.removeAt(0);
+        }
+      });
+    });
+
     setState(() {
-      _counter++;
+      _status = 'Connected';
+    });
+    return true;
+  }
+
+  void _getPorts() async {
+    _ports = [];
+    final List<UsbDevice> devices = await UsbSerial.listDevices();
+    print(devices);
+
+    devices.forEach((device) {
+      _ports.add(ListTile(
+          leading: Icon(Icons.usb),
+          title: Text(device.productName),
+          subtitle: Text(device.manufacturerName),
+          trailing: RaisedButton(
+            child:
+                Text(_deviceId == device.deviceId ? 'Disconnect' : 'Connect'),
+            onPressed: () {
+              _connectTo(_deviceId == device.deviceId ? null : device)
+                  .then((res) {
+                _getPorts();
+              });
+            },
+          )));
+    });
+
+    setState(() {
+      print(_ports);
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    UsbSerial.usbEventStream.listen((UsbEvent event) {
+      _getPorts();
+    });
+
+    _getPorts();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _connectTo(null);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+        home: Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text('USB Serial Plugin example app'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+          child: Column(children: <Widget>[
+        Text(
+            _ports.isNotEmpty
+                ? 'Available Serial Ports'
+                : 'No serial devices available',
+            style: Theme.of(context).textTheme.title),
+        ..._ports,
+        Text('Status: $_status\n'),
+        ListTile(
+          title: TextField(
+            controller: _textController,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Text To Send',
             ),
-          ],
+          ),
+          trailing: RaisedButton(
+            child: Text('Send'),
+            onPressed: _port == null
+                ? null
+                : () async {
+                    if (_port == null) {
+                      return;
+                    }
+                    final String data = _textController.text + '\r\n';
+                    await _port.write(Uint8List.fromList(data.codeUnits));
+                    _textController.text = '';
+                  },
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-    );
+        Text('Result Data', style: Theme.of(context).textTheme.title),
+        ..._serialData,
+      ])),
+    ));
   }
 }
