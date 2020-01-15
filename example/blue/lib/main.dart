@@ -63,7 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _testPrint(PrinterBluetooth printer) async {
     try {
-      printer.printLine('hello');
+      printerManager.selectPrinter(printer);
+      printerManager.printLine('hello');
     } catch (e) {
       print(e.toString());
     }
