@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     printerManager.scanResults.listen((devices) async {
-      print('UI: Devices found ${devices.length}');
+      // print('UI: Devices found ${devices.length}');
       setState(() {
         _devices = devices;
       });
@@ -57,17 +57,14 @@ class _MyHomePageState extends State<MyHomePage> {
     printerManager.stopScan();
   }
 
-  // Future _runDelayed(int seconds) {
-  //   return Future<dynamic>.delayed(Duration(seconds: seconds));
-  // }
-
   void _testPrint(PrinterBluetooth printer) async {
-    try {
-      printerManager.selectPrinter(printer);
-      printerManager.printLine('hello');
-    } catch (e) {
-      print(e.toString());
-    }
+    printerManager.selectPrinter(printer);
+    printerManager.printLine('hello').then((val) {
+      showToast('Success!');
+    }).catchError((dynamic e) {
+      print('catched: ${e.toString()}');
+      showToast(e.toString());
+    });
   }
 
   @override

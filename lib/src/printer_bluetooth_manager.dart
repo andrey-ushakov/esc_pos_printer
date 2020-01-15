@@ -26,83 +26,19 @@ import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
 class PrinterBluetooth {
   PrinterBluetooth(this._device);
   final BluetoothDevice _device;
-  // final BluetoothManager _bluetoothManager = BluetoothManager.instance;
-  // final PrinterBluetoothManager _manager = PrinterBluetoothManager();
-  // bool _isPrinting = false;
 
   String get name => _device.name;
   String get address => _device.address;
   int get type => _device.type;
-
-  // Future _runDelayed(int seconds) {
-  //   return Future<dynamic>.delayed(Duration(seconds: seconds));
-  // }
-
-  // void printLine(String text) async {
-  //   const int timeout = 5;
-  //   print('============ ${_manager._isScanning}');
-  //   // if (_bluetoothManager.is) {
-  //   //   showToast('Print failed (scanning in progress)');
-  //   //   return;
-  //   // }
-  //   if (_isPrinting) {
-  //     throw Exception('Print failed (another printing in progress)');
-  //   }
-
-  //   _isPrinting = true;
-
-  //   // We have to rescan before connecting, otherwise we can connect only once
-  //   await _manager._bluetoothManager.startScan(timeout: Duration(seconds: 1));
-  //   await _manager._bluetoothManager.stopScan();
-
-  //   // Connect
-  //   await _manager._bluetoothManager.connect(_device);
-
-  //   // Subscribe to the events
-  //   _manager._bluetoothManager.state.listen((state) async {
-  //     switch (state) {
-  //       case BluetoothManager.CONNECTED:
-  //         print('********************* CONNECTED');
-  //         // to avoid double call
-  //         // if (!_connected) {
-  //         if (_device.connected == null || !_device.connected) {
-  //           print('@@@@SEND DATA......');
-  //           final List<int> bytes = latin1.encode('test!\n\n\n').toList();
-  //           await _manager._bluetoothManager.writeData(bytes);
-  //           // showToast('Data sent'); TODO
-  //           // return 0;
-  //         }
-  //         // TODO sending disconnect signal should be event-based
-  //         _runDelayed(3).then((dynamic v) async {
-  //           print('@@@@DISCONNECTING......');
-  //           await _manager._bluetoothManager.disconnect();
-  //           _isPrinting = false;
-  //         });
-  //         // _connected = true;
-  //         break;
-  //       case BluetoothManager.DISCONNECTED:
-  //         print('********************* DISCONNECTED');
-  //         // _connected = false;
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     // return 0;
-  //   });
-  //   // Printing timeout
-  //   _runDelayed(timeout).then((dynamic v) async {
-  //     if (_isPrinting) {
-  //       _isPrinting = false;
-  //       throw Exception('Print failed (timeout)');
-  //     }
-  //   });
-  // }
 }
 
 /// Printer Bluetooth Manager
 class PrinterBluetoothManager {
+  // PrinterBluetoothManager() {
+
+  // }
+
   final BluetoothManager _bluetoothManager = BluetoothManager.instance;
-  // bool _connected = false;
   bool _isScanning = false;
   bool _isPrinting = false;
   StreamSubscription _scanResultsSubscription;
@@ -125,6 +61,7 @@ class PrinterBluetoothManager {
     _bluetoothManager.startScan(timeout: Duration(seconds: 4));
 
     _scanResultsSubscription = _bluetoothManager.scanResults.listen((devices) {
+      // print('====scan result');
       _scanResults.add(devices.map((d) => PrinterBluetooth(d)).toList());
     });
 
@@ -148,7 +85,7 @@ class PrinterBluetoothManager {
     _selectedPrinter = printer;
   }
 
-  void printLine(String text) async {
+  Future<void> printLine(String text) async {
     const int timeout = 5;
     print('============ $_isScanning');
     if (_selectedPrinter == null) {
@@ -175,31 +112,26 @@ class PrinterBluetoothManager {
       switch (state) {
         case BluetoothManager.CONNECTED:
           print('********************* CONNECTED');
-          // to avoid double call
-          // if (!_connected) {
+          // To avoid double call
           if (_selectedPrinter._device.connected == null ||
               !_selectedPrinter._device.connected) {
-            print('@@@@SEND DATA......');
             final List<int> bytes = latin1.encode('test!\n\n\n').toList();
             await _bluetoothManager.writeData(bytes);
-            // TODO data sent
+            // TODO Notify data sent
           }
           // TODO sending disconnect signal should be event-based
           _runDelayed(3).then((dynamic v) async {
-            print('@@@@DISCONNECTING......');
+            print('DISCONNECTING......');
             await _bluetoothManager.disconnect();
             _isPrinting = false;
           });
-          // _connected = true;
           break;
         case BluetoothManager.DISCONNECTED:
           print('********************* DISCONNECTED');
-          // _connected = false;
           break;
         default:
           break;
       }
-      // return 0;
     });
 
     // Printing timeout
