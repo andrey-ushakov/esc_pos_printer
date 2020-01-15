@@ -38,10 +38,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<BluetoothDevice> _devices = [];
   StreamSubscription _scanResultsSubscription;
   StreamSubscription _isScanningSubscription;
-  // Buffers used for rescan before sending the data
-  List<BluetoothDevice> _bufDevices = [];
-  StreamSubscription _bufScanSubscription;
-  // StreamSubscription _isScanningSubscription;
 
   void _startScanDevices() {
     setState(() {
@@ -59,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _isScanningSubscription =
         bluetoothManager.isScanning.listen((isScanningCurrent) async {
-      // if isScanning value changed (scan just stopped)
+      // If isScanning value changed (scan just stopped)
       if (_isScanning && !isScanningCurrent) {
         _scanResultsSubscription.cancel();
         _isScanningSubscription.cancel();
@@ -81,12 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void _testPrint(BluetoothDevice printer) async {
     const int timeout = 5;
     if (_isScanning) {
-      // print('Print failed (scanning in progress)');
       showToast('Print failed (scanning in progress)');
       return;
     }
     if (_isPrinting) {
-      // print('Print failed (another printing in progress)');
       showToast('Print failed (another printing in progress)');
       return;
     }
