@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
@@ -29,51 +30,85 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   BluetoothManager bluetoothManager = BluetoothManager.instance;
   bool _connected = false;
+  bool _isScanning = false;
+  List<BluetoothDevice> _devices = [];
+  StreamSubscription _scanResultsSubscription;
+  StreamSubscription _isScanningSubscription;
+  // Buffers used for rescan before sending the data
+  List<BluetoothDevice> _bufDevices = [];
+  StreamSubscription _bufScanSubscription;
+  // StreamSubscription _isScanningSubscription;
 
-  Future sleep3() {
-    return Future<dynamic>.delayed(const Duration(seconds: 7), () => "1");
+  void _startScanDevices() {
+    setState(() {
+      _devices = [];
+    });
+
+    bluetoothManager.startScan(timeout: Duration(seconds: 4));
+
+    _scanResultsSubscription =
+        bluetoothManager.scanResults.listen((devices) async {
+      setState(() {
+        _devices = devices;
+      });
+    });
+
+    _isScanningSubscription =
+        bluetoothManager.isScanning.listen((isScanningCurrent) async {
+      // if isScanning value changed (scan just stopped)
+      if (_isScanning && !isScanningCurrent) {
+        _scanResultsSubscription.cancel();
+        _isScanningSubscription.cancel();
+      }
+      setState(() {
+        _isScanning = isScanningCurrent;
+      });
+    });
+  }
+
+  void _stopScanDevices() {
+    bluetoothManager.stopScan();
+  }
+
+  Future _sleep(int seconds) {
+    return Future<dynamic>.delayed(Duration(seconds: seconds));
   }
 
   void _testPrint(BluetoothDevice printer) async {
-    // print('Test print.... name: ${printer.name}');
-    if (printer != null && printer.address != null) {
-      // Connect
-      await bluetoothManager.connect(printer);
+    // We have to rescan before connecting, otherwise we can connect only once
+    await bluetoothManager.startScan(timeout: Duration(seconds: 1));
+    await bluetoothManager.stopScan();
 
-      // Subscribe to the events
-      bluetoothManager.state.listen((state) async {
-        // print('**************cur device status: $state');
-        switch (state) {
-          case BluetoothManager.CONNECTED:
-            print('********************* CONNECTED');
-            // to avoid double call
-            if (!_connected) {
-              print('@@@@SEND DATA......');
-              final List<int> bytes = latin1.encode('test!\n\n\n').toList();
-              await bluetoothManager.writeData(bytes);
-              // print('################## print send #############');
-              // bluetoothManager.
-            }
-            sleep3().then((dynamic printer) async {
-              print('@@@@DISCONNECTING......');
-              await bluetoothManager.disconnect();
-            });
+    // Connect
+    await bluetoothManager.connect(printer);
 
-            _connected = true;
-            break;
-          case BluetoothManager.DISCONNECTED:
-            print('********************* DISCONNECTED');
-            _connected = false;
-            break;
-          default:
-            break;
-        }
-      });
-
-      // TODO show message "Data sent"
-    } else {
-      // TODO show message "Can't connect to the device"
-    }
+    // Subscribe to the events
+    bluetoothManager.state.listen((state) async {
+      switch (state) {
+        case BluetoothManager.CONNECTED:
+          print('********************* CONNECTED');
+          // to avoid double call
+          if (!_connected) {
+            print('@@@@SEND DATA......');
+            final List<int> bytes = latin1.encode('test!\n\n\n').toList();
+            await bluetoothManager.writeData(bytes);
+            // TODO show message "Data sent"
+          }
+          // TODO sending disconnect signal should be event-based
+          _sleep(3).then((dynamic printer) async {
+            print('@@@@DISCONNECTING......');
+            await bluetoothManager.disconnect();
+          });
+          _connected = true;
+          break;
+        case BluetoothManager.DISCONNECTED:
+          print('********************* DISCONNECTED');
+          _connected = false;
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   @override
@@ -82,65 +117,53 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: StreamBuilder<List<BluetoothDevice>>(
-        stream: bluetoothManager.scanResults,
-        initialData: [],
-        builder: (c, snapshot) => Column(
-          children: snapshot.data
-              .map((d) => InkWell(
-                    onTap: () => _testPrint(d),
-                    child: Column(
+      body: ListView.builder(
+          itemCount: _devices.length,
+          itemBuilder: (BuildContext context, int index) {
+            return InkWell(
+              onTap: () => _testPrint(_devices[index]),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    height: 60,
+                    padding: EdgeInsets.only(left: 10),
+                    alignment: Alignment.centerLeft,
+                    child: Row(
                       children: <Widget>[
-                        Container(
-                          height: 60,
-                          padding: EdgeInsets.only(left: 10),
-                          alignment: Alignment.centerLeft,
-                          child: Row(
+                        Icon(Icons.print),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Icon(Icons.print),
-                              SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(d.name ?? ''),
-                                    Text(d.address),
-                                    Text(
-                                      'Click to print a test receipt',
-                                      style: TextStyle(color: Colors.grey[700]),
-                                    ),
-                                  ],
-                                ),
-                              )
+                              Text(_devices[index].name ?? ''),
+                              Text(_devices[index].address),
+                              Text(
+                                'Click to print a test receipt',
+                                style: TextStyle(color: Colors.grey[700]),
+                              ),
                             ],
                           ),
-                        ),
-                        Divider(),
+                        )
                       ],
                     ),
-                  ))
-              .toList(),
-        ),
-      ),
-      floatingActionButton: StreamBuilder<bool>(
-        stream: bluetoothManager.isScanning,
-        initialData: false,
-        builder: (c, snapshot) {
-          if (snapshot.data) {
-            return FloatingActionButton(
-              child: Icon(Icons.stop),
-              onPressed: () => bluetoothManager.stopScan(),
-              backgroundColor: Colors.red,
+                  ),
+                  Divider(),
+                ],
+              ),
             );
-          } else {
-            return FloatingActionButton(
-                child: Icon(Icons.search),
-                onPressed: () =>
-                    bluetoothManager.startScan(timeout: Duration(seconds: 4)));
-          }
-        },
-      ),
+          }),
+      floatingActionButton: _isScanning
+          ? FloatingActionButton(
+              child: Icon(Icons.stop),
+              onPressed: _stopScanDevices,
+              backgroundColor: Colors.red,
+            )
+          : FloatingActionButton(
+              child: Icon(Icons.search),
+              onPressed: _startScanDevices,
+            ),
     );
   }
 }
