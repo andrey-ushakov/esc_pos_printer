@@ -2,18 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
+import 'package:oktoast/oktoast.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Bluetooth demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return OKToast(
+      child: MaterialApp(
+        title: 'Bluetooth demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MyHomePage(title: 'Bluetooth demo'),
       ),
-      home: MyHomePage(title: 'Bluetooth demo'),
     );
   }
 }
@@ -31,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   BluetoothManager bluetoothManager = BluetoothManager.instance;
   bool _connected = false;
   bool _isScanning = false;
+  bool _isPrinting = false;
   List<BluetoothDevice> _devices = [];
   StreamSubscription _scanResultsSubscription;
   StreamSubscription _isScanningSubscription;
@@ -75,6 +79,19 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _testPrint(BluetoothDevice printer) async {
+    if (_isScanning) {
+      // print('Print failed (scanning in progress)');
+      showToast('Print failed (scanning in progress)');
+      return;
+    }
+    if (_isPrinting) {
+      // print('Print failed (another printing in progress)');
+      showToast('Print failed (another printing in progress)');
+      return;
+    }
+
+    _isPrinting = true;
+
     // We have to rescan before connecting, otherwise we can connect only once
     await bluetoothManager.startScan(timeout: Duration(seconds: 1));
     await bluetoothManager.stopScan();
@@ -92,12 +109,13 @@ class _MyHomePageState extends State<MyHomePage> {
             print('@@@@SEND DATA......');
             final List<int> bytes = latin1.encode('test!\n\n\n').toList();
             await bluetoothManager.writeData(bytes);
-            // TODO show message "Data sent"
+            showToast('Data sent');
           }
           // TODO sending disconnect signal should be event-based
           _sleep(3).then((dynamic printer) async {
             print('@@@@DISCONNECTING......');
             await bluetoothManager.disconnect();
+            _isPrinting = false;
           });
           _connected = true;
           break;
