@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _testPrint(PrinterBluetooth printer) async {
     printerManager.selectPrinter(printer);
-    printerManager.printLine('hello').then((val) {
+    printerManager.printLine('====== @@@ hello\n\n\n').then((val) {
       showToast('Success!');
     }).catchError((dynamic e) {
       print('catched: ${e.toString()}');

@@ -34,20 +34,17 @@ class PrinterBluetooth {
 
 /// Printer Bluetooth Manager
 class PrinterBluetoothManager {
-  // PrinterBluetoothManager() {
-
-  // }
-
   final BluetoothManager _bluetoothManager = BluetoothManager.instance;
   bool _isScanning = false;
   bool _isPrinting = false;
+  bool _isConnected = false;
   StreamSubscription _scanResultsSubscription;
   StreamSubscription _isScanningSubscription;
   PrinterBluetooth _selectedPrinter;
 
   Stream<bool> get isScanningStream => _bluetoothManager.isScanning;
 
-  BehaviorSubject<List<PrinterBluetooth>> _scanResults =
+  final BehaviorSubject<List<PrinterBluetooth>> _scanResults =
       BehaviorSubject.seeded([]);
   Stream<List<PrinterBluetooth>> get scanResults => _scanResults.stream;
 
@@ -61,11 +58,9 @@ class PrinterBluetoothManager {
     _bluetoothManager.startScan(timeout: Duration(seconds: 4));
 
     _scanResultsSubscription = _bluetoothManager.scanResults.listen((devices) {
-      // print('====scan result');
       _scanResults.add(devices.map((d) => PrinterBluetooth(d)).toList());
     });
 
-    // TODO move listener to constructor
     _isScanningSubscription =
         _bluetoothManager.isScanning.listen((isScanningCurrent) async {
       // If isScanning value changed (scan just stopped)
@@ -87,7 +82,6 @@ class PrinterBluetoothManager {
 
   Future<void> printLine(String text) async {
     const int timeout = 5;
-    print('============ $_isScanning');
     if (_selectedPrinter == null) {
       throw Exception('Print failed (Select a printer first)');
     }
@@ -113,9 +107,8 @@ class PrinterBluetoothManager {
         case BluetoothManager.CONNECTED:
           print('********************* CONNECTED');
           // To avoid double call
-          if (_selectedPrinter._device.connected == null ||
-              !_selectedPrinter._device.connected) {
-            final List<int> bytes = latin1.encode('test!\n\n\n').toList();
+          if (!_isConnected) {
+            final List<int> bytes = latin1.encode(text).toList();
             await _bluetoothManager.writeData(bytes);
             // TODO Notify data sent
           }
@@ -125,9 +118,11 @@ class PrinterBluetoothManager {
             await _bluetoothManager.disconnect();
             _isPrinting = false;
           });
+          _isConnected = true;
           break;
         case BluetoothManager.DISCONNECTED:
           print('********************* DISCONNECTED');
+          _isConnected = false;
           break;
         default:
           break;
