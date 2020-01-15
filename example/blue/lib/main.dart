@@ -74,11 +74,12 @@ class _MyHomePageState extends State<MyHomePage> {
     bluetoothManager.stopScan();
   }
 
-  Future _sleep(int seconds) {
+  Future _runDelayed(int seconds) {
     return Future<dynamic>.delayed(Duration(seconds: seconds));
   }
 
   void _testPrint(BluetoothDevice printer) async {
+    const int timeout = 5;
     if (_isScanning) {
       // print('Print failed (scanning in progress)');
       showToast('Print failed (scanning in progress)');
@@ -112,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
             showToast('Data sent');
           }
           // TODO sending disconnect signal should be event-based
-          _sleep(3).then((dynamic printer) async {
+          _runDelayed(3).then((dynamic v) async {
             print('@@@@DISCONNECTING......');
             await bluetoothManager.disconnect();
             _isPrinting = false;
@@ -125,6 +126,13 @@ class _MyHomePageState extends State<MyHomePage> {
           break;
         default:
           break;
+      }
+    });
+    // Printing timeout
+    _runDelayed(timeout).then((dynamic v) async {
+      if (_isPrinting) {
+        _isPrinting = false;
+        showToast('Print failed');
       }
     });
   }
