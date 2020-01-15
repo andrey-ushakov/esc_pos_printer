@@ -10,10 +10,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^0.1.2
   oktoast: ^2.3.0
-  flutter_bluetooth_basic:
-    git:
-      url: git://github.com/andrey-ushakov/flutter_bluetooth_basic
-      ref: master
+  esc_pos_printer:
+    path: ../../
 
 dev_dependencies:
   flutter_test:

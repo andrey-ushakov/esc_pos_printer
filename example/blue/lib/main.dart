@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
+// import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
 import 'package:oktoast/oktoast.dart';
 
 void main() => runApp(MyApp());
@@ -24,111 +25,48 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
-  // final FlutterBlue flutterBlue = FlutterBlue.instance;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  BluetoothManager bluetoothManager = BluetoothManager.instance;
-  bool _connected = false;
-  bool _isScanning = false;
-  bool _isPrinting = false;
-  List<BluetoothDevice> _devices = [];
-  StreamSubscription _scanResultsSubscription;
-  StreamSubscription _isScanningSubscription;
+  PrinterBluetoothManager printerManager = PrinterBluetoothManager();
+  List<PrinterBluetooth> _devices = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    printerManager.scanResults.listen((devices) async {
+      print('UI: Devices found ${devices.length}');
+      setState(() {
+        _devices = devices;
+      });
+    });
+  }
 
   void _startScanDevices() {
     setState(() {
       _devices = [];
     });
-
-    bluetoothManager.startScan(timeout: Duration(seconds: 4));
-
-    _scanResultsSubscription =
-        bluetoothManager.scanResults.listen((devices) async {
-      setState(() {
-        _devices = devices;
-      });
-    });
-
-    _isScanningSubscription =
-        bluetoothManager.isScanning.listen((isScanningCurrent) async {
-      // If isScanning value changed (scan just stopped)
-      if (_isScanning && !isScanningCurrent) {
-        _scanResultsSubscription.cancel();
-        _isScanningSubscription.cancel();
-      }
-      setState(() {
-        _isScanning = isScanningCurrent;
-      });
-    });
+    printerManager.startScan(Duration(seconds: 4));
   }
 
   void _stopScanDevices() {
-    bluetoothManager.stopScan();
+    printerManager.stopScan();
   }
 
-  Future _runDelayed(int seconds) {
-    return Future<dynamic>.delayed(Duration(seconds: seconds));
-  }
+  // Future _runDelayed(int seconds) {
+  //   return Future<dynamic>.delayed(Duration(seconds: seconds));
+  // }
 
-  void _testPrint(BluetoothDevice printer) async {
-    const int timeout = 5;
-    if (_isScanning) {
-      showToast('Print failed (scanning in progress)');
-      return;
+  void _testPrint(PrinterBluetooth printer) async {
+    try {
+      printer.printLine('hello');
+    } catch (e) {
+      print(e.toString());
     }
-    if (_isPrinting) {
-      showToast('Print failed (another printing in progress)');
-      return;
-    }
-
-    _isPrinting = true;
-
-    // We have to rescan before connecting, otherwise we can connect only once
-    await bluetoothManager.startScan(timeout: Duration(seconds: 1));
-    await bluetoothManager.stopScan();
-
-    // Connect
-    await bluetoothManager.connect(printer);
-
-    // Subscribe to the events
-    bluetoothManager.state.listen((state) async {
-      switch (state) {
-        case BluetoothManager.CONNECTED:
-          print('********************* CONNECTED');
-          // to avoid double call
-          if (!_connected) {
-            print('@@@@SEND DATA......');
-            final List<int> bytes = latin1.encode('test!\n\n\n').toList();
-            await bluetoothManager.writeData(bytes);
-            showToast('Data sent');
-          }
-          // TODO sending disconnect signal should be event-based
-          _runDelayed(3).then((dynamic v) async {
-            print('@@@@DISCONNECTING......');
-            await bluetoothManager.disconnect();
-            _isPrinting = false;
-          });
-          _connected = true;
-          break;
-        case BluetoothManager.DISCONNECTED:
-          print('********************* DISCONNECTED');
-          _connected = false;
-          break;
-        default:
-          break;
-      }
-    });
-    // Printing timeout
-    _runDelayed(timeout).then((dynamic v) async {
-      if (_isPrinting) {
-        _isPrinting = false;
-        showToast('Print failed');
-      }
-    });
   }
 
   @override
@@ -174,16 +112,24 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
           }),
-      floatingActionButton: _isScanning
-          ? FloatingActionButton(
+      floatingActionButton: StreamBuilder<bool>(
+        stream: printerManager.isScanningStream,
+        initialData: false,
+        builder: (c, snapshot) {
+          if (snapshot.data) {
+            return FloatingActionButton(
               child: Icon(Icons.stop),
               onPressed: _stopScanDevices,
               backgroundColor: Colors.red,
-            )
-          : FloatingActionButton(
+            );
+          } else {
+            return FloatingActionButton(
               child: Icon(Icons.search),
               onPressed: _startScanDevices,
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }
