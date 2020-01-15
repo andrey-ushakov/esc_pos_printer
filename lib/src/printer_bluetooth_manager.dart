@@ -35,14 +35,14 @@ class PrinterBluetooth {
 /// Printer Bluetooth Manager
 class PrinterBluetoothManager {
   final BluetoothManager _bluetoothManager = BluetoothManager.instance;
-  bool _isScanning = false;
   bool _isPrinting = false;
   bool _isConnected = false;
   StreamSubscription _scanResultsSubscription;
   StreamSubscription _isScanningSubscription;
   PrinterBluetooth _selectedPrinter;
 
-  Stream<bool> get isScanningStream => _bluetoothManager.isScanning;
+  final BehaviorSubject<bool> _isScanning = BehaviorSubject.seeded(false);
+  Stream<bool> get isScanningStream => _isScanning.stream;
 
   final BehaviorSubject<List<PrinterBluetooth>> _scanResults =
       BehaviorSubject.seeded([]);
@@ -64,11 +64,11 @@ class PrinterBluetoothManager {
     _isScanningSubscription =
         _bluetoothManager.isScanning.listen((isScanningCurrent) async {
       // If isScanning value changed (scan just stopped)
-      if (_isScanning && !isScanningCurrent) {
+      if (_isScanning.value && !isScanningCurrent) {
         _scanResultsSubscription.cancel();
         _isScanningSubscription.cancel();
       }
-      _isScanning = isScanningCurrent;
+      _isScanning.add(isScanningCurrent);
     });
   }
 
@@ -85,7 +85,7 @@ class PrinterBluetoothManager {
     if (_selectedPrinter == null) {
       throw Exception('Print failed (Select a printer first)');
     }
-    if (_isScanning) {
+    if (_isScanning.value) {
       throw Exception('Print failed (scanning in progress)');
     }
     if (_isPrinting) {
