@@ -1,8 +1,5 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
 import 'package:oktoast/oktoast.dart';
 
 void main() => runApp(MyApp());
@@ -59,7 +56,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _testPrint(PrinterBluetooth printer) async {
     printerManager.selectPrinter(printer);
-    printerManager.printLine('====== @@@ hello\n\n\n').then((val) {
+
+    // printerManager.addText('left', styles: PosStyles(align: PosTextAlign.left));
+    // printerManager.addText('center',
+    //     styles: PosStyles(align: PosTextAlign.center));
+    // printerManager.addText('right',
+    //     styles: PosStyles(align: PosTextAlign.right), linesAfter: 3);
+
+    printerManager.addText(
+        'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
+    printerManager.addText('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+        styles: PosStyles(codeTable: PosCodeTable.westEur));
+    printerManager.addEmptyLines(3);
+
+    printerManager.printTicket().then((val) {
       showToast('Success!');
     }).catchError((dynamic e) {
       print('catched: ${e.toString()}');

@@ -8,6 +8,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:rxdart/rxdart.dart';
 // import 'dart:convert';
 // import 'dart:io';
@@ -40,6 +41,7 @@ class PrinterBluetoothManager {
   StreamSubscription _scanResultsSubscription;
   StreamSubscription _isScanningSubscription;
   PrinterBluetooth _selectedPrinter;
+  List<int> _printBuffer = [];
 
   final BehaviorSubject<bool> _isScanning = BehaviorSubject.seeded(false);
   Stream<bool> get isScanningStream => _isScanning.stream;
@@ -80,7 +82,7 @@ class PrinterBluetoothManager {
     _selectedPrinter = printer;
   }
 
-  Future<void> printLine(String text) async {
+  Future<void> writeBytes(List<int> bytes) async {
     const int timeout = 5;
     if (_selectedPrinter == null) {
       throw Exception('Print failed (Select a printer first)');
@@ -108,7 +110,6 @@ class PrinterBluetoothManager {
           print('********************* CONNECTED');
           // To avoid double call
           if (!_isConnected) {
-            final List<int> bytes = latin1.encode(text).toList();
             await _bluetoothManager.writeData(bytes);
             // TODO Notify data sent
           }
@@ -136,5 +137,28 @@ class PrinterBluetoothManager {
         throw Exception('Print failed (timeout)');
       }
     });
+  }
+
+  void addText(
+    String text, {
+    PosStyles styles = const PosStyles(),
+    int linesAfter = 0,
+  }) {
+    _printBuffer +=
+        PosGenerator.text(text, styles: styles, linesAfter: linesAfter);
+  }
+
+  void addEmptyLines(int n) {
+    _printBuffer += PosGenerator.emptyLines(n);
+  }
+
+  Future<void> printTicket() async {
+    if (_printBuffer.isNotEmpty) {
+      final Future<void> res = writeBytes(_printBuffer);
+      _printBuffer = [];
+      return res;
+    } else {
+      throw Exception('Print failed (print buffer is empty)');
+    }
   }
 }
