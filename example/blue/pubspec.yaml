@@ -10,6 +10,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^0.1.2
   oktoast: ^2.3.0
+  image: ^2.1.4
   esc_pos_printer:
     path: ../../
 
@@ -19,3 +20,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/logo.png

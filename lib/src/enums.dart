@@ -26,6 +26,15 @@ class PosTextSize {
       16 * (width.value - 1) + (height.value - 1);
 }
 
+class PaperSize {
+  const PaperSize._internal(this.value);
+  final int value;
+  static const mm58 = PaperSize._internal(1);
+  static const mm80 = PaperSize._internal(2);
+
+  static int width(PaperSize size) => size == PaperSize.mm58 ? 350 : 512;
+}
+
 class PosBeepDuration {
   const PosBeepDuration._internal(this.value);
   final int value;

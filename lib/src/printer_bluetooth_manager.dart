@@ -41,7 +41,6 @@ class PrinterBluetoothManager {
   StreamSubscription _scanResultsSubscription;
   StreamSubscription _isScanningSubscription;
   PrinterBluetooth _selectedPrinter;
-  List<int> _printBuffer = [];
 
   final BehaviorSubject<bool> _isScanning = BehaviorSubject.seeded(false);
   Stream<bool> get isScanningStream => _isScanning.stream;
@@ -107,7 +106,7 @@ class PrinterBluetoothManager {
     _bluetoothManager.state.listen((state) async {
       switch (state) {
         case BluetoothManager.CONNECTED:
-          print('********************* CONNECTED');
+          // print('********************* CONNECTED');
           // To avoid double call
           if (!_isConnected) {
             await _bluetoothManager.writeData(bytes);
@@ -115,14 +114,14 @@ class PrinterBluetoothManager {
           }
           // TODO sending disconnect signal should be event-based
           _runDelayed(3).then((dynamic v) async {
-            print('DISCONNECTING......');
+            // print('DISCONNECTING......');
             await _bluetoothManager.disconnect();
             _isPrinting = false;
           });
           _isConnected = true;
           break;
         case BluetoothManager.DISCONNECTED:
-          print('********************* DISCONNECTED');
+          // print('********************* DISCONNECTED');
           _isConnected = false;
           break;
         default:
@@ -139,26 +138,12 @@ class PrinterBluetoothManager {
     });
   }
 
-  void addText(
-    String text, {
-    PosStyles styles = const PosStyles(),
-    int linesAfter = 0,
-  }) {
-    _printBuffer +=
-        PosGenerator.text(text, styles: styles, linesAfter: linesAfter);
-  }
-
-  void addEmptyLines(int n) {
-    _printBuffer += PosGenerator.emptyLines(n);
-  }
-
-  Future<void> printTicket() async {
-    if (_printBuffer.isNotEmpty) {
-      final Future<void> res = writeBytes(_printBuffer);
-      _printBuffer = [];
+  Future<void> printTicket(Ticket ticket) async {
+    if (ticket.bytes.isNotEmpty) {
+      final Future<void> res = writeBytes(ticket.bytes);
       return res;
     } else {
-      throw Exception('Print failed (print buffer is empty)');
+      throw Exception('Print failed (ticket is empty)');
     }
   }
 }
