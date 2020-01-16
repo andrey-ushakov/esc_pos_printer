@@ -257,24 +257,22 @@ class Ticket {
   /// Beeps [n] times
   ///
   /// Beep [duration] could be between 50 and 450 ms.
-  // void beep({int n = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
-  //   if (n <= 0) {
-  //     return;
-  //   }
+  void beep({int n = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
+    if (n <= 0) {
+      return;
+    }
 
-  //   int beepCount = n;
-  //   if (beepCount > 9) {
-  //     beepCount = 9;
-  //   }
+    int beepCount = n;
+    if (beepCount > 9) {
+      beepCount = 9;
+    }
 
-  //   _socket.add(
-  //     Uint8List.fromList(
-  //       List.from(cBeep.codeUnits)..addAll([beepCount, duration.value]),
-  //     ),
-  //   );
+    bytes += Uint8List.fromList(
+      List.from(cBeep.codeUnits)..addAll([beepCount, duration.value]),
+    );
 
-  //   beep(n: n - 9, duration: duration);
-  // }
+    beep(n: n - 9, duration: duration);
+  }
 
   /// Clear the buffer and reset text styles
   void reset() {
@@ -303,25 +301,23 @@ class Ticket {
   }
 
   /// Reverse feed for [n] lines (if supported by the priner)
-  // void reverseFeed(int n) {
-  //   _socket.add(
-  //     Uint8List.fromList(
-  //       List.from(cReverseFeedN.codeUnits)..add(n),
-  //     ),
-  //   );
-  // }
+  void reverseFeed(int n) {
+    bytes += Uint8List.fromList(
+      List.from(cReverseFeedN.codeUnits)..add(n),
+    );
+  }
 
   /// Cut the paper
   ///
   /// [mode] is used to define the full or partial cut (if supported by the priner)
-  // void cut({PosCutMode mode = PosCutMode.full}) {
-  //   _socket.write('\n\n\n\n\n');
-  //   if (mode == PosCutMode.partial) {
-  //     _socket.write(cCutPart);
-  //   } else {
-  //     _socket.write(cCutFull);
-  //   }
-  // }
+  void cut({PosCutMode mode = PosCutMode.full}) {
+    emptyLines(5);
+    if (mode == PosCutMode.partial) {
+      bytes += cCutPart.codeUnits;
+    } else {
+      bytes += cCutFull.codeUnits;
+    }
+  }
 
   /// Generate multiple bytes for a number: In lower and higher parts, or more parts as needed.
   ///
