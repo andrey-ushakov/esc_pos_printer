@@ -11,6 +11,6 @@ export './src/barcode.dart';
 export './src/enums.dart';
 export './src/pos_column.dart';
 export './src/pos_styles.dart';
-export './src/printer.dart';
 export './src/printer_bluetooth_manager.dart';
+export './src/printer_network_manager.dart';
 export './src/ticket.dart';

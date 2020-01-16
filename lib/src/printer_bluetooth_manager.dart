@@ -94,7 +94,6 @@ class PrinterBluetoothManager {
     _bluetoothManager.state.listen((state) async {
       switch (state) {
         case BluetoothManager.CONNECTED:
-          // print('********************* CONNECTED');
           // To avoid double call
           if (!_isConnected) {
             await _bluetoothManager.writeData(bytes);
@@ -102,14 +101,12 @@ class PrinterBluetoothManager {
           }
           // TODO sending disconnect signal should be event-based
           _runDelayed(3).then((dynamic v) async {
-            // print('DISCONNECTING......');
             await _bluetoothManager.disconnect();
             _isPrinting = false;
           });
           _isConnected = true;
           break;
         case BluetoothManager.DISCONNECTED:
-          // print('********************* DISCONNECTED');
           _isConnected = false;
           break;
         default:
@@ -127,7 +124,7 @@ class PrinterBluetoothManager {
   }
 
   Future<void> printTicket(Ticket ticket) async {
-    if (ticket.bytes.isNotEmpty) {
+    if (ticket != null && ticket.bytes.isNotEmpty) {
       final Future<void> res = writeBytes(ticket.bytes);
       return res;
     } else {

@@ -10,6 +10,29 @@ enum PosTextAlign { left, center, right }
 enum PosCutMode { full, partial }
 enum PosFontType { fontA, fontB }
 
+class PosPrintResult {
+  const PosPrintResult._internal(this.value);
+  final int value;
+  static const success = PosPrintResult._internal(1);
+  static const timeout = PosPrintResult._internal(2);
+  static const printerNotSelected = PosPrintResult._internal(3);
+  static const ticketEmpty = PosPrintResult._internal(4);
+
+  static String msg(PosPrintResult val) {
+    if (val == PosPrintResult.success) {
+      return 'Success';
+    } else if (val == PosPrintResult.timeout) {
+      return 'Error. Printer connection timeout';
+    } else if (val == PosPrintResult.printerNotSelected) {
+      return 'Error. Printer not selected';
+    } else if (val == PosPrintResult.ticketEmpty) {
+      return 'Error. Ticket is empty';
+    } else {
+      return 'Unknown error';
+    }
+  }
+}
+
 class PosTextSize {
   const PosTextSize._internal(this.value);
   final int value;
