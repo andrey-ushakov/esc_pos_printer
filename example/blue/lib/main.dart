@@ -57,9 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     printerManager.stopScan();
   }
 
-  void _testPrint(PrinterBluetooth printer) async {
-    printerManager.selectPrinter(printer);
-
+  Future<Ticket> testTicket() async {
     final Ticket ticket = Ticket(PaperSize.mm58);
 
     ticket.text(
@@ -122,13 +120,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // );
 
     ticket.feed(2);
+    return ticket;
+  }
 
-    printerManager.printTicket(ticket).then((val) {
-      showToast('Success!');
-    }).catchError((dynamic e) {
-      print('catched: ${e.toString()}');
-      showToast(e.toString());
-    });
+  void _testPrint(PrinterBluetooth printer) async {
+    printerManager.selectPrinter(printer);
+
+    final PosPrintResult res =
+        await printerManager.printTicket(await testTicket());
+    showToast(PosPrintResult.msg(res));
   }
 
   @override
