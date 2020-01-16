@@ -13,7 +13,7 @@ void main() async {
 
   final PosPrintResult res =
       await printerManager.printTicket(await testTicket());
-  print('Print result: ${PosPrintResult.msg(res)}');
+  print('Print result: ${res.msg}');
 }
 
 Future<Ticket> testTicket() async {

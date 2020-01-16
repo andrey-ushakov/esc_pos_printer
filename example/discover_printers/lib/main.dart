@@ -161,8 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final PosPrintResult res =
         await printerManager.printTicket(await testTicket());
-    final snackBar = SnackBar(
-        content: Text(PosPrintResult.msg(res), textAlign: TextAlign.center));
+    final snackBar =
+        SnackBar(content: Text(res.msg, textAlign: TextAlign.center));
     Scaffold.of(ctx).showSnackBar(snackBar);
   }
 

@@ -112,7 +112,7 @@ final PrinterNetworkManager printerManager = PrinterNetworkManager();
 printerManager.selectPrinter('192.168.0.123', port: 9100);
 final PosPrintResult res = await printerManager.printTicket(testTicket());
 
-print('Print result: ${PosPrintResult.msg(res)}');
+print('Print result: ${res.msg}');
 ```
 For more details, check *example/example.dart* and *example/discover_printers*.
 
@@ -131,7 +131,7 @@ printerManager.startScan(Duration(seconds: 4));
 printerManager.selectPrinter(printer);
 final PosPrintResult res = await printerManager.printTicket(testTicket());
 
-print('Print result: ${PosPrintResult.msg(res)}');
+print('Print result: ${res.msg}');
 ```
 
 For more details, check demo project *example/blue*.

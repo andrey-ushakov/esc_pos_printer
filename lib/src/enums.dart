@@ -20,18 +20,18 @@ class PosPrintResult {
   static const printInProgress = PosPrintResult._internal(5);
   static const scanInProgress = PosPrintResult._internal(6);
 
-  static String msg(PosPrintResult val) {
-    if (val == PosPrintResult.success) {
+  String get msg {
+    if (value == PosPrintResult.success.value) {
       return 'Success';
-    } else if (val == PosPrintResult.timeout) {
+    } else if (value == PosPrintResult.timeout.value) {
       return 'Error. Printer connection timeout';
-    } else if (val == PosPrintResult.printerNotSelected) {
+    } else if (value == PosPrintResult.printerNotSelected.value) {
       return 'Error. Printer not selected';
-    } else if (val == PosPrintResult.ticketEmpty) {
+    } else if (value == PosPrintResult.ticketEmpty.value) {
       return 'Error. Ticket is empty';
-    } else if (val == PosPrintResult.printInProgress) {
+    } else if (value == PosPrintResult.printInProgress.value) {
       return 'Error. Another print in progress';
-    } else if (val == PosPrintResult.scanInProgress) {
+    } else if (value == PosPrintResult.scanInProgress.value) {
       return 'Error. Printer scanning in progress';
     } else {
       return 'Unknown error';
@@ -61,7 +61,7 @@ class PaperSize {
   static const mm58 = PaperSize._internal(1);
   static const mm80 = PaperSize._internal(2);
 
-  static int width(PaperSize size) => size == PaperSize.mm58 ? 350 : 512;
+  int get width => value == PaperSize.mm58.value ? 350 : 512;
 }
 
 class PosBeepDuration {

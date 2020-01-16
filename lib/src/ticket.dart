@@ -37,7 +37,7 @@ class Ticket {
   }
 
   double _colIndToPosition(int colInd) {
-    final int width = PaperSize.width(_paperSize);
+    final int width = _paperSize.width;
     return colInd == 0 ? 0 : (width * colInd / 11 - 1);
   }
 

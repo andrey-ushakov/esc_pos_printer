@@ -128,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final PosPrintResult res =
         await printerManager.printTicket(await testTicket());
-    showToast(PosPrintResult.msg(res));
+    showToast(res.msg);
   }
 
   @override
