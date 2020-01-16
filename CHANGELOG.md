@@ -1,3 +1,11 @@
+## [2.1.0]
+* Printer class replaced by PrinterNetworkManager
+* Generate tickets using Ticket class
+* Unified interfaces for WiFi/Bluetooth printings
+* Better error handling using PosPrintResult class
+* Examples updated
+
+
 ## [2.0.0]
 * Bluetooth printers support (beta version, iOS-only)
 
