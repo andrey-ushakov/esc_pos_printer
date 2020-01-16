@@ -2,19 +2,21 @@
 
 ![Pub](https://img.shields.io/pub/v/esc_pos_printer.svg)
 
-The library allows to print receipts using a ESC/POS (usually thermal) network printer.
+The library allows to print receipts using an ESC/POS thermal WiFi/Bluetooth printer.
 
 [[pub.dev page]](https://pub.dev/packages/esc_pos_printer)
 | [[Documentation]](https://pub.dev/documentation/esc_pos_printer/latest/)
 
-It can be used in [Flutter](https://flutter.dev/) or [Dart](https://dart.dev/) projects. In Flutter, both Android and iOS are supported.
+WiFi printing can be used in [Flutter](https://flutter.dev/) or pure [Dart](https://dart.dev/) projects. For Flutter projects, both Android and iOS are supported.
+
+Bluetooth printing can be used only for iOS. Android support will come soon.
 
 To discover existing printers in your subnet, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of the ESC/POS printers by default listen on port 9100.
 
 ## Main Features
 
-* Connect to Wi-Fi printers
-* Simple text printing using *println* method
+* Connect to Wi-Fi / Bluetooth printers
+* Simple text printing using *text* method
 * Tables printing using *printRow* method
 * Text styling:
   * size, align, bold, reverse, underline, different fonts, turn 90°
@@ -27,7 +29,7 @@ To discover existing printers in your subnet, consider using [ping_discover_netw
 
 **Note**: Your printer may not support some of the presented features (especially for underline styles, partial/full paper cutting, reverse feed, ...).
 
-## Getting Started
+## Getting Started (WiFi printer)
 
 ```dart
 import 'package:esc_pos_printer/esc_pos_printer.dart';
@@ -103,15 +105,14 @@ final List<int> barData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4];
 printer.printBarcode(Barcode.upcA(barData));
 ```
 
+## Getting Started (Bluetooth printer)
+See example project *blue*.
+
 ## TODO
-* ~~Add raw print function~~
-* ~~Print images~~
-* ~~Print barcodes~~
+* Bluetooth print / add Android support
+* WiFi print / use Ticket class to make both, WiFi and Bluetooth interfaces more uniform
 * Print QR codes
-* ~~Turn 90° clockwise rotation mode on/off~~
-* ~~Flutter example: discover active Wi-Fi printers~~
 * USB printers support
-* ~~Add encoding commands~~
 
 ## Test print
 <img src="https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt.jpg?raw=true" alt="test receipt" height="500"/>

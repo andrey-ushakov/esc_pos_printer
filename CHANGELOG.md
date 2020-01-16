@@ -1,3 +1,7 @@
+## [2.0.0]
+* Bluetooth printers support (beta version, iOS-only)
+
+
 ## [1.5.0]
 * printlnMixedKanji merged to println
 * Can print rows/cols with mixed chinese/non-chinese texts
