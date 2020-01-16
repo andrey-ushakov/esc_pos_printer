@@ -18,11 +18,13 @@ import 'pos_column.dart';
 import 'pos_styles.dart';
 
 class Ticket {
-  Ticket(this._paperSize);
+  Ticket(this._paperSize) {
+    reset();
+  }
 
   List<int> bytes = [];
   PosCodeTable _codeTable;
-  PaperSize _paperSize;
+  final PaperSize _paperSize;
 
   /// Set global code table which will be used instead of the default printer's code table
   void setGlobalCodeTable(PosCodeTable codeTable) {
@@ -35,7 +37,7 @@ class Ticket {
   }
 
   double _colIndToPosition(int colInd) {
-    int width = PaperSize.width(_paperSize);
+    final int width = PaperSize.width(_paperSize);
     return colInd == 0 ? 0 : (width * colInd / 11 - 1);
   }
 

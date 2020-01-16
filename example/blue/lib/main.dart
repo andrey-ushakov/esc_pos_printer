@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _testPrint(PrinterBluetooth printer) async {
     printerManager.selectPrinter(printer);
 
-    Ticket ticket = Ticket(PaperSize.mm58);
+    final Ticket ticket = Ticket(PaperSize.mm58);
 
     ticket.text(
         'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
