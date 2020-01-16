@@ -17,6 +17,8 @@ class PosPrintResult {
   static const timeout = PosPrintResult._internal(2);
   static const printerNotSelected = PosPrintResult._internal(3);
   static const ticketEmpty = PosPrintResult._internal(4);
+  static const printInProgress = PosPrintResult._internal(5);
+  static const scanInProgress = PosPrintResult._internal(6);
 
   static String msg(PosPrintResult val) {
     if (val == PosPrintResult.success) {
@@ -27,6 +29,10 @@ class PosPrintResult {
       return 'Error. Printer not selected';
     } else if (val == PosPrintResult.ticketEmpty) {
       return 'Error. Ticket is empty';
+    } else if (val == PosPrintResult.printInProgress) {
+      return 'Error. Another print in progress';
+    } else if (val == PosPrintResult.scanInProgress) {
+      return 'Error. Printer scanning in progress';
     } else {
       return 'Unknown error';
     }

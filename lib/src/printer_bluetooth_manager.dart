@@ -69,16 +69,16 @@ class PrinterBluetoothManager {
     _selectedPrinter = printer;
   }
 
-  Future<void> writeBytes(List<int> bytes) async {
+  Future<PosPrintResult> writeBytes(List<int> bytes) async {
+    final Completer<PosPrintResult> completer = Completer();
+
     const int timeout = 5;
     if (_selectedPrinter == null) {
-      throw Exception('Print failed (Select a printer first)');
-    }
-    if (_isScanning.value) {
-      throw Exception('Print failed (scanning in progress)');
-    }
-    if (_isPrinting) {
-      throw Exception('Print failed (another printing in progress)');
+      return Future<PosPrintResult>.value(PosPrintResult.printerNotSelected);
+    } else if (_isScanning.value) {
+      return Future<PosPrintResult>.value(PosPrintResult.scanInProgress);
+    } else if (_isPrinting) {
+      return Future<PosPrintResult>.value(PosPrintResult.printInProgress);
     }
 
     _isPrinting = true;
@@ -97,7 +97,7 @@ class PrinterBluetoothManager {
           // To avoid double call
           if (!_isConnected) {
             await _bluetoothManager.writeData(bytes);
-            // TODO Notify data sent
+            completer.complete(PosPrintResult.success);
           }
           // TODO sending disconnect signal should be event-based
           _runDelayed(3).then((dynamic v) async {
@@ -118,17 +118,17 @@ class PrinterBluetoothManager {
     _runDelayed(timeout).then((dynamic v) async {
       if (_isPrinting) {
         _isPrinting = false;
-        throw Exception('Print failed (timeout)');
+        completer.complete(PosPrintResult.timeout);
       }
     });
+
+    return completer.future;
   }
 
-  Future<void> printTicket(Ticket ticket) async {
-    if (ticket != null && ticket.bytes.isNotEmpty) {
-      final Future<void> res = writeBytes(ticket.bytes);
-      return res;
-    } else {
-      throw Exception('Print failed (ticket is empty)');
+  Future<PosPrintResult> printTicket(Ticket ticket) async {
+    if (ticket == null || ticket.bytes.isEmpty) {
+      return Future<PosPrintResult>.value(PosPrintResult.ticketEmpty);
     }
+    return writeBytes(ticket.bytes);
   }
 }
