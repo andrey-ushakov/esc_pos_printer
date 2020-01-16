@@ -2,25 +2,13 @@
  * esc_pos_printer
  * Created by Andrey Ushakov
  * 
- * Copyright (c) 2020. All rights reserved.
+ * Copyright (c) 2019-2020. All rights reserved.
  * See LICENSE for distribution and usage details.
  */
 
 import 'dart:async';
-import 'dart:convert';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:rxdart/rxdart.dart';
-// import 'dart:convert';
-// import 'dart:io';
-// import 'dart:typed_data';
-// import 'package:gbk_codec/gbk_codec.dart';
-// import 'package:hex/hex.dart';
-// import 'package:image/image.dart';
-// import 'barcode.dart';
-// import 'commands.dart';
-// import 'enums.dart';
-// import 'pos_column.dart';
-// import 'pos_styles.dart';
 import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
 
 /// Bluetooth printer

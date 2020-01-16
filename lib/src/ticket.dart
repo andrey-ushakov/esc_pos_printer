@@ -1,3 +1,11 @@
+/*
+ * esc_pos_printer
+ * Created by Andrey Ushakov
+ * 
+ * Copyright (c) 2019-2020. All rights reserved.
+ * See LICENSE for distribution and usage details.
+ */
+
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:gbk_codec/gbk_codec.dart';

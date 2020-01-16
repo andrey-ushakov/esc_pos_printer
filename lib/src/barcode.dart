@@ -1,3 +1,11 @@
+/*
+ * esc_pos_printer
+ * Created by Andrey Ushakov
+ * 
+ * Copyright (c) 2019-2020. All rights reserved.
+ * See LICENSE for distribution and usage details.
+ */
+
 class BarcodeType {
   const BarcodeType._internal(this.value);
   final int value;
