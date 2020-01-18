@@ -1,3 +1,7 @@
+## [2.1.1]
+* Bluetooth printing support for Android
+
+
 ## [2.1.0]
 * Printer class replaced by PrinterNetworkManager
 * Generate tickets using Ticket class
