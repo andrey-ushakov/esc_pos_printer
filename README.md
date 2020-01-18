@@ -142,3 +142,8 @@ For more details, check demo project *example/blue*.
 
 ## Test print
 <img src="https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt.jpg?raw=true" alt="test receipt" height="500"/>
+
+## Support
+If this package was helpful, a cup of coffee would be highly appreciated :)
+
+[<img src="https://az743702.vo.msecnd.net/cdn/kofi2.png?v=2" width="200">](https://ko-fi.com/andreydev)
