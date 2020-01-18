@@ -9,7 +9,7 @@ The library allows to print receipts using an ESC/POS thermal WiFi/Bluetooth pri
 
 WiFi printing can be used in [Flutter](https://flutter.dev/) or pure [Dart](https://dart.dev/) projects. For Flutter projects, both Android and iOS are supported.
 
-Bluetooth printing can be used only for iOS. Android support will be added soon *(I hope)*.
+Bluetooth printing can also be used on both Android and iOS platforms.
 
 To discover existing printers in your subnet, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of the ESC/POS printers by default listen on port 9100.
 
@@ -137,7 +137,6 @@ print('Print result: ${res.msg}');
 For more details, check demo project *example/blue*.
 
 ## TODO
-* Bluetooth printers: add Android support
 * Print QR codes
 * USB printers support
 
