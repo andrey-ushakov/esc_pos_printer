@@ -8,6 +8,7 @@
 
 enum PosTextAlign { left, center, right }
 enum PosCutMode { full, partial }
+enum DrawerPin { pin2, pin5 }
 enum PosFontType { fontA, fontB }
 
 class PosPrintResult {

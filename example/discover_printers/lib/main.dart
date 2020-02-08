@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     print('subnet:\t$subnet, port:\t$port');
 
-    final stream = NetworkAnalyzer.discover2(subnet, port);
+    final stream = NetworkAnalyzer.discover(subnet, port);
 
     stream.listen((NetworkAddress addr) {
       if (addr.exists) {
@@ -152,6 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ticket.feed(2);
 
     ticket.cut();
+    ticket.drawer();
     return ticket;
   }
 

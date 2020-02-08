@@ -18,6 +18,10 @@ const cBeep = '${esc}B'; // Beeper [count] [duration]
 const cCutFull = '${gs}V0'; // Full cut
 const cCutPart = '${gs}V1'; // Partial cut
 
+// Cash drawer open
+const cCashDrawerPin2 = '${esc}p030255'; // Cash drawer open
+const cCashDrawerPin5 = '${esc}p130255'; // Cash drawer open
+
 // Character
 const cReverseOn = '${gs}B1'; // Turn white/black reverse print mode on
 const cReverseOff = '${gs}B0'; // Turn white/black reverse print mode off

@@ -321,6 +321,15 @@ class Ticket {
     }
   }
 
+
+ void drawer({DrawerPin mode = DrawerPin.pin2}) {
+    if (mode == DrawerPin.pin2) {
+      bytes += cCashDrawerPin2.codeUnits;
+    } else {
+      bytes += cCashDrawerPin5.codeUnits;
+    }
+  }
+
   /// Generate multiple bytes for a number: In lower and higher parts, or more parts as needed.
   ///
   /// [value] Input number
