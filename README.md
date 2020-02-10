@@ -13,6 +13,8 @@ Bluetooth printing can also be used on both Android and iOS platforms.
 
 To discover existing printers in your subnet, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of the ESC/POS printers by default listen on port 9100.
 
+**Here is a [printers tested with this library](printers.md). Please add your models you have tested to maintain and improve this library and to choose the right printer.**
+
 ## Main Features
 
 * Connect to Wi-Fi / Bluetooth printers
