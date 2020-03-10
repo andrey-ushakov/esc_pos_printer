@@ -3,6 +3,7 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:flutter/services.dart';
 import 'package:ping_discover_network/ping_discover_network.dart';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:image/image.dart';
 import 'package:wifi/wifi.dart';
 
