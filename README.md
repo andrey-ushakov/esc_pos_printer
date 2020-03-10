@@ -2,22 +2,20 @@
 
 ![Pub](https://img.shields.io/pub/v/esc_pos_printer.svg)
 
-The library allows to print receipts using an ESC/POS thermal WiFi/Bluetooth printer.
+The library allows to print receipts using an ESC/POS thermal WiFi/Ethernet printer.
 
 [[pub.dev page]](https://pub.dev/packages/esc_pos_printer)
 | [[Documentation]](https://pub.dev/documentation/esc_pos_printer/latest/)
 
-WiFi printing can be used in [Flutter](https://flutter.dev/) or pure [Dart](https://dart.dev/) projects. For Flutter projects, both Android and iOS are supported.
+It can be used in [Flutter](https://flutter.dev/) or pure [Dart](https://dart.dev/) projects. For Flutter projects, both Android and iOS are supported.
 
-Bluetooth printing can also be used on both Android and iOS platforms.
+To scan for printers in your network, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of the ESC/POS printers by default listen on port 9100.
 
-To discover existing printers in your subnet, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of the ESC/POS printers by default listen on port 9100.
-
-**Here is a [printers tested with this library](printers.md). Please add your models you have tested to maintain and improve this library and to choose the right printer.**
+**Here are some [printers tested with this library](printers.md). Please add your models you have tested to maintain and improve this library and help others to choose the right printer.**
 
 ## Main Features
 
-* Connect to Wi-Fi / Bluetooth printers
+* Connect to Wi-Fi / Ethernet printers
 * Simple text printing using *text* method
 * Tables printing using *row* method
 * Text styling:
@@ -63,7 +61,7 @@ Ticket testTicket() {
   return ticket;
 }
 ```
-Print table row:
+Print a table row:
 
 ```dart
 ticket.row([
@@ -85,7 +83,7 @@ ticket.row([
   ]);
 ```
 
-Print image:
+Print an image:
 
 ```dart
 import 'dart:io';
@@ -99,7 +97,7 @@ ticket.image(image);
 ticket.imageRaster(image);
 ```
 
-Print barcode:
+Print a barcode:
 ```dart
 final List<int> barData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4];
 ticket.barcode(Barcode.upcA(barData));
@@ -118,29 +116,6 @@ print('Print result: ${res.msg}');
 ```
 For more details, check *example/example.dart* and *example/discover_printers*.
 
-## Getting Started (Bluetooth printer)
-
-```dart
-PrinterBluetoothManager printerManager = PrinterBluetoothManager();
-
-printerManager.scanResults.listen((printers) async {
-  // store found printers
-});
-printerManager.startScan(Duration(seconds: 4));
-
-// ...
-
-printerManager.selectPrinter(printer);
-final PosPrintResult res = await printerManager.printTicket(testTicket());
-
-print('Print result: ${res.msg}');
-```
-
-For more details, check demo project *example/blue*.
-
-## TODO
-* Print QR codes
-* USB printers support
 
 ## Test print
 <img src="https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt.jpg?raw=true" alt="test receipt" height="500"/>
