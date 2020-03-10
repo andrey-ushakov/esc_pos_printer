@@ -2,7 +2,7 @@
 
 ![Pub](https://img.shields.io/pub/v/esc_pos_printer.svg)
 
-The library allows to print receipts using an ESC/POS thermal WiFi/Ethernet printer.
+The library allows to print receipts using an ESC/POS thermal WiFi/Ethernet printer. For Bluetooth printers, use [esc_pos_bluetooth](https://github.com/andrey-ushakov/esc_pos_bluetooth) library.
 
 [[pub.dev page]](https://pub.dev/packages/esc_pos_printer)
 | [[Documentation]](https://pub.dev/documentation/esc_pos_printer/latest/)
@@ -11,10 +11,10 @@ It can be used in [Flutter](https://flutter.dev/) or pure [Dart](https://dart.de
 
 To scan for printers in your network, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of the ESC/POS printers by default listen on port 9100.
 
-**Here are some [printers tested with this library](printers.md). Please add your models you have tested to maintain and improve this library and help others to choose the right printer.**
+## Tested Printers
+Here are some [printers tested with this library](printers.md). Please add your models you have tested to maintain and improve this library and help others to choose the right printer.
 
 ## Main Features
-
 * Connect to Wi-Fi / Ethernet printers
 * Simple text printing using *text* method
 * Tables printing using *row* method
@@ -117,7 +117,7 @@ print('Print result: ${res.msg}');
 For more details, check *example/example.dart* and *example/discover_printers*.
 
 
-## Test print
+## Test Print
 <img src="https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt.jpg?raw=true" alt="test receipt" height="500"/>
 
 ## Support
