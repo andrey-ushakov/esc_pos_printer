@@ -1,3 +1,9 @@
+## [3.0.0]
+* Basic ESC/POS classes moved to esc_pos_utils library
+* Bluetooth printing moved to esc_pos_bluetooth library
+* This library is used to print using a WiFi/Ethernet printer
+
+
 ## [2.1.2]
 * Bluetooth printing support for Android
 

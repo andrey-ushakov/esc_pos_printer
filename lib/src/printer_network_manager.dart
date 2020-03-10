@@ -7,8 +7,8 @@
  */
 
 import 'dart:io';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
 import './enums.dart';
-import './ticket.dart';
 
 /// Printer Network Manager
 class PrinterNetworkManager {
