@@ -1,6 +1,6 @@
 name: esc_pos_printer
 description: The library allows to print receipts using an ESC/POS thermal WiFi printer.
-version: 3.0.0
+version: 3.0.1
 homepage: https://github.com/andrey-ushakov/esc_pos_printer
 
 environment:

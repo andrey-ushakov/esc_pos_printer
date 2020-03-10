@@ -1,3 +1,7 @@
+## [3.0.1]
+* Removed rxdart dependency
+
+
 ## [3.0.0]
 * Basic ESC/POS classes moved to [esc_pos_utils](https://github.com/andrey-ushakov/esc_pos_utils) library
 * Bluetooth printing moved to [esc_pos_bluetooth](https://github.com/andrey-ushakov/esc_pos_bluetooth) library
