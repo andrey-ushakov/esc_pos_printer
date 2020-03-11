@@ -114,7 +114,42 @@ final PosPrintResult res = await printerManager.printTicket(testTicket());
 
 print('Print result: ${res.msg}');
 ```
-For more details, check *example/example.dart* and *example/discover_printers*.
+For more details, check `example/example.dart` and `example/discover_printers`.
+
+
+## Using Code Tables
+Thanks to the [charset_converter](https://pub.dev/packages/charset_converter) package, it's possible to print in different languages. The source text should be encoded using the corresponding charset and the correct charset should be passed to the `Ticket.textEncoded` method.
+
+Here are some examples:
+```dart
+/// Portuguese
+Uint8List encTxt1 = await CharsetConverter.encode(
+    "cp860", "Portuguese: Olá, Não falo português, Cão");
+ticket.textEncoded(encTxt1,
+    styles: PosStyles(codeTable: PosCodeTable.pc860_1));
+
+/// Greek
+Uint8List encTxt2 =
+    await CharsetConverter.encode("windows-1253", "Greek: αβγδώ");
+ticket.textEncoded(encTxt2,
+    styles: PosStyles(codeTable: PosCodeTable.greek));
+
+/// Polish
+Uint8List encTxt3 = await CharsetConverter.encode(
+    "cp852", "Polish: Dzień dobry! Dobry wieczór! Cześć!");
+ticket.textEncoded(encTxt3,
+    styles: PosStyles(codeTable: PosCodeTable.pc852_1));
+
+/// Russian / Cyrillic
+Uint8List encTxt4 =
+    await CharsetConverter.encode("cp866", "Russian: Привет мир!");
+ticket.textEncoded(encTxt4,
+    styles: PosStyles(codeTable: PosCodeTable.pc866_2));
+```
+
+Note that `CharsetConverter.encode` takes a platform-specific charset (check the [library documentation](https://pub.dev/packages/charset_converter) for more info).
+
+Note that different printers may support different sets of codetables and the above examples may not work on some printer models. It's also possible to pass a codetable by its code (according to your printer's documentation): `PosStyles(codeTable: PosCodeTable(7))`.
 
 
 ## Test Print

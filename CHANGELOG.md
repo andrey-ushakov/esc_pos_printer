@@ -1,3 +1,7 @@
+## [3.0.2]
+* Updated `esc_pos_utils` package version
+
+
 ## [3.0.1]
 * Removed rxdart dependency
 
