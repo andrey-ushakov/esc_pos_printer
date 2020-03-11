@@ -31,26 +31,26 @@ Future<Ticket> testTicket() async {
   ticket.text('Reverse text', styles: PosStyles(reverse: true));
   ticket.text('Underlined text',
       styles: PosStyles(underline: true), linesAfter: 1);
-  ticket.text('Align left', styles: PosStyles(align: PosTextAlign.left));
-  ticket.text('Align center', styles: PosStyles(align: PosTextAlign.center));
+  ticket.text('Align left', styles: PosStyles(align: PosAlign.left));
+  ticket.text('Align center', styles: PosStyles(align: PosAlign.center));
   ticket.text('Align right',
-      styles: PosStyles(align: PosTextAlign.right), linesAfter: 1);
+      styles: PosStyles(align: PosAlign.right), linesAfter: 1);
 
   ticket.row([
     PosColumn(
       text: 'col3',
       width: 3,
-      styles: PosStyles(align: PosTextAlign.center, underline: true),
+      styles: PosStyles(align: PosAlign.center, underline: true),
     ),
     PosColumn(
       text: 'col6',
       width: 6,
-      styles: PosStyles(align: PosTextAlign.center, underline: true),
+      styles: PosStyles(align: PosAlign.center, underline: true),
     ),
     PosColumn(
       text: 'col3',
       width: 3,
-      styles: PosStyles(align: PosTextAlign.center, underline: true),
+      styles: PosStyles(align: PosAlign.center, underline: true),
     ),
   ]);
 

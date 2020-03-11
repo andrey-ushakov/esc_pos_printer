@@ -1,3 +1,7 @@
+## [3.1.0]
+* Updated `esc_pos_utils` package version to `0.3.0` (Image and Barcode alignment). 
+
+
 ## [3.0.2]
 * Updated `esc_pos_utils` package version
 
