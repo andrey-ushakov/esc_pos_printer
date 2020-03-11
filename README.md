@@ -29,7 +29,9 @@ Here are some [printers tested with this library](printers.md). Please add your 
 
 **Note**: Your printer may not support some of the presented features (especially for underline styles, partial/full paper cutting, reverse feed, ...).
 
-## Getting started (Generate a ticket)
+## Getting started: Generate a Ticket
+
+### Simple ticket:
 ```dart
 Ticket testTicket() {
   final Ticket ticket = Ticket(PaperSize.mm80);
@@ -61,7 +63,8 @@ Ticket testTicket() {
   return ticket;
 }
 ```
-Print a table row:
+
+### Print a table row:
 
 ```dart
 ticket.row([
@@ -83,7 +86,7 @@ ticket.row([
   ]);
 ```
 
-Print an image:
+### Print an image:
 
 ```dart
 import 'dart:io';
@@ -97,13 +100,38 @@ ticket.image(image);
 ticket.imageRaster(image);
 ```
 
-Print a barcode:
+### Print a barcode:
+
 ```dart
 final List<int> barData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4];
 ticket.barcode(Barcode.upcA(barData));
 ```
 
-## Getting Started (WiFi printer)
+### Print a QR Code:
+
+To print a QR Code, add [qr_flutter](https://pub.dev/packages/qr_flutter) and [path_provider](https://pub.dev/packages/path_provider) as a dependency in your `pubspec.yaml` file.
+```dart
+String qrData = "google.com";
+const double qrSize = 200;
+try {
+  final uiImg = await QrPainter(
+    data: qrData,
+    version: QrVersions.auto,
+    gapless: false,
+  ).toImageData(qrSize);
+  final dir = await getTemporaryDirectory();
+  final pathName = '${dir.path}/qr_tmp.png';
+  final qrFile = File(pathName);
+  final imgFile = await qrFile.writeAsBytes(uiImg.buffer.asUint8List());
+  final img = decodeImage(imgFile.readAsBytesSync());
+
+  ticket.image(img);
+} catch (e) {
+  print(e);
+}
+```
+
+## Getting Started: Print a Ticket
 
 ```dart
 import 'package:esc_pos_printer/esc_pos_printer.dart';
