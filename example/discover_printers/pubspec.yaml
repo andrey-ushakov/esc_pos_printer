@@ -15,7 +15,9 @@ dependencies:
   image: ^2.1.4
   esc_pos_printer:
     path: ../../
-  esc_pos_utils: ^0.3.1
+  esc_pos_utils: ^0.3.2
+  # esc_pos_utils:
+    # path: ../../../esc_pos_utils
 
 dev_dependencies:
   flutter_test:

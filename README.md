@@ -88,16 +88,26 @@ ticket.row([
 
 ### Print an image:
 
+This package implements 3 ESC/POS functions:
+* `ESC *` - print in column format
+* `GS v 0` - print in bit raster format (obsolete)
+* `GS ( L` - print in bit raster format
+
+Note that your printer may support only some of the above functions.
+
 ```dart
 import 'dart:io';
 import 'package:image/image.dart';
 
-const String filename = './logo.png';
-final Image image = decodeImage(File(filename).readAsBytesSync());
-// Using (ESC *) command
+final ByteData data = await rootBundle.load('assets/logo.png');
+final Uint8List bytes = data.buffer.asUint8List();
+final Image image = decodeImage(bytes);
+// Using `ESC *`
 ticket.image(image);
-// Using an alternative obsolette (GS v 0) command
+// Using `GS v 0` (obsolete)
 ticket.imageRaster(image);
+// Using `GS ( L`
+ticket.imageRaster(image, imageFn: PosImageFn.graphics);
 ```
 
 ### Print a barcode:

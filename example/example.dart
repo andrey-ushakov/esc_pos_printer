@@ -65,8 +65,9 @@ Future<Ticket> testTicket() async {
   // final Uint8List bytes = data.buffer.asUint8List();
   // final Image image = decodeImage(bytes);
   // ticket.image(image);
-  // Print image using an alternative (obsolette) command
+  // Print image using alternative commands
   // ticket.imageRaster(image);
+  // ticket.imageRaster(image, imageFn: PosImageFn.graphics);
 
   // Print barcode
   final List<int> barData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4];
