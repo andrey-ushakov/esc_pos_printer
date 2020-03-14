@@ -168,11 +168,24 @@ Uint8List encTxt3 = await CharsetConverter.encode(
 ticket.textEncoded(encTxt3,
     styles: PosStyles(codeTable: PosCodeTable.pc852_1));
 
-/// Russian / Cyrillic
+/// Russian
 Uint8List encTxt4 =
     await CharsetConverter.encode("cp866", "Russian: Привет мир!");
 ticket.textEncoded(encTxt4,
     styles: PosStyles(codeTable: PosCodeTable.pc866_2));
+
+/// Thai: x-mac-thai | iso-8859-11 | cp874
+Uint8List encThai =
+    await CharsetConverter.encode("cp874", "Thai: ใบเสร็จ-ใบรับผ้า");
+ticket.textEncoded(encThai,
+    styles: PosStyles(codeTable: PosCodeTable.thai_1));
+
+/// Arabic
+/// Possible charsets for CharsetConverter.encode: cp864, windows-1256
+/// Possible codeTables for PosStyles: arabic, pc864_1, pc864_2, pc1001_1, pc1001_2, wp1256, pc720
+Uint8List encArabic = await CharsetConverter.encode("windows-1256", "اهلا");
+ticket.textEncoded(encArabic,
+    styles: PosStyles(codeTable: PosCodeTable.arabic));
 ```
 
 Note that `CharsetConverter.encode` takes a platform-specific charset (check the [library documentation](https://pub.dev/packages/charset_converter) for more info).
