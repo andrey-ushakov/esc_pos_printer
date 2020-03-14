@@ -1,6 +1,6 @@
 # esc_pos_printer
 
-![Pub](https://img.shields.io/pub/v/esc_pos_printer.svg)
+[![Pub Version](https://img.shields.io/pub/v/esc_pos_printer)](https://pub.dev/packages/esc_pos_printer)
 
 The library allows to print receipts using an ESC/POS thermal WiFi/Ethernet printer. For Bluetooth printers, use [esc_pos_bluetooth](https://github.com/andrey-ushakov/esc_pos_bluetooth) library.
 
