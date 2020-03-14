@@ -9,7 +9,7 @@ It can be used in [Flutter](https://flutter.dev/) or pure [Dart](https://dart.de
 To scan for printers in your network, consider using [ping_discover_network](https://pub.dev/packages/ping_discover_network) package. Note that most of the ESC/POS printers by default listen on port 9100.
 
 ## Tested Printers
-Here are some [printers tested with this library](printers.md). Please add your models you have tested to maintain and improve this library and help others to choose the right printer.
+Here are some [printers tested with this library](printers.md). Please add the models you have tested to maintain and improve this library and help others to choose the right printer.
 
 
 
