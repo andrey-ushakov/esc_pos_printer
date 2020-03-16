@@ -161,8 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return ticket;
   }
 
-  Future<Ticket> demoReceipt80mm() async {
-    final Ticket ticket = Ticket(PaperSize.mm80);
+  Future<Ticket> demoReceipt(PaperSize paper) async {
+    final Ticket ticket = Ticket(paper);
 
     // Print image
     final ByteData data = await rootBundle.load('assets/rabbit_black.jpg');
@@ -184,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ticket.text('Web: www.example.com',
         styles: PosStyles(align: PosAlign.center), linesAfter: 1);
 
-    ticket.text('------------------------------------------------');
+    ticket.hr();
     ticket.row([
       PosColumn(text: 'Qty', width: 1),
       PosColumn(text: 'Item', width: 7),
@@ -226,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
       PosColumn(
           text: '2.55', width: 2, styles: PosStyles(align: PosAlign.right)),
     ]);
-    ticket.text('------------------------------------------------');
+    ticket.hr();
 
     ticket.row([
       PosColumn(
@@ -245,8 +245,8 @@ class _MyHomePageState extends State<MyHomePage> {
             width: PosTextSize.size2,
           )),
     ]);
-    ticket.text('------------------------------------------------',
-        linesAfter: 1);
+
+    ticket.hr(ch: '=', linesAfter: 1);
 
     ticket.row([
       PosColumn(
@@ -307,14 +307,16 @@ class _MyHomePageState extends State<MyHomePage> {
     final PrinterNetworkManager printerManager = PrinterNetworkManager();
     printerManager.selectPrinter(printerIp, port: 9100);
 
+    // TODO Don't forget to choose printer's paper size
+    const PaperSize paper = PaperSize.mm80;
+
     // TEST PRINT
-    // const PaperSize paper = PaperSize.mm80; // TODO Don't forget to choose printer's paper
     // final PosPrintResult res =
     //     await printerManager.printTicket(await testTicket(paper));
 
     // DEMMO RECEIPT
     final PosPrintResult res =
-        await printerManager.printTicket(await demoReceipt80mm());
+        await printerManager.printTicket(await demoReceipt(paper));
 
     final snackBar =
         SnackBar(content: Text(res.msg, textAlign: TextAlign.center));
