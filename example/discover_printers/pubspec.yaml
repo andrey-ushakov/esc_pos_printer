@@ -15,6 +15,9 @@ dependencies:
   image: ^2.1.4
   esc_pos_printer:
     path: ../../
+  intl: ^0.16.1
+  qr_flutter: ^3.2.0
+  path_provider: ^1.6.5
   esc_pos_utils: ^0.3.3
   # esc_pos_utils:
     # path: ../../../esc_pos_utils
@@ -28,3 +31,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/rabbit_black.jpg
