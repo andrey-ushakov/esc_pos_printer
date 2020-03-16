@@ -314,7 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // final PosPrintResult res =
     //     await printerManager.printTicket(await testTicket(paper));
 
-    // DEMO RECEIPT
+    // DEMMO RECEIPT
     final PosPrintResult res =
         await printerManager.printTicket(await demoReceipt(paper));
 
