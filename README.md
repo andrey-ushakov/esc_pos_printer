@@ -72,4 +72,6 @@ For a complete example, check `example/example.dart` and `example/discover_print
 
 
 ## Test Print
+<img src="https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt2.jpg?raw=true" alt="test receipt" height="500"/>
+
 <img src="https://github.com/andrey-ushakov/esc_pos_printer/blob/master/example/receipt.jpg?raw=true" alt="test receipt" height="500"/>
