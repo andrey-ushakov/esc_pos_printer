@@ -10,8 +10,9 @@ To scan for printers in your network, consider using [ping_discover_network](htt
 
 
 ## TODO (PRs are welcomed!)
-* Print QR Codes using `GS ( k` command (printing QR code from an image already supported)
-* PDF-417 Barcodes using `GS ( k` command
+* Print QR Codes using the `GS ( k` command (printing QR code from an image already supported)
+* PDF-417 Barcodes using the `GS ( k` command
+* Line spacing using the `ESC 3 <n>` command
 
 
 ## How to Help
