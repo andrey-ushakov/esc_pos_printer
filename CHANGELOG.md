@@ -1,5 +1,10 @@
+## [3.1.5]
+* Updated `esc_pos_utils` package version to `0.3.5`.
+
+
 ## [3.1.4]
 * Updated `esc_pos_utils` package version to `0.3.4`.
+
 
 ## [3.1.3]
 * Updated `esc_pos_utils` package version to `0.3.3`.
