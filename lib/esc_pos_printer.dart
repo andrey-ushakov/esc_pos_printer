@@ -9,3 +9,4 @@ library esc_pos_printer;
 
 export './src/enums.dart';
 export './src/printer_network_manager.dart';
+export './src/printer_usb_manager.dart';
