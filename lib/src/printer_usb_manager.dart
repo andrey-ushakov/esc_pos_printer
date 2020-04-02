@@ -17,28 +17,10 @@ class PrinterUsbManager {
     return;
   }
 
-  Future<PosPrintResult> writeBytes(
-      List<int> bytes, {
-        int chunkSizeBytes = 20,
-        int queueSleepTimeMs = 20,
-      }) async {
+  Future<PosPrintResult> writeBytes(List<int> bytes) async {
     final Completer<PosPrintResult> completer = Completer();
-
-    final len = bytes.length;
-    List<List<int>> chunks = [];
-
-    for (var i = 0; i < len; i += chunkSizeBytes) {
-      var end = (i + chunkSizeBytes < len) ? i + chunkSizeBytes : len;
-      chunks.add(bytes.sublist(i, end));
-    }
-
-    for (var i = 0; i < chunks.length; i += 1) {
-      await Escposprinter.printBytes(bytes);
-      sleep(Duration(milliseconds: queueSleepTimeMs));
-    }
-
+    await Escposprinter.printBytes(bytes);
     completer.complete(PosPrintResult.success);
-
     return completer.future;
   }
 
