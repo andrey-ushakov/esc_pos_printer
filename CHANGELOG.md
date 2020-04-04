@@ -1,3 +1,7 @@
+## [3.1.6]
+* Bump esc_pos_utils
+
+
 ## [3.1.5]
 * Updated `esc_pos_utils` package version to `0.3.5`.
 
