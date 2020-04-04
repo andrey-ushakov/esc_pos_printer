@@ -279,24 +279,28 @@ class _MyHomePageState extends State<MyHomePage> {
     ticket.text(timestamp,
         styles: PosStyles(align: PosAlign.center), linesAfter: 2);
 
-    try {
-      const String qrData = 'example.com';
-      const double qrSize = 200;
-      final uiImg = await QrPainter(
-        data: qrData,
-        version: QrVersions.auto,
-        gapless: false,
-      ).toImageData(qrSize);
-      final dir = await getTemporaryDirectory();
-      final pathName = '${dir.path}/qr_tmp.png';
-      final qrFile = File(pathName);
-      final imgFile = await qrFile.writeAsBytes(uiImg.buffer.asUint8List());
-      final img = decodeImage(imgFile.readAsBytesSync());
+    // Print QR Code from image
+    // try {
+    //   const String qrData = 'example.com';
+    //   const double qrSize = 200;
+    //   final uiImg = await QrPainter(
+    //     data: qrData,
+    //     version: QrVersions.auto,
+    //     gapless: false,
+    //   ).toImageData(qrSize);
+    //   final dir = await getTemporaryDirectory();
+    //   final pathName = '${dir.path}/qr_tmp.png';
+    //   final qrFile = File(pathName);
+    //   final imgFile = await qrFile.writeAsBytes(uiImg.buffer.asUint8List());
+    //   final img = decodeImage(imgFile.readAsBytesSync());
 
-      ticket.image(img);
-    } catch (e) {
-      print(e);
-    }
+    //   ticket.image(img);
+    // } catch (e) {
+    //   print(e);
+    // }
+
+    // Print QR Code using native function
+    // ticket.qrcode('example.com');
 
     ticket.feed(2);
     ticket.cut();
