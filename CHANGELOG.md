@@ -1,3 +1,7 @@
+## [3.1.7]
+* Bump esc_pos_utils
+
+
 ## [3.1.6]
 * Bump esc_pos_utils
 
