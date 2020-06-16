@@ -93,14 +93,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Ticket> testTicket(PaperSize paper) async {
-    final Ticket ticket = Ticket(paper);
+    final profile = await CapabilityProfile.load();
+    final Ticket ticket = Ticket(paper, profile);
 
     ticket.text(
         'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
     ticket.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
-        styles: PosStyles(codeTable: PosCodeTable.westEur));
+        styles: PosStyles(codeTable: 'CP1252'));
     ticket.text('Special 2: blåbærgrød',
-        styles: PosStyles(codeTable: PosCodeTable.westEur));
+        styles: PosStyles(codeTable: 'CP1252'));
 
     ticket.text('Bold text', styles: PosStyles(bold: true));
     ticket.text('Reverse text', styles: PosStyles(reverse: true));
@@ -162,7 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<Ticket> demoReceipt(PaperSize paper) async {
-    final Ticket ticket = Ticket(paper);
+    final profile = await CapabilityProfile.load();
+    final Ticket ticket = Ticket(paper, profile);
 
     // Print image
     final ByteData data = await rootBundle.load('assets/rabbit_black.jpg');
