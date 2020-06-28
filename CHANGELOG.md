@@ -1,3 +1,8 @@
+## [3.2.5]
+
+- Updated example and README (using CapabilityProfiles)
+- Bump esc_pos_utils
+
 ## [3.2.4]
 
 - Bump esc_pos_utils
