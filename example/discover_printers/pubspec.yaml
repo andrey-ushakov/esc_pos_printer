@@ -18,7 +18,7 @@ dependencies:
   intl: ^0.16.1
   qr_flutter: ^3.2.0
   path_provider: ^1.6.5
-  esc_pos_utils: ^0.4.7
+  esc_pos_utils: ^0.4.8
   # esc_pos_utils:
   #   path: ../../../esc_pos_utils
   charset_converter: ^1.0.3

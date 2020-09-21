@@ -1,6 +1,6 @@
 name: esc_pos_printer
 description: The library allows to print receipts using an ESC/POS thermal WiFi printer.
-version: 3.2.7
+version: 3.2.8
 homepage: https://github.com/andrey-ushakov/esc_pos_printer
 
 environment:
@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  esc_pos_utils: ^0.4.7
+  esc_pos_utils: ^0.4.8
   # esc_pos_utils:
   #   path: ../esc_pos_utils
   charset_converter: ^1.0.3
