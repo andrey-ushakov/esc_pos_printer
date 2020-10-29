@@ -16,3 +16,5 @@ Thank you for your contribution!
 |[Issyzonepos 80mm Wifi Thermal Receipt](https://www.aliexpress.com/item/32985398184.html)|80mm|3.1.4|No issues graphics & barcode tested also tested)|
 |[HOIN HOP-H58 Bluetooth Thermal Cash Receipt Printer](https://www.aliexpress.com/item/32859843705.html)|58mm|3.1.4|No issues|
 |[Elgin i9 - Ethernet](https://www.americanas.com.br/produto/28943574/impressora-nao-fiscal-elgin-i9-guilhotina-usb?WT.srch=1&acc=e789ea56094489dffd798f86ff51c7a9&epar=bp_pl_00_go_inf-aces_acessorios_geral_gmv&gclid=CjwKCAjwnef6BRAgEiwAgv8mQRRqkLzg7F0l3j3rzFpYXrmi-57_YWX0OiKD5VcE7q1BG2v-qsWfyBoCF8wQAvD_BwE&i=5bac49bbeec3dfb1f8d856ec&o=5a067550eec3dfb1f8def31e&opn=YSMESP&sellerid=8829865000339)|80mm|3.2.5|No issues|
+|[Bematech Mp-4200 Th - Ethernet](https://www.americanas.com.br/produto/49359625?WT.srch=1&sellerid=8829865000339&opn=YSMESP&epar=bp_pl_00_go_pla_aic_geral_gmv&acc=e789ea56094489dffd798f86ff51c7a9&i=5bac49bbeec3dfb1f8d856ec&o=5c2d07f06c28a3cb504793d8&gclid=CjwKCAjw0On8BRAgEiwAincsHJedwINPR8pwvCxTAdreSajJ-l-XsTunVI8pXBkxrnX-5-NRW7nJIRoCJ5UQAvD_BwE)|80mm|3.2.9|No issues|
+
