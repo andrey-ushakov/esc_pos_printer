@@ -13,6 +13,7 @@ dependencies:
   # esc_pos_utils:
   #   path: ../esc_pos_utils
   charset_converter: ^1.0.3
+  image: ^2.1.4
 
 dev_dependencies:
   flutter_test:

@@ -25,9 +25,9 @@ To scan for printers in your network, consider using [ping_discover_network](htt
 
 Here are some [printers tested with this library](printers.md). Please add the models you have tested to maintain and improve this library and help others to choose the right printer.
 
-## Generate a Ticket
+## Generate a Receipt
 
-### Simple Ticket with Styles:
+### Simple Receipt with Styles:
 
 ```dart
 void testReceipt(NetworkPrinter printer) {
@@ -60,7 +60,7 @@ void testReceipt(NetworkPrinter printer) {
 
 You can find more examples here: [esc_pos_utils](https://github.com/andrey-ushakov/esc_pos_utils).
 
-## Print a Ticket
+## Print a Receipt
 
 ```dart
 import 'package:esc_pos_printer/esc_pos_printer.dart';
