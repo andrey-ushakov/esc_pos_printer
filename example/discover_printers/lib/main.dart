@@ -92,27 +92,24 @@ class _MyHomePageState extends State<MyHomePage> {
       });
   }
 
-  Future<Ticket> testTicket(PaperSize paper) async {
-    final profile = await CapabilityProfile.load();
-    final Ticket ticket = Ticket(paper, profile);
-
-    ticket.text(
+  Future<void> testReceipt(NetworkPrinter printer) async {
+    printer.text(
         'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
-    ticket.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+    printer.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
         styles: PosStyles(codeTable: 'CP1252'));
-    ticket.text('Special 2: blåbærgrød',
+    printer.text('Special 2: blåbærgrød',
         styles: PosStyles(codeTable: 'CP1252'));
 
-    ticket.text('Bold text', styles: PosStyles(bold: true));
-    ticket.text('Reverse text', styles: PosStyles(reverse: true));
-    ticket.text('Underlined text',
+    printer.text('Bold text', styles: PosStyles(bold: true));
+    printer.text('Reverse text', styles: PosStyles(reverse: true));
+    printer.text('Underlined text',
         styles: PosStyles(underline: true), linesAfter: 1);
-    ticket.text('Align left', styles: PosStyles(align: PosAlign.left));
-    ticket.text('Align center', styles: PosStyles(align: PosAlign.center));
-    ticket.text('Align right',
+    printer.text('Align left', styles: PosStyles(align: PosAlign.left));
+    printer.text('Align center', styles: PosStyles(align: PosAlign.center));
+    printer.text('Align right',
         styles: PosStyles(align: PosAlign.right), linesAfter: 1);
 
-    ticket.row([
+    printer.row([
       PosColumn(
         text: 'col3',
         width: 3,
@@ -130,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ]);
 
-    ticket.text('Text size 200%',
+    printer.text('Text size 200%',
         styles: PosStyles(
           height: PosTextSize.size2,
           width: PosTextSize.size2,
@@ -140,39 +137,34 @@ class _MyHomePageState extends State<MyHomePage> {
     final ByteData data = await rootBundle.load('assets/logo.png');
     final Uint8List bytes = data.buffer.asUint8List();
     final Image image = decodeImage(bytes);
-    ticket.image(image);
+    printer.image(image);
     // Print image using alternative commands
-    // ticket.imageRaster(image);
-    // ticket.imageRaster(image, imageFn: PosImageFn.graphics);
+    // printer.imageRaster(image);
+    // printer.imageRaster(image, imageFn: PosImageFn.graphics);
 
     // Print barcode
     final List<int> barData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4];
-    ticket.barcode(Barcode.upcA(barData));
+    printer.barcode(Barcode.upcA(barData));
 
     // Print mixed (chinese + latin) text. Only for printers supporting Kanji mode
-    // ticket.text(
+    // printer.text(
     //   'hello ! 中文字 # world @ éphémère &',
     //   styles: PosStyles(codeTable: PosCodeTable.westEur),
     //   containsChinese: true,
     // );
 
-    ticket.feed(2);
-
-    ticket.cut();
-    return ticket;
+    printer.feed(2);
+    printer.cut();
   }
 
-  Future<Ticket> demoReceipt(PaperSize paper) async {
-    final profile = await CapabilityProfile.load();
-    final Ticket ticket = Ticket(paper, profile);
-
+  Future<void> printDemoReceipt(NetworkPrinter printer) async {
     // Print image
     final ByteData data = await rootBundle.load('assets/rabbit_black.jpg');
     final Uint8List bytes = data.buffer.asUint8List();
     final Image image = decodeImage(bytes);
-    ticket.image(image);
+    printer.image(image);
 
-    ticket.text('GROCERYLY',
+    printer.text('GROCERYLY',
         styles: PosStyles(
           align: PosAlign.center,
           height: PosTextSize.size2,
@@ -180,14 +172,16 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         linesAfter: 1);
 
-    ticket.text('889  Watson Lane', styles: PosStyles(align: PosAlign.center));
-    ticket.text('New Braunfels, TX', styles: PosStyles(align: PosAlign.center));
-    ticket.text('Tel: 830-221-1234', styles: PosStyles(align: PosAlign.center));
-    ticket.text('Web: www.example.com',
+    printer.text('889  Watson Lane', styles: PosStyles(align: PosAlign.center));
+    printer.text('New Braunfels, TX',
+        styles: PosStyles(align: PosAlign.center));
+    printer.text('Tel: 830-221-1234',
+        styles: PosStyles(align: PosAlign.center));
+    printer.text('Web: www.example.com',
         styles: PosStyles(align: PosAlign.center), linesAfter: 1);
 
-    ticket.hr();
-    ticket.row([
+    printer.hr();
+    printer.row([
       PosColumn(text: 'Qty', width: 1),
       PosColumn(text: 'Item', width: 7),
       PosColumn(
@@ -196,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
           text: 'Total', width: 2, styles: PosStyles(align: PosAlign.right)),
     ]);
 
-    ticket.row([
+    printer.row([
       PosColumn(text: '2', width: 1),
       PosColumn(text: 'ONION RINGS', width: 7),
       PosColumn(
@@ -204,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
       PosColumn(
           text: '1.98', width: 2, styles: PosStyles(align: PosAlign.right)),
     ]);
-    ticket.row([
+    printer.row([
       PosColumn(text: '1', width: 1),
       PosColumn(text: 'PIZZA', width: 7),
       PosColumn(
@@ -212,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
       PosColumn(
           text: '3.45', width: 2, styles: PosStyles(align: PosAlign.right)),
     ]);
-    ticket.row([
+    printer.row([
       PosColumn(text: '1', width: 1),
       PosColumn(text: 'SPRING ROLLS', width: 7),
       PosColumn(
@@ -220,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
       PosColumn(
           text: '2.99', width: 2, styles: PosStyles(align: PosAlign.right)),
     ]);
-    ticket.row([
+    printer.row([
       PosColumn(text: '3', width: 1),
       PosColumn(text: 'CRUNCHY STICKS', width: 7),
       PosColumn(
@@ -228,9 +222,9 @@ class _MyHomePageState extends State<MyHomePage> {
       PosColumn(
           text: '2.55', width: 2, styles: PosStyles(align: PosAlign.right)),
     ]);
-    ticket.hr();
+    printer.hr();
 
-    ticket.row([
+    printer.row([
       PosColumn(
           text: 'TOTAL',
           width: 6,
@@ -248,9 +242,9 @@ class _MyHomePageState extends State<MyHomePage> {
           )),
     ]);
 
-    ticket.hr(ch: '=', linesAfter: 1);
+    printer.hr(ch: '=', linesAfter: 1);
 
-    ticket.row([
+    printer.row([
       PosColumn(
           text: 'Cash',
           width: 8,
@@ -260,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
           width: 4,
           styles: PosStyles(align: PosAlign.right, width: PosTextSize.size2)),
     ]);
-    ticket.row([
+    printer.row([
       PosColumn(
           text: 'Change',
           width: 8,
@@ -271,14 +265,14 @@ class _MyHomePageState extends State<MyHomePage> {
           styles: PosStyles(align: PosAlign.right, width: PosTextSize.size2)),
     ]);
 
-    ticket.feed(2);
-    ticket.text('Thank you!',
+    printer.feed(2);
+    printer.text('Thank you!',
         styles: PosStyles(align: PosAlign.center, bold: true));
 
     final now = DateTime.now();
     final formatter = DateFormat('MM/dd/yyyy H:m');
     final String timestamp = formatter.format(now);
-    ticket.text(timestamp,
+    printer.text(timestamp,
         styles: PosStyles(align: PosAlign.center), linesAfter: 2);
 
     // Print QR Code from image
@@ -296,33 +290,33 @@ class _MyHomePageState extends State<MyHomePage> {
     //   final imgFile = await qrFile.writeAsBytes(uiImg.buffer.asUint8List());
     //   final img = decodeImage(imgFile.readAsBytesSync());
 
-    //   ticket.image(img);
+    //   printer.image(img);
     // } catch (e) {
     //   print(e);
     // }
 
     // Print QR Code using native function
-    // ticket.qrcode('example.com');
+    // printer.qrcode('example.com');
 
-    ticket.feed(2);
-    ticket.cut();
-    return ticket;
+    printer.feed(1);
+    printer.cut();
   }
 
   void testPrint(String printerIp, BuildContext ctx) async {
-    final PrinterNetworkManager printerManager = PrinterNetworkManager();
-    printerManager.selectPrinter(printerIp, port: 9100);
-
     // TODO Don't forget to choose printer's paper size
     const PaperSize paper = PaperSize.mm80;
+    final profile = await CapabilityProfile.load();
+    final printer = NetworkPrinter(paper, profile);
 
-    // TEST PRINT
-    // final PosPrintResult res =
-    //     await printerManager.printTicket(await testTicket(paper));
+    final PosPrintResult res = await printer.connect(printerIp, port: 9100);
 
-    // DEMO RECEIPT
-    final PosPrintResult res =
-        await printerManager.printTicket(await demoReceipt(paper));
+    if (res == PosPrintResult.success) {
+      // DEMO RECEIPT
+      await printDemoReceipt(printer);
+      // TEST PRINT
+      // await testReceipt(printer);
+      printer.disconnect();
+    }
 
     final snackBar =
         SnackBar(content: Text(res.msg, textAlign: TextAlign.center));

@@ -1,3 +1,9 @@
+## [4.0.0]
+
+- New code generation concept: instead of generating the whole ticket, commands sent separately for each command
+- `PrinterNetworkManager` replaced by `NetworkPrinter`
+- Bump esc_pos_utils
+
 ## [3.2.9]
 
 - Bump esc_pos_utils

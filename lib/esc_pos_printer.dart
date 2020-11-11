@@ -8,4 +8,4 @@
 library esc_pos_printer;
 
 export './src/enums.dart';
-export './src/printer_network_manager.dart';
+export 'src/network_printer.dart';

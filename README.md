@@ -30,36 +30,31 @@ Here are some [printers tested with this library](printers.md). Please add the m
 ### Simple Ticket with Styles:
 
 ```dart
-Ticket testTicket() {
-  // Using default profile
-  final profile = await CapabilityProfile.load();
-  final Ticket ticket = Ticket(PaperSize.mm80, profile);
+void testReceipt(NetworkPrinter printer) {
+  printer.text(
+        'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
+  printer.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
+      styles: PosStyles(codeTable: 'CP1252'));
+  printer.text('Special 2: blåbærgrød',
+      styles: PosStyles(codeTable: 'CP1252'));
 
-  ticket.text(
-      'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
-  ticket.text('Special 1: àÀ èÈ éÉ ûÛ üÜ çÇ ôÔ',
-      styles: PosStyles(codeTable: PosCodeTable.westEur));
-  ticket.text('Special 2: blåbærgrød',
-      styles: PosStyles(codeTable: PosCodeTable.westEur));
-
-  ticket.text('Bold text', styles: PosStyles(bold: true));
-  ticket.text('Reverse text', styles: PosStyles(reverse: true));
-  ticket.text('Underlined text',
+  printer.text('Bold text', styles: PosStyles(bold: true));
+  printer.text('Reverse text', styles: PosStyles(reverse: true));
+  printer.text('Underlined text',
       styles: PosStyles(underline: true), linesAfter: 1);
-  ticket.text('Align left', styles: PosStyles(align: PosAlign.left));
-  ticket.text('Align center', styles: PosStyles(align: PosAlign.center));
-  ticket.text('Align right',
+  printer.text('Align left', styles: PosStyles(align: PosAlign.left));
+  printer.text('Align center', styles: PosStyles(align: PosAlign.center));
+  printer.text('Align right',
       styles: PosStyles(align: PosAlign.right), linesAfter: 1);
 
-  ticket.text('Text size 200%',
+  printer.text('Text size 200%',
       styles: PosStyles(
         height: PosTextSize.size2,
         width: PosTextSize.size2,
       ));
 
-  ticket.feed(2);
-  ticket.cut();
-  return ticket;
+  printer.feed(2);
+  printer.cut();
 }
 ```
 
@@ -70,9 +65,16 @@ You can find more examples here: [esc_pos_utils](https://github.com/andrey-ushak
 ```dart
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 
-final PrinterNetworkManager printerManager = PrinterNetworkManager();
-printerManager.selectPrinter('192.168.0.123', port: 9100);
-final PosPrintResult res = await printerManager.printTicket(testTicket());
+const PaperSize paper = PaperSize.mm80;
+final profile = await CapabilityProfile.load();
+final printer = NetworkPrinter(paper, profile);
+
+final PosPrintResult res = await printer.connect('192.168.0.123', port: 9100);
+
+if (res == PosPrintResult.success) {
+  testReceipt(printer);
+  printer.disconnect();
+}
 
 print('Print result: ${res.msg}');
 ```
