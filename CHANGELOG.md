@@ -1,3 +1,7 @@
+## [4.0.1]
+
+- `NetworkPrinter`: added `paperSize`, `profile`, `host`, `port` getters
+
 ## [4.0.0]
 
 - New code generation concept: instead of generating the whole ticket, commands sent separately for each command

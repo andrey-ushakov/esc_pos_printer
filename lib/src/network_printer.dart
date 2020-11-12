@@ -14,17 +14,27 @@ import './enums.dart';
 
 /// Network Printer
 class NetworkPrinter {
-  NetworkPrinter(PaperSize paperSize, CapabilityProfile profile,
-      {int spaceBetweenRows = 5}) {
+  NetworkPrinter(this._paperSize, this._profile, {int spaceBetweenRows = 5}) {
     _generator =
         Generator(paperSize, profile, spaceBetweenRows: spaceBetweenRows);
   }
 
+  final PaperSize _paperSize;
+  final CapabilityProfile _profile;
+  String _host;
+  int _port;
   Generator _generator;
   Socket _socket;
 
+  int get port => _port;
+  String get host => _host;
+  PaperSize get paperSize => _paperSize;
+  CapabilityProfile get profile => _profile;
+
   Future<PosPrintResult> connect(String host,
       {int port = 91000, Duration timeout = const Duration(seconds: 5)}) async {
+    _host = host;
+    _port = port;
     try {
       _socket = await Socket.connect('192.168.0.101', port, timeout: timeout);
       _socket.add(_generator.reset());
