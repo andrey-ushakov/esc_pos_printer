@@ -1,3 +1,7 @@
+## [4.0.2]
+
+- Fixed IP bug
+
 ## [4.0.1]
 
 - `NetworkPrinter`: added `paperSize`, `profile`, `host`, `port` getters
