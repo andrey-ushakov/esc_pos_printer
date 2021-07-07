@@ -46,6 +46,8 @@ class NetworkPrinter {
 
   /// [delayMs]: milliseconds to wait after destroying the socket
   void disconnect({int delayMs}) async {
+    // Wait for all buffer to be accepted by the receiver
+    await _socket.flush();
     _socket.destroy();
     if (delayMs != null) {
       await Future.delayed(Duration(milliseconds: delayMs), () => null);
