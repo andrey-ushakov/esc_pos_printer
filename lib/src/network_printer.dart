@@ -30,6 +30,7 @@ class NetworkPrinter {
   String get host => _host;
   PaperSize get paperSize => _paperSize;
   CapabilityProfile get profile => _profile;
+  Socket get socket => _socket;
 
   Future<PosPrintResult> connect(String host,
       {int port = 91000, Duration timeout = const Duration(seconds: 5)}) async {
