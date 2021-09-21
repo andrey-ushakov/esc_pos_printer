@@ -1,3 +1,7 @@
+## [4.1.0]
+
+-Null-Safety
+
 ## [4.0.3]
 
 - Added optional delay param to `disconnect` method
