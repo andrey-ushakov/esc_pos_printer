@@ -4,24 +4,24 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
+  charset_converter: ^1.0.3
   cupertino_icons: ^0.1.2
-  wifi: ^0.1.5
-  ping_discover_network: ^0.2.0+1
-  image: ^2.1.4
   esc_pos_printer:
     path: ../../
-  intl: ^0.16.1
-  qr_flutter: ^3.2.0
-  path_provider: ^1.6.5
   esc_pos_utils: ^1.0.0
+  flutter:
+    sdk: flutter
+  image: ^2.1.4
+  intl: ^0.16.1
+  path_provider: ^1.6.5
+  ping_discover_network: ^0.2.0+1
+  qr_flutter: ^3.2.0
+  wifi: ^0.1.5
   # esc_pos_utils:
   # path: ../../../esc_pos_utils
-  charset_converter: ^1.0.3
 
 dev_dependencies:
   flutter_test:
