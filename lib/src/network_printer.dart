@@ -44,6 +44,11 @@ class NetworkPrinter {
     }
   }
 
+  /// Flush all buffered print commands
+  Future<void> flush() async {
+    await _socket.flush();
+  }
+
   /// [delayMs]: milliseconds to wait after destroying the socket
   void disconnect({int? delayMs}) async {
     _socket.destroy();
