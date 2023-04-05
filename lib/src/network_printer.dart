@@ -6,128 +6,184 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data' show Uint8List;
+
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:image/image.dart';
+import 'package:rxdart/rxdart.dart';
+
 import './enums.dart';
 
 /// Network Printer
 class NetworkPrinter {
-  NetworkPrinter(this._paperSize, this._profile, {int spaceBetweenRows = 5}) {
-    _generator =
-        Generator(paperSize, profile, spaceBetweenRows: spaceBetweenRows);
+  NetworkPrinter() {
+    _stateStream.add(currentState);
   }
-
-  final PaperSize _paperSize;
-  final CapabilityProfile _profile;
-  String? _host;
-  int? _port;
-  late Generator _generator;
-  late Socket _socket;
-
+  Stream<NetworkPrinterState> get state => _stateStream.stream;
+  NetworkPrinterState get currentState => _currentState;
   int? get port => _port;
   String? get host => _host;
-  PaperSize get paperSize => _paperSize;
-  CapabilityProfile get profile => _profile;
 
-  Future<PosPrintResult> connect(String host,
-      {int port = 91000, Duration timeout = const Duration(seconds: 5)}) async {
+  final StreamController<NetworkPrinterState> _stateStream =
+      BehaviorSubject<NetworkPrinterState>();
+  NetworkPrinterState _currentState = NetworkPrinterState.disconnected;
+  String? _host;
+  int? _port;
+  Generator? _generator;
+  Socket? _socket;
+  CapabilityProfile? _profile;
+
+  StreamSubscription<dynamic>? _streamSubscription;
+
+  Future<PosPrintResult> connect(
+    String host, {
+    int port = 91000,
+    PaperSize paperSize = PaperSize.mm80,
+    Duration timeout = const Duration(seconds: 5),
+  }) async {
+    _changeState(NetworkPrinterState.connecting);
+
     _host = host;
     _port = port;
     try {
+      final profile = await _cachedProfile();
+      _generator = Generator(paperSize, profile);
       _socket = await Socket.connect(host, port, timeout: timeout);
-      _socket.add(_generator.reset());
+      _changeState(NetworkPrinterState.connected);
+      _streamSubscription?.cancel();
+      _streamSubscription = null;
+      _streamSubscription = _socket!.listen(
+        (event) {},
+        onDone: () {
+          disconnect();
+        },
+      );
       return Future<PosPrintResult>.value(PosPrintResult.success);
     } catch (e) {
+      _changeState(NetworkPrinterState.disconnected);
       return Future<PosPrintResult>.value(PosPrintResult.timeout);
     }
   }
 
-  /// [delayMs]: milliseconds to wait after destroying the socket
-  void disconnect({int? delayMs}) async {
-    _socket.destroy();
-    if (delayMs != null) {
-      await Future.delayed(Duration(milliseconds: delayMs), () => null);
+  Future<CapabilityProfile> _cachedProfile() async {
+    if (_profile != null) {
+      return _profile!;
+    }
+    _profile = await CapabilityProfile.load();
+    return _profile!;
+  }
+
+  void disconnect() async {
+    _socket?.destroy();
+    _socket = null;
+    _streamSubscription?.cancel();
+    _streamSubscription = null;
+    _changeState(NetworkPrinterState.disconnected);
+  }
+
+  void _changeState(NetworkPrinterState state) {
+    if (_currentState != state) {
+      _currentState = state;
+      _stateStream.add(_currentState);
+    }
+  }
+
+  bool _sendCommand(List<int>? data) {
+    if (_socket != null && data != null) {
+      _socket!.add(data);
+      return true;
+    } else {
+      return false;
     }
   }
 
   // ************************ Printer Commands ************************
-  void reset() {
-    _socket.add(_generator.reset());
+
+  bool reset() {
+    return _sendCommand(_generator?.reset());
   }
 
-  void text(
+  bool text(
     String text, {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
     bool containsChinese = false,
     int? maxCharsPerLine,
   }) {
-    _socket.add(_generator.text(text,
+    return _sendCommand(
+      _generator?.text(
+        text,
         styles: styles,
         linesAfter: linesAfter,
         containsChinese: containsChinese,
-        maxCharsPerLine: maxCharsPerLine));
+        maxCharsPerLine: maxCharsPerLine,
+      ),
+    );
   }
 
-  void setGlobalCodeTable(String codeTable) {
-    _socket.add(_generator.setGlobalCodeTable(codeTable));
+  bool setGlobalCodeTable(String codeTable) {
+    return _sendCommand(_generator?.setGlobalCodeTable(codeTable));
   }
 
-  void setGlobalFont(PosFontType font, {int? maxCharsPerLine}) {
-    _socket
-        .add(_generator.setGlobalFont(font, maxCharsPerLine: maxCharsPerLine));
+  bool setGlobalFont(PosFontType font, {int? maxCharsPerLine}) {
+    return _sendCommand(
+      _generator?.setGlobalFont(
+        font,
+        maxCharsPerLine: maxCharsPerLine,
+      ),
+    );
   }
 
-  void setStyles(PosStyles styles, {bool isKanji = false}) {
-    _socket.add(_generator.setStyles(styles, isKanji: isKanji));
+  bool setStyles(PosStyles styles, {bool isKanji = false}) {
+    return _sendCommand(_generator?.setStyles(styles, isKanji: isKanji));
   }
 
-  void rawBytes(List<int> cmd, {bool isKanji = false}) {
-    _socket.add(_generator.rawBytes(cmd, isKanji: isKanji));
+  bool rawBytes(List<int> cmd, {bool isKanji = false}) {
+    return _sendCommand(_generator?.rawBytes(cmd, isKanji: isKanji));
   }
 
-  void emptyLines(int n) {
-    _socket.add(_generator.emptyLines(n));
+  bool emptyLines(int n) {
+    return _sendCommand(_generator?.emptyLines(n));
   }
 
-  void feed(int n) {
-    _socket.add(_generator.feed(n));
+  bool feed(int n) {
+    return _sendCommand(_generator?.feed(n));
   }
 
-  void cut({PosCutMode mode = PosCutMode.full}) {
-    _socket.add(_generator.cut(mode: mode));
+  bool cut({PosCutMode mode = PosCutMode.full}) {
+    return _sendCommand(_generator?.cut(mode: mode));
   }
 
-  void printCodeTable({String? codeTable}) {
-    _socket.add(_generator.printCodeTable(codeTable: codeTable));
+  bool printCodeTable({String? codeTable}) {
+    return _sendCommand(_generator?.printCodeTable(codeTable: codeTable));
   }
 
-  void beep({int n = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
-    _socket.add(_generator.beep(n: n, duration: duration));
+  bool beep({int n = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
+    return _sendCommand(_generator?.beep(n: n, duration: duration));
   }
 
-  void reverseFeed(int n) {
-    _socket.add(_generator.reverseFeed(n));
+  bool reverseFeed(int n) {
+    return _sendCommand(_generator?.reverseFeed(n));
   }
 
-  void row(List<PosColumn> cols) {
-    _socket.add(_generator.row(cols));
+  bool row(List<PosColumn> cols) {
+    return _sendCommand(_generator?.row(cols));
   }
 
-  void image(Image imgSrc, {PosAlign align = PosAlign.center}) {
-    _socket.add(_generator.image(imgSrc, align: align));
+  bool image(Image imgSrc, {PosAlign align = PosAlign.center}) {
+    return _sendCommand(_generator?.image(imgSrc, align: align));
   }
 
-  void imageRaster(
+  bool imageRaster(
     Image image, {
     PosAlign align = PosAlign.center,
     bool highDensityHorizontal = true,
     bool highDensityVertical = true,
     PosImageFn imageFn = PosImageFn.bitImageRaster,
   }) {
-    _socket.add(_generator.imageRaster(
+    return _sendCommand(_generator?.imageRaster(
       image,
       align: align,
       highDensityHorizontal: highDensityHorizontal,
@@ -136,7 +192,7 @@ class NetworkPrinter {
     ));
   }
 
-  void barcode(
+  bool barcode(
     Barcode barcode, {
     int? width,
     int? height,
@@ -144,7 +200,7 @@ class NetworkPrinter {
     BarcodeText textPos = BarcodeText.below,
     PosAlign align = PosAlign.center,
   }) {
-    _socket.add(_generator.barcode(
+    return _sendCommand(_generator?.barcode(
       barcode,
       width: width,
       height: height,
@@ -154,30 +210,32 @@ class NetworkPrinter {
     ));
   }
 
-  void qrcode(
+  bool qrcode(
     String text, {
     PosAlign align = PosAlign.center,
     QRSize size = QRSize.Size4,
     QRCorrection cor = QRCorrection.L,
   }) {
-    _socket.add(_generator.qrcode(text, align: align, size: size, cor: cor));
+    return _sendCommand(
+      _generator?.qrcode(text, align: align, size: size, cor: cor),
+    );
   }
 
-  void drawer({PosDrawer pin = PosDrawer.pin2}) {
-    _socket.add(_generator.drawer(pin: pin));
+  bool drawer({PosDrawer pin = PosDrawer.pin2}) {
+    return _sendCommand(_generator?.drawer(pin: pin));
   }
 
-  void hr({String ch = '-', int? len, int linesAfter = 0}) {
-    _socket.add(_generator.hr(ch: ch, linesAfter: linesAfter));
+  bool hr({String ch = '-', int? len, int linesAfter = 0}) {
+    return _sendCommand(_generator?.hr(ch: ch, linesAfter: linesAfter));
   }
 
-  void textEncoded(
+  bool textEncoded(
     Uint8List textBytes, {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
     int? maxCharsPerLine,
   }) {
-    _socket.add(_generator.textEncoded(
+    return _sendCommand(_generator?.textEncoded(
       textBytes,
       styles: styles,
       linesAfter: linesAfter,
