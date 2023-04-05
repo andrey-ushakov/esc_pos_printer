@@ -4,14 +4,11 @@ PODS:
   - Flutter (1.0.0)
   - path_provider (0.0.1):
     - Flutter
-  - wifi (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
   - charset_converter (from `.symlinks/plugins/charset_converter/ios`)
   - Flutter (from `Flutter`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
-  - wifi (from `.symlinks/plugins/wifi/ios`)
 
 EXTERNAL SOURCES:
   charset_converter:
@@ -20,15 +17,12 @@ EXTERNAL SOURCES:
     :path: Flutter
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
-  wifi:
-    :path: ".symlinks/plugins/wifi/ios"
 
 SPEC CHECKSUMS:
   charset_converter: 215c7b04932ec2b9ba43be96a9bc34afed3e5322
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  wifi: d7d77c94109e36c4175d845f0a5964eadba71060
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.12.0
