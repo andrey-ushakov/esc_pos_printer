@@ -35,4 +35,4 @@ class PosPrintResult {
   }
 }
 
-enum NetworkPrinterState { disconnected, connecting, connected }
+enum PosPrinterState { disconnected, connecting, connected }

@@ -21,14 +21,14 @@ class NetworkPrinter {
   NetworkPrinter() {
     _stateStream.add(currentState);
   }
-  Stream<NetworkPrinterState> get state => _stateStream.stream;
-  NetworkPrinterState get currentState => _currentState;
+  Stream<PosPrinterState> get state => _stateStream.stream;
+  PosPrinterState get currentState => _currentState;
   int? get port => _port;
   String? get host => _host;
 
-  final StreamController<NetworkPrinterState> _stateStream =
-      BehaviorSubject<NetworkPrinterState>();
-  NetworkPrinterState _currentState = NetworkPrinterState.disconnected;
+  final StreamController<PosPrinterState> _stateStream =
+      BehaviorSubject<PosPrinterState>();
+  PosPrinterState _currentState = PosPrinterState.disconnected;
   String? _host;
   int? _port;
   Generator? _generator;
@@ -41,9 +41,10 @@ class NetworkPrinter {
     String host, {
     int port = 91000,
     PaperSize paperSize = PaperSize.mm80,
+    int maxCharsPerLine = 42,
     Duration timeout = const Duration(seconds: 5),
   }) async {
-    _changeState(NetworkPrinterState.connecting);
+    _changeState(PosPrinterState.connecting);
 
     _host = host;
     _port = port;
@@ -51,7 +52,7 @@ class NetworkPrinter {
       final profile = await _cachedProfile();
       _generator = Generator(paperSize, profile);
       _socket = await Socket.connect(host, port, timeout: timeout);
-      _changeState(NetworkPrinterState.connected);
+      _changeState(PosPrinterState.connected);
       _streamSubscription?.cancel();
       _streamSubscription = null;
       _streamSubscription = _socket!.listen(
@@ -60,9 +61,11 @@ class NetworkPrinter {
           disconnect();
         },
       );
+      _sendCommand(_generator?.setGlobalFont(PosFontType.fontA,
+          maxCharsPerLine: maxCharsPerLine));
       return Future<PosPrintResult>.value(PosPrintResult.success);
     } catch (e) {
-      _changeState(NetworkPrinterState.disconnected);
+      _changeState(PosPrinterState.disconnected);
       return Future<PosPrintResult>.value(PosPrintResult.timeout);
     }
   }
@@ -80,10 +83,10 @@ class NetworkPrinter {
     _socket = null;
     _streamSubscription?.cancel();
     _streamSubscription = null;
-    _changeState(NetworkPrinterState.disconnected);
+    _changeState(PosPrinterState.disconnected);
   }
 
-  void _changeState(NetworkPrinterState state) {
+  void _changeState(PosPrinterState state) {
     if (_currentState != state) {
       _currentState = state;
       _stateStream.add(_currentState);
@@ -125,15 +128,6 @@ class NetworkPrinter {
 
   bool setGlobalCodeTable(String codeTable) {
     return _sendCommand(_generator?.setGlobalCodeTable(codeTable));
-  }
-
-  bool setGlobalFont(PosFontType font, {int? maxCharsPerLine}) {
-    return _sendCommand(
-      _generator?.setGlobalFont(
-        font,
-        maxCharsPerLine: maxCharsPerLine,
-      ),
-    );
   }
 
   bool setStyles(PosStyles styles, {bool isKanji = false}) {
@@ -226,7 +220,11 @@ class NetworkPrinter {
   }
 
   bool hr({String ch = '-', int? len, int linesAfter = 0}) {
-    return _sendCommand(_generator?.hr(ch: ch, linesAfter: linesAfter));
+    return _sendCommand(_generator?.hr(
+      ch: ch,
+      linesAfter: linesAfter,
+      len: len,
+    ));
   }
 
   bool textEncoded(

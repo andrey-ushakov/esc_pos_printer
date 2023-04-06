@@ -97,12 +97,13 @@ packages:
     source: path
     version: "4.1.0"
   esc_pos_utils:
-    dependency: "direct main"
+    dependency: transitive
     description:
-      name: esc_pos_utils
-      sha256: "8ec0013d7a7f1e790ced6b09b95ce3bf2c6f9468a3e2bc49ece000761d86c6f8"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: ca055bd2537760e73a91a2e2cf072b56a80e9d7a
+      url: "https://github.com/SzymonGesicki/esc_pos_utils.git"
+    source: git
     version: "1.1.0"
   fake_async:
     dependency: transitive
