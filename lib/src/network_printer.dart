@@ -25,6 +25,7 @@ class NetworkPrinter {
   PosPrinterState get currentState => _currentState;
   int? get port => _port;
   String? get host => _host;
+  PaperSize get currentPaperSize => _currentPaperSize;
 
   final StreamController<PosPrinterState> _stateStream =
       BehaviorSubject<PosPrinterState>();
@@ -34,6 +35,7 @@ class NetworkPrinter {
   Generator? _generator;
   Socket? _socket;
   CapabilityProfile? _profile;
+  PaperSize _currentPaperSize = PaperSize.mm80;
 
   StreamSubscription<dynamic>? _streamSubscription;
 
@@ -45,7 +47,7 @@ class NetworkPrinter {
     Duration timeout = const Duration(seconds: 5),
   }) async {
     _changeState(PosPrinterState.connecting);
-
+    _currentPaperSize = paperSize;
     _host = host;
     _port = port;
     try {
