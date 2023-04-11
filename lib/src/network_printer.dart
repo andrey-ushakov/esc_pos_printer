@@ -18,20 +18,18 @@ import './enums.dart';
 
 /// Network Printer
 class NetworkPrinter {
-  NetworkPrinter() {
+  NetworkPrinter({required this.host, this.port = 9100}) {
     _stateStream.add(currentState);
   }
   Stream<PosPrinterState> get state => _stateStream.stream;
   PosPrinterState get currentState => _currentState;
-  int? get port => _port;
-  String? get host => _host;
+  final int port;
+  final String host;
   PaperSize get currentPaperSize => _currentPaperSize;
 
   final StreamController<PosPrinterState> _stateStream =
       BehaviorSubject<PosPrinterState>();
   PosPrinterState _currentState = PosPrinterState.disconnected;
-  String? _host;
-  int? _port;
   Generator? _generator;
   Socket? _socket;
   CapabilityProfile? _profile;
@@ -39,17 +37,13 @@ class NetworkPrinter {
 
   StreamSubscription<dynamic>? _streamSubscription;
 
-  Future<PosPrintResult> connect(
-    String host, {
-    int port = 91000,
+  Future<PosPrintResult> connect({
     PaperSize paperSize = PaperSize.mm80,
     int maxCharsPerLine = 42,
     Duration timeout = const Duration(seconds: 5),
   }) async {
     _changeState(PosPrinterState.connecting);
     _currentPaperSize = paperSize;
-    _host = host;
-    _port = port;
     try {
       final profile = await _cachedProfile();
       _generator = Generator(paperSize, profile);

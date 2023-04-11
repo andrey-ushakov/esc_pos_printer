@@ -31,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final NetworkPrinter printer = NetworkPrinter();
+  final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.52");
 
   Future<void> testReceipt() async {
     printer.text(
@@ -269,8 +269,8 @@ class _MyHomePageState extends State<MyHomePage> {
     printer.cut();
   }
 
-  void connectAndPrint(String printerIp) async {
-    final PosPrintResult res = await printer.connect(printerIp, port: 9100);
+  void connectAndPrint() async {
+    final PosPrintResult res = await printer.connect();
 
     if (res == PosPrintResult.success) {
       // DEMO RECEIPT
@@ -285,8 +285,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void connect(String printerIp) async {
-    final PosPrintResult res = await printer.connect(printerIp, port: 9100);
+  void connect() async {
+    final PosPrintResult res = await printer.connect();
     final snackBar =
         SnackBar(content: Text(res.msg, textAlign: TextAlign.center));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -298,7 +298,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    const host = "192.168.0.52";
     return Scaffold(
       appBar: AppBar(
         title: const Text('Discover Printers'),
@@ -317,7 +316,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(width: 10),
             TextButton(
               onPressed: () {
-                connectAndPrint(host);
+                connectAndPrint();
               },
               child: const Text("connect and print"),
             ),
@@ -331,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(width: 10),
             TextButton(
               onPressed: () {
-                connect(host);
+                connect();
               },
               child: const Text("connect"),
             ),
