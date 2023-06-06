@@ -27,8 +27,7 @@ class NetworkPrinter {
   final String host;
   PaperSize get currentPaperSize => _currentPaperSize;
 
-  final StreamController<PosPrinterState> _stateStream =
-      BehaviorSubject<PosPrinterState>();
+  final StreamController<PosPrinterState> _stateStream = BehaviorSubject<PosPrinterState>();
   PosPrinterState _currentState = PosPrinterState.disconnected;
   Generator? _generator;
   Socket? _socket;
@@ -41,6 +40,8 @@ class NetworkPrinter {
     PaperSize paperSize = PaperSize.mm80,
     int maxCharsPerLine = 42,
     Duration timeout = const Duration(seconds: 5),
+    int leftMargin = 8,
+    int dpi = 203,
   }) async {
     _changeState(PosPrinterState.connecting);
     _currentPaperSize = paperSize;
@@ -57,8 +58,21 @@ class NetworkPrinter {
           disconnect();
         },
       );
-      _sendCommand(_generator?.setGlobalFont(PosFontType.fontA,
-          maxCharsPerLine: maxCharsPerLine));
+      // reset settings
+      _sendCommand([27, 64]);
+      // character set
+      _sendCommand([27, 82, 0]);
+      // set global code table to Windows 1255
+      _sendCommand(_generator?.setGlobalCodeTable('CP1255'));
+
+      // Calculate dots based on dpi (dots per inch)
+      // 1 inch is approximately 25.4 millimeters
+      final dots = (leftMargin * dpi / 25.4).round();
+      final nL = dots % 256;
+      final nH = (dots / 256).floor();
+      // set left margin
+      _sendCommand([29, 76, nL, nH]);
+
       return Future<PosPrintResult>.value(PosPrintResult.success);
     } catch (e) {
       _changeState(PosPrinterState.disconnected);

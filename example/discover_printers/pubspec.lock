@@ -101,7 +101,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: ca055bd2537760e73a91a2e2cf072b56a80e9d7a
+      resolved-ref: "88da987d81214c9ec8924c8688784f150cd20d1c"
       url: "https://github.com/SzymonGesicki/esc_pos_utils.git"
     source: git
     version: "1.1.0"
