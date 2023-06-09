@@ -85,8 +85,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: de51a1abb937613050b080233eeb21aee11d7b5f
-      resolved-ref: de51a1abb937613050b080233eeb21aee11d7b5f
+      ref: f3f74cb982954846e25f47bbddf3d9f9b3c032fe
+      resolved-ref: f3f74cb982954846e25f47bbddf3d9f9b3c032fe
       url: "https://github.com/SzymonGesicki/esc_pos_utils.git"
     source: git
     version: "1.1.0"
