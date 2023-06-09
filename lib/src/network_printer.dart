@@ -47,7 +47,7 @@ class NetworkPrinter {
     _currentPaperSize = paperSize;
     try {
       final profile = await _cachedProfile();
-      _generator = Generator(paperSize, profile);
+      _generator = Generator(paperSize, profile, maxCharsPerLine);
       _socket = await Socket.connect(host, port, timeout: timeout);
       _changeState(PosPrinterState.connected);
       _streamSubscription?.cancel();
