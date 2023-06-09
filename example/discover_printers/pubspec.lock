@@ -108,8 +108,8 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: f3f74cb982954846e25f47bbddf3d9f9b3c032fe
-      resolved-ref: f3f74cb982954846e25f47bbddf3d9f9b3c032fe
+      ref: "5c8c264dd01d90494c625748ab5664d8cc0c1127"
+      resolved-ref: "5c8c264dd01d90494c625748ab5664d8cc0c1127"
       url: "https://github.com/SzymonGesicki/esc_pos_utils.git"
     source: git
     version: "1.1.0"

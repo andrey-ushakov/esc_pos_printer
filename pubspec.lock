@@ -69,27 +69,18 @@ packages:
     dependency: transitive
     description:
       name: csslib
-      sha256: f857285c8dc0b4f2f77b49a1c083ff8c75223a7549de20f3e607df58cf497a43
+      sha256: "706b5707578e0c1b4b7550f64078f0a0f19dec3f50a178ffae7006b0a9ca58fb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.17.0"
+    version: "1.0.0"
   enough_convert:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: enough_convert
       sha256: c67d85ca21aaa0648f155907362430701db41f7ec8e6501a58ad9cd9d8569d01
       url: "https://pub.dev"
     source: hosted
     version: "1.6.0"
-  esc_pos_utils:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "5c8c264dd01d90494c625748ab5664d8cc0c1127"
-      resolved-ref: "5c8c264dd01d90494c625748ab5664d8cc0c1127"
-      url: "https://github.com/SzymonGesicki/esc_pos_utils.git"
-    source: git
-    version: "1.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -109,7 +100,7 @@ packages:
     source: sdk
     version: "0.0.0"
   gbk_codec:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: gbk_codec
       sha256: "3af5311fc9393115e3650ae6023862adf998051a804a08fb804f042724999f61"
@@ -117,7 +108,7 @@ packages:
     source: hosted
     version: "0.4.0"
   hex:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: hex
       sha256: "4e7cd54e4b59ba026432a6be2dd9d96e4c5205725194997193bf871703b82c4a"
@@ -128,10 +119,10 @@ packages:
     dependency: transitive
     description:
       name: html
-      sha256: bfef906cbd4e78ef49ae511d9074aebd1d2251482ef601a280973e8b58b51bbf
+      sha256: "3a7812d5bcd2894edf53dfaf8cd640876cf6cef50a8f238745c8b8120ea74d3a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.15.0"
+    version: "0.15.4"
   image:
     dependency: "direct main"
     description:
@@ -274,5 +265,5 @@ packages:
     source: hosted
     version: "5.3.0"
 sdks:
-  dart: ">=2.18.0 <3.0.0"
+  dart: ">=2.19.0 <3.0.0"
   flutter: ">=1.17.0"

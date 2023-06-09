@@ -2,9 +2,6 @@
 
 import 'package:flutter/material.dart' hide Image;
 import 'package:esc_pos_printer/esc_pos_printer.dart';
-import 'package:flutter/services.dart';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
-import 'package:image/image.dart';
 
 void main() => runApp(const MyApp());
 
@@ -35,19 +32,20 @@ class _MyHomePageState extends State<MyHomePage> {
   // final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.54");
 
   Future<void> testReceipt() async {
-    printer.text('Text size 200%',
-        styles: const PosStyles(
-          height: PosTextSize.size2,
-          width: PosTextSize.size2,
-        ));
+    // printer.text('Text size 200%');
 
-    // // Print image
-    final ByteData data = await rootBundle.load('assets/logo.png');
-    final Uint8List bytes = data.buffer.asUint8List();
-    final Image image = decodeImage(bytes)!;
-    printer.image(image);
+    printer.row([
+      PosColumn(text: "test1", styles: const PosStyles(align: PosAlign.left), width: 2),
+      PosColumn(text: "test2", styles: const PosStyles(align: PosAlign.right), width: 10),
+    ]);
 
-    printer.feed(2);
+    // // // Print image
+    // final ByteData data = await rootBundle.load('assets/logo.png');
+    // final Uint8List bytes = data.buffer.asUint8List();
+    // final Image image = decodeImage(bytes)!;
+    // printer.image(image);
+
+    // printer.feed(2);
     printer.cut();
   }
 

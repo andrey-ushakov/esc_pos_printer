@@ -10,7 +10,13 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data' show Uint8List;
 
-import 'package:esc_pos_utils/esc_pos_utils.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/barcode.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/capability_profile.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/enums.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/generator.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/pos_column.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/pos_styles.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/qrcode.dart';
 import 'package:image/image.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -67,11 +73,11 @@ class NetworkPrinter {
 
       // Calculate dots based on dpi (dots per inch)
       // 1 inch is approximately 25.4 millimeters
-      final dots = (leftMargin * dpi / 25.4).round();
-      final nL = dots % 256;
-      final nH = (dots / 256).floor();
-      // set left margin
-      _sendCommand([29, 76, nL, nH]);
+      // final dots = (leftMargin * dpi / 25.4).round();
+      // final nL = dots % 256;
+      // final nH = (dots / 256).floor();
+      // // set left margin
+      // _sendCommand([29, 76, nL, nH]);
 
       return Future<PosPrintResult>.value(PosPrintResult.success);
     } catch (e) {

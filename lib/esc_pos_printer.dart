@@ -7,5 +7,12 @@
  */
 library esc_pos_printer;
 
+export '/esc_pos_utils/src/barcode.dart';
+export '/esc_pos_utils/src/capability_profile.dart';
+export '/esc_pos_utils/src/enums.dart';
+export '/esc_pos_utils/src/generator.dart';
+export '/esc_pos_utils/src/pos_column.dart';
+export '/esc_pos_utils/src/pos_styles.dart';
+export '/esc_pos_utils/src/qrcode.dart';
 export 'src/enums.dart';
 export 'src/network_printer.dart';

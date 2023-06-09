@@ -10,12 +10,11 @@ dependencies:
   charset_converter: ^2.0.0
   flutter:
     sdk: flutter
+  enough_convert: ^1.6.0
+  gbk_codec: ^0.4.0
+  hex: ^0.2.0
   image: ^3.0.2
   rxdart: ^0.27.7
-  esc_pos_utils:
-    git:
-      url: https://github.com/SzymonGesicki/esc_pos_utils.git
-      ref: 5c8c264dd01d90494c625748ab5664d8cc0c1127 
 
 dev_dependencies:
   flutter_test:
