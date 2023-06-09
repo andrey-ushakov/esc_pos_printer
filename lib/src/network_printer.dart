@@ -44,9 +44,9 @@ class NetworkPrinter {
 
   Future<PosPrintResult> connect({
     PaperSize paperSize = PaperSize.mm80,
-    int maxCharsPerLine = 42,
+    int maxCharsPerLine = 44,
     Duration timeout = const Duration(seconds: 5),
-    int leftMargin = 8,
+    int leftMargin = 6,
     int dpi = 203,
   }) async {
     _changeState(PosPrinterState.connecting);
@@ -73,11 +73,11 @@ class NetworkPrinter {
 
       // Calculate dots based on dpi (dots per inch)
       // 1 inch is approximately 25.4 millimeters
-      // final dots = (leftMargin * dpi / 25.4).round();
-      // final nL = dots % 256;
-      // final nH = (dots / 256).floor();
-      // // set left margin
-      // _sendCommand([29, 76, nL, nH]);
+      final dots = (leftMargin * dpi / 25.4).round();
+      final nL = dots % 256;
+      final nH = (dots / 256).floor();
+      // set left margin
+      _sendCommand([29, 76, nL, nH]);
 
       return Future<PosPrintResult>.value(PosPrintResult.success);
     } catch (e) {
