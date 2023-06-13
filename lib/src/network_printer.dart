@@ -64,10 +64,14 @@ class NetworkPrinter {
           disconnect();
         },
       );
+      // set print position to the beginning of the line
+      _sendCommand([10]);
       // reset settings
       _sendCommand([27, 64]);
-      // character set
-      _sendCommand([27, 82, 0]);
+      // enter standard mode
+      _sendCommand([27, 83]);
+      // character set hebrew
+      _sendCommand([27, 82, 7]);
       // set global code table to Windows 1255
       _sendCommand(_generator?.setGlobalCodeTable('CP1255'));
 
@@ -76,6 +80,7 @@ class NetworkPrinter {
       final dots = (leftMargin * dpi / 25.4).round();
       final nL = dots % 256;
       final nH = (dots / 256).floor();
+
       // set left margin
       _sendCommand([29, 76, nL, nH]);
 

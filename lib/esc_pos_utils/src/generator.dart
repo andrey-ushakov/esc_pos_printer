@@ -79,34 +79,6 @@ class Generator {
     return Uint8List.fromList(Latin8Codec(allowInvalid: true).encode(data));
   }
 
-  List _getLexemes(String text) {
-    final List<String> lexemes = [];
-    final List<bool> isLexemeChinese = [];
-    int start = 0;
-    int end = 0;
-    bool curLexemeChinese = _isChinese(text[0]);
-    for (var i = 1; i < text.length; ++i) {
-      if (curLexemeChinese == _isChinese(text[i])) {
-        end += 1;
-      } else {
-        lexemes.add(text.substring(start, end + 1));
-        isLexemeChinese.add(curLexemeChinese);
-        start = i;
-        end = i;
-        curLexemeChinese = !curLexemeChinese;
-      }
-    }
-    lexemes.add(text.substring(start, end + 1));
-    isLexemeChinese.add(curLexemeChinese);
-
-    return <dynamic>[lexemes, isLexemeChinese];
-  }
-
-  /// Break text into chinese/non-chinese lexemes
-  bool _isChinese(String ch) {
-    return ch.codeUnitAt(0) > 255;
-  }
-
   /// Generate multiple bytes for a number: In lower and higher parts, or more parts as needed.
   ///
   /// [value] Input number
@@ -461,83 +433,36 @@ class Generator {
       final double toPos = _colIndToPosition(colInd + cols[i].width) - spaceBetweenRows;
       int maxCharactersNb = ((toPos - fromPos) / charWidth).floor();
 
-      if (!cols[i].containsChinese) {
-        // CASE 1: containsChinese = false
-        Uint8List encodedToPrint =
-            cols[i].textEncoded != null ? cols[i].textEncoded! : _encode(cols[i].text);
+      Uint8List encodedToPrint =
+          cols[i].textEncoded != null ? cols[i].textEncoded! : _encode(cols[i].text);
 
-        // If the col's content is too long, split it to the next row
-        int realCharactersNb = encodedToPrint.length;
-        if (realCharactersNb > maxCharactersNb) {
-          // Print max possible and split to the next row
-          Uint8List encodedToPrintNextRow = encodedToPrint.sublist(maxCharactersNb);
-          encodedToPrint = encodedToPrint.sublist(0, maxCharactersNb);
-          isNextRow = true;
-          nextRow.add(PosColumn(
-              textEncoded: encodedToPrintNextRow, width: cols[i].width, styles: cols[i].styles));
-        } else {
-          // Insert an empty col
-          nextRow.add(PosColumn(text: '', width: cols[i].width, styles: cols[i].styles));
-        }
-        // end rows splitting
-        bytes += _text(
-          encodedToPrint,
-          styles: cols[i].styles,
-          colInd: colInd,
-          colWidth: cols[i].width,
-        );
+      // If the col's content is too long, split it to the next row
+      int realCharactersNb = encodedToPrint.length;
+
+      if (realCharactersNb > maxCharactersNb) {
+        // Print max possible and split to the next row
+        Uint8List encodedToPrintNextRow = encodedToPrint.sublist(maxCharactersNb);
+        encodedToPrint = encodedToPrint.sublist(0, maxCharactersNb);
+        isNextRow = true;
+        nextRow.add(PosColumn(
+            textEncoded: encodedToPrintNextRow, width: cols[i].width, styles: cols[i].styles));
       } else {
-        // CASE 1: containsChinese = true
-        // Split text into multiple lines if it too long
-        int counter = 0;
-        int splitPos = 0;
-        for (int p = 0; p < cols[i].text.length; ++p) {
-          final int w = _isChinese(cols[i].text[p]) ? 2 : 1;
-          if (counter + w >= maxCharactersNb) {
-            break;
-          }
-          counter += w;
-          splitPos += 1;
-        }
-        String toPrintNextRow = cols[i].text.substring(splitPos);
-        String toPrint = cols[i].text.substring(0, splitPos);
-
-        if (toPrintNextRow.isNotEmpty) {
-          isNextRow = true;
-          nextRow.add(PosColumn(
-              text: toPrintNextRow,
-              containsChinese: true,
-              width: cols[i].width,
-              styles: cols[i].styles));
-        } else {
-          // Insert an empty col
-          nextRow.add(PosColumn(text: '', width: cols[i].width, styles: cols[i].styles));
-        }
-
-        // Print current row
-        final list = _getLexemes(toPrint);
-        final List<String> lexemes = list[0];
-        final List<bool> isLexemeChinese = list[1];
-
-        // Print each lexeme using codetable OR kanji
-        for (var j = 0; j < lexemes.length; ++j) {
-          bytes += _text(
-            _encode(lexemes[j], isKanji: isLexemeChinese[j]),
-            styles: cols[i].styles,
-            colInd: colInd,
-            colWidth: cols[i].width,
-            isKanji: isLexemeChinese[j],
-          );
-          // Define the absolute position only once (we print one line only)
-          // colInd = null;
-        }
+        // Insert an empty col
+        nextRow.add(PosColumn(text: '', width: cols[i].width, styles: cols[i].styles));
       }
+      // end rows splitting
+      bytes += _text(
+        encodedToPrint,
+        styles: cols[i].styles,
+        colInd: colInd,
+        colWidth: cols[i].width,
+      );
     }
 
     bytes += emptyLines(1);
 
     if (isNextRow) {
-      row(nextRow);
+      bytes += row(nextRow);
     }
     return bytes;
   }

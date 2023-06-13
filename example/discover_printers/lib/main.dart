@@ -32,12 +32,22 @@ class _MyHomePageState extends State<MyHomePage> {
   // final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.54");
 
   Future<void> testReceipt() async {
-    // printer.text('Text size 200%');
-
     printer.row([
       PosColumn(text: "test1", styles: const PosStyles(align: PosAlign.left), width: 2),
-      PosColumn(text: "test2", styles: const PosStyles(align: PosAlign.right), width: 10),
+      PosColumn(text: "test2 ", styles: const PosStyles(align: PosAlign.right), width: 10),
     ]);
+    printer.row([
+      PosColumn(
+          text: "test1 fsdkjfhsd kjfhds kjfhdks jhpp",
+          styles: const PosStyles(align: PosAlign.left),
+          width: 2),
+      PosColumn(
+          text: "test2 fskjd jhgf jhgfhf hf h q w e r t y u io p a s d f g h j kl",
+          styles: const PosStyles(align: PosAlign.right),
+          width: 10),
+    ]);
+
+    printer.hr();
 
     // // // Print image
     // final ByteData data = await rootBundle.load('assets/logo.png');
@@ -50,7 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void connectAndPrint() async {
-    final PosPrintResult res = await printer.connect();
+    final PosPrintResult res = await printer.connect(
+      paperSize: PaperSize.custom(510),
+      leftMargin: 0,
+      dpi: 203,
+      maxCharsPerLine: 42,
+    );
 
     if (res == PosPrintResult.success) {
       // DEMO RECEIPT
