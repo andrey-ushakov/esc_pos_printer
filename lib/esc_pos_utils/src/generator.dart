@@ -633,11 +633,16 @@ class Generator {
 
   /// Print horizontal full width separator
   /// If [len] is null, then it will be defined according to the paper width
-  List<int> hr({String ch = '-', int? len, int linesAfter = 0}) {
+  List<int> hr({
+    String ch = '-',
+    int? len,
+    int linesAfter = 0,
+    PosStyles styles = const PosStyles(),
+  }) {
     List<int> bytes = [];
     int n = len ?? _maxCharsPerLine ?? _getMaxCharsPerLine(_styles.fontType);
     String ch1 = ch.length == 1 ? ch : ch[0];
-    bytes += text(List.filled(n, ch1).join(), linesAfter: linesAfter);
+    bytes += text(List.filled(n, ch1).join(), linesAfter: linesAfter, styles: styles);
     return bytes;
   }
 

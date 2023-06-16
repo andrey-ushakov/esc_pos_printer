@@ -244,11 +244,17 @@ class NetworkPrinter {
     return _sendCommand(_generator?.drawer(pin: pin));
   }
 
-  bool hr({String ch = '-', int? len, int linesAfter = 0}) {
+  bool hr({
+    String ch = '-',
+    int? len,
+    int linesAfter = 0,
+    PosStyles styles = const PosStyles(),
+  }) {
     return _sendCommand(_generator?.hr(
       ch: ch,
       linesAfter: linesAfter,
       len: len,
+      styles: styles,
     ));
   }
 
