@@ -74,6 +74,8 @@ class NetworkPrinter {
       _sendCommand([27, 82, 7]);
       // set global code table to Windows 1255
       _sendCommand(_generator?.setGlobalCodeTable('CP1255'));
+      // set absolute print position
+      _sendCommand([27, 36, 0, 0]);
 
       // Calculate dots based on dpi (dots per inch)
       // 1 inch is approximately 25.4 millimeters
