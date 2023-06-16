@@ -55,6 +55,7 @@ class NetworkPrinter {
       final profile = await _cachedProfile();
       _generator = Generator(paperSize, profile, maxCharsPerLine);
       _socket = await Socket.connect(host, port, timeout: timeout);
+
       _changeState(PosPrinterState.connected);
       _streamSubscription?.cancel();
       _streamSubscription = null;
@@ -64,6 +65,7 @@ class NetworkPrinter {
           disconnect();
         },
       );
+
       // set print position to the beginning of the line
       _sendCommand([10]);
       // reset settings

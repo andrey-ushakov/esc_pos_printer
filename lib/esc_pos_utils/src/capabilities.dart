@@ -1,4 +1,6 @@
-{
+// ignore_for_file: prefer_single_quotes
+
+final capabilitiesJosn = {
   "profiles": {
     "default": {
       "codePages": {
@@ -69,7 +71,6 @@
       "model": "Default",
       "description": "Default ESC/POS profile"
     },
-
     "XP-N160I": {
       "codePages": {
         "0": "CP437",
@@ -144,7 +145,6 @@
       "model": "XP-N160I",
       "description": ""
     },
-
     "RP80USE": {
       "codePages": {
         "0": "CP437",
@@ -195,7 +195,6 @@
       "model": "RP80USE",
       "description": ""
     },
-
     "TP806L": {
       "codePages": {
         "0": "PC437",
@@ -222,4 +221,4 @@
       "description": ""
     }
   }
-}
+};

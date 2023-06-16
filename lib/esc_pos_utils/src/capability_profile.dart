@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_final_locals
+// ignore_for_file: prefer_final_locals, prefer_single_quotes
 
 /*
  * esc_pos_utils
@@ -9,6 +9,7 @@
  */
 
 import 'dart:convert' show json;
+import 'package:esc_pos_printer/esc_pos_utils/src/capabilities.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 class CodePage {
@@ -22,9 +23,7 @@ class CapabilityProfile {
 
   /// Public factory
   static Future<CapabilityProfile> load({String name = 'default'}) async {
-    final content =
-        await rootBundle.loadString('packages/esc_pos_utils/resources/capabilities.json');
-    Map<String, dynamic> capabilities = json.decode(content);
+    Map<String, dynamic> capabilities = capabilitiesJosn;
 
     dynamic profile = capabilities['profiles'][name];
 
