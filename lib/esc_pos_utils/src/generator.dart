@@ -658,6 +658,21 @@ class Generator {
     bytes += emptyLines(linesAfter + 1);
     return bytes;
   }
+
+  List<int> openCashDrawer({required int pin}) {
+    // ESC p m t1 t2
+    // p -> 112
+    // m -> pin connector (0, 1)
+    // t1 t2 -> on off impulse milliseconds
+    const t1 = 120;
+    const t2 = 240;
+    List<int> bytes = [];
+    bytes += esc.codeUnits;
+    bytes += [112, pin, t1, t2];
+
+    return bytes;
+  }
+
   // ************************ (end) Public command generators ************************
 
   // ************************ (end) Internal command generators ************************

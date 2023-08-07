@@ -271,5 +271,9 @@ class NetworkPrinter {
       maxCharsPerLine: maxCharsPerLine,
     ));
   }
+
+  bool openCashDrawer({required int pin}) {
+    return _sendCommand(_generator?.openCashDrawer(pin: pin));
+  }
   // ************************ (end) Printer Commands ************************
 }

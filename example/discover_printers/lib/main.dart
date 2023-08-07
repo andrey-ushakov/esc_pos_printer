@@ -28,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.222");
+  final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.220");
   // final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.54");
 
   Future<void> testReceipt() async {
@@ -36,26 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
       PosColumn(text: "test1", styles: const PosStyles(align: PosAlign.left), width: 2),
       PosColumn(text: "test2 ", styles: const PosStyles(align: PosAlign.right), width: 10),
     ]);
-    printer.row([
-      PosColumn(
-          text: "test1 fsdkjfhsd kjfhds kjfhdks jhpp",
-          styles: const PosStyles(align: PosAlign.left),
-          width: 2),
-      PosColumn(
-          text: "test2 fskjd jhgf jhgfhf hf h q w e r t y u io p a s d f g h j kl",
-          styles: const PosStyles(align: PosAlign.right),
-          width: 10),
-    ]);
 
     printer.hr();
-
-    // // // Print image
-    // final ByteData data = await rootBundle.load('assets/logo.png');
-    // final Uint8List bytes = data.buffer.asUint8List();
-    // final Image image = decodeImage(bytes)!;
-    // printer.image(image);
-
-    // printer.feed(2);
     printer.cut();
   }
 
@@ -109,9 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(width: 10),
             TextButton(
               onPressed: () {
-                // print(Latin1Codec().encode("₪"));
-                // print(Windows1().encode("₪"));
-
                 connectAndPrint();
               },
               child: const Text("connect and print"),
@@ -122,6 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 testReceipt();
               },
               child: const Text("print"),
+            ),
+            const SizedBox(width: 10),
+            TextButton(
+              onPressed: () {
+                printer.openCashDrawer(pin: 0);
+              },
+              child: const Text("cash drawer"),
             ),
             const SizedBox(width: 10),
             TextButton(
