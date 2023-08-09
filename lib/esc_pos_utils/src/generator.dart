@@ -9,6 +9,7 @@
  */
 
 import 'dart:typed_data' show Uint8List;
+import 'package:bidi/bidi.dart' as bidi;
 import 'package:enough_convert/latin.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/barcode.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/capability_profile.dart';
@@ -71,12 +72,13 @@ class Generator {
   }
 
   Uint8List _encode(String text, {bool isKanji = false}) {
-    var data = text;
+    final visual = bidi.logicalToVisual(text);
+    var decoded = String.fromCharCodes(visual);
     notSupportedCharacters.forEach((element) {
-      data = data.replaceAll(String.fromCharCode(element.asci), element.replacteTo);
+      decoded = decoded.replaceAll(String.fromCharCode(element.asci), element.replacteTo);
     });
 
-    return Uint8List.fromList(Latin8Codec(allowInvalid: true).encode(data));
+    return Uint8List.fromList(Latin8Codec(allowInvalid: true).encode(decoded));
   }
 
   /// Generate multiple bytes for a number: In lower and higher parts, or more parts as needed.
