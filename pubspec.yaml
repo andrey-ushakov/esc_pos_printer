@@ -7,13 +7,14 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  charset_converter: ^2.0.0
-  esc_pos_utils: ^1.1.0
+  charset_converter: ^2.1.1
+  esc_pos_utils: 
+    git: https://github.com/mrsaedsadi/esc_pos_utils.git
   flutter:
     sdk: flutter
   # esc_pos_utils:
   #   path: ../esc_pos_utils
-  image: ^3.0.2
+  image: ^4.0.02
 
 dev_dependencies:
   flutter_test:
