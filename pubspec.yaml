@@ -4,18 +4,18 @@ version: 4.1.0
 homepage: https://github.com/andrey-ushakov/esc_pos_printer
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  charset_converter: ^2.0.0
+  bidi: ^2.0.9
+  charset_converter: ^2.1.1
+  enough_convert: ^1.6.0
   flutter:
     sdk: flutter
-  enough_convert: ^1.6.0
   gbk_codec: ^0.4.0
   hex: ^0.2.0
-  image: ^3.0.2
+  image: ^4.0.17
   rxdart: ^0.27.7
-  bidi: ^2.0.7
 
 dev_dependencies:
   flutter_test:

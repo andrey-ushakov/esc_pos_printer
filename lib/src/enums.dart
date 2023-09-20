@@ -36,3 +36,11 @@ class PosPrintResult {
 }
 
 enum PosPrinterState { disconnected, connecting, connected }
+
+enum PrinterCharacterSet {
+  hebrew(7);
+
+  const PrinterCharacterSet(this.value);
+
+  final int value;
+}

@@ -32,22 +32,30 @@ class _MyHomePageState extends State<MyHomePage> {
   // final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.54");
 
   Future<void> testReceipt() async {
-    printer.row([
-      PosColumn(text: "test1", styles: const PosStyles(align: PosAlign.left), width: 2),
-      PosColumn(text: "test2 ", styles: const PosStyles(align: PosAlign.right), width: 10),
-    ]);
+    final commands = EscPosGenerator.generateCommands(
+      [
+        InitCommand(
+          leftMargin: 0,
+          dpi: 203,
+          globalCodeTable: "CP1255",
+          characterSet: PrinterCharacterSet.hebrew,
+        ),
+        RowCommand(cols: [
+          PosColumn(text: "test1", styles: const PosStyles(align: PosAlign.left), width: 2),
+          PosColumn(text: "test2 ", styles: const PosStyles(align: PosAlign.right), width: 10),
+        ]),
+        HrCommand(),
+        CutCommand(),
+      ],
+      paperSize: PaperSize.custom(510),
+      maxCharsPerLine: 42,
+    );
 
-    printer.hr();
-    printer.cut();
+    printer.sendCommands(commands);
   }
 
   void connectAndPrint() async {
-    final PosPrintResult res = await printer.connect(
-      paperSize: PaperSize.custom(510),
-      leftMargin: 0,
-      dpi: 203,
-      maxCharsPerLine: 42,
-    );
+    final PosPrintResult res = await printer.connect();
 
     if (res == PosPrintResult.success) {
       // DEMO RECEIPT
@@ -104,8 +112,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(width: 10),
             TextButton(
-              onPressed: () {
-                printer.openCashDrawer(pin: 0);
+              onPressed: () async {
+                final commands = EscPosGenerator.generateCommands(
+                  [OpenCashDrawerCommand(pin: 0)],
+                );
+                printer.sendCommands(commands);
               },
               child: const Text("cash drawer"),
             ),
