@@ -8,14 +8,18 @@
 
 import 'dart:async';
 import 'dart:io';
+
 import 'package:rxdart/rxdart.dart';
+
 import './enums.dart';
 
 class NetworkPrinter {
   NetworkPrinter({required this.host, this.port = 9100}) {
     _stateStream.add(currentState);
   }
+
   Stream<PosPrinterState> get state => _stateStream.stream;
+
   PosPrinterState get currentState => _currentState;
   final int port;
   final String host;
@@ -31,7 +35,7 @@ class NetworkPrinter {
       _socket = await Socket.connect(host, port, timeout: timeout);
 
       _changeState(PosPrinterState.connected);
-      _streamSubscription?.cancel();
+      await _streamSubscription?.cancel();
       _streamSubscription = null;
       _streamSubscription = _socket!.listen(
         (event) {},
@@ -56,10 +60,10 @@ class NetworkPrinter {
     }
   }
 
-  void disconnect() async {
+  Future<void> disconnect() async {
     _socket?.destroy();
     _socket = null;
-    _streamSubscription?.cancel();
+    await _streamSubscription?.cancel();
     _streamSubscription = null;
     _changeState(PosPrinterState.disconnected);
   }
