@@ -53,11 +53,12 @@ class NetworkPrinter {
   }
 
   // ************************ Printer Commands ************************
-  void reset() {
+  List<int> reset() {
     _socket.add(_generator.reset());
+    return [];
   }
 
-  void text(
+  List<int> text(
     String text, {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
@@ -69,58 +70,71 @@ class NetworkPrinter {
         linesAfter: linesAfter,
         containsChinese: containsChinese,
         maxCharsPerLine: maxCharsPerLine));
+    return [];
   }
 
-  void setGlobalCodeTable(String codeTable) {
+  List<int> setGlobalCodeTable(String codeTable) {
     _socket.add(_generator.setGlobalCodeTable(codeTable));
+    return [];
   }
 
-  void setGlobalFont(PosFontType font, {int? maxCharsPerLine}) {
+  List<int> setGlobalFont(PosFontType font, {int? maxCharsPerLine}) {
     _socket
         .add(_generator.setGlobalFont(font, maxCharsPerLine: maxCharsPerLine));
+    return [];
   }
 
-  void setStyles(PosStyles styles, {bool isKanji = false}) {
+  List<int> setStyles(PosStyles styles, {bool isKanji = false}) {
     _socket.add(_generator.setStyles(styles, isKanji: isKanji));
+    return [];
   }
 
-  void rawBytes(List<int> cmd, {bool isKanji = false}) {
+  List<int> rawBytes(List<int> cmd, {bool isKanji = false}) {
     _socket.add(_generator.rawBytes(cmd, isKanji: isKanji));
+    return [];
   }
 
-  void emptyLines(int n) {
+  List<int> emptyLines(int n) {
     _socket.add(_generator.emptyLines(n));
+    return [];
   }
 
-  void feed(int n) {
+  List<int> feed(int n) {
     _socket.add(_generator.feed(n));
+    return [];
   }
 
-  void cut({PosCutMode mode = PosCutMode.full}) {
+  List<int> cut({PosCutMode mode = PosCutMode.full}) {
     _socket.add(_generator.cut(mode: mode));
+    return [];
   }
 
-  void printCodeTable({String? codeTable}) {
+  List<int> printCodeTable({String? codeTable}) {
     _socket.add(_generator.printCodeTable(codeTable: codeTable));
+    return [];
   }
 
-  void beep({int n = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
+  List<int> beep({int n = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
     _socket.add(_generator.beep(n: n, duration: duration));
+    return [];
   }
 
-  void reverseFeed(int n) {
+  List<int> reverseFeed(int n) {
     _socket.add(_generator.reverseFeed(n));
+    return [];
   }
 
-  void row(List<PosColumn> cols) {
+  List<int> row(List<PosColumn> cols) {
     _socket.add(_generator.row(cols));
+    return [];
   }
 
-  void image(Image imgSrc, {PosAlign align = PosAlign.center}) {
+  List<int> image(Image imgSrc, {PosAlign align = PosAlign.center}) {
     _socket.add(_generator.image(imgSrc, align: align));
+    return [];
   }
 
-  void imageRaster(
+  List<int> imageRaster(
     Image image, {
     PosAlign align = PosAlign.center,
     bool highDensityHorizontal = true,
@@ -134,9 +148,10 @@ class NetworkPrinter {
       highDensityVertical: highDensityVertical,
       imageFn: imageFn,
     ));
+    return [];
   }
 
-  void barcode(
+  List<int> barcode(
     Barcode barcode, {
     int? width,
     int? height,
@@ -152,26 +167,30 @@ class NetworkPrinter {
       textPos: textPos,
       align: align,
     ));
+    return [];
   }
 
-  void qrcode(
+  List<int> qrcode(
     String text, {
     PosAlign align = PosAlign.center,
     QRSize size = QRSize.Size4,
     QRCorrection cor = QRCorrection.L,
   }) {
     _socket.add(_generator.qrcode(text, align: align, size: size, cor: cor));
+    return [];
   }
 
-  void drawer({PosDrawer pin = PosDrawer.pin2}) {
+  List<int> drawer({PosDrawer pin = PosDrawer.pin2}) {
     _socket.add(_generator.drawer(pin: pin));
+    return [];
   }
 
-  void hr({String ch = '-', int? len, int linesAfter = 0}) {
+  List<int> hr({String ch = '-', int? len, int linesAfter = 0}) {
     _socket.add(_generator.hr(ch: ch, linesAfter: linesAfter));
+    return [];
   }
 
-  void textEncoded(
+  List<int> textEncoded(
     Uint8List textBytes, {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
@@ -183,6 +202,7 @@ class NetworkPrinter {
       linesAfter: linesAfter,
       maxCharsPerLine: maxCharsPerLine,
     ));
+    return [];
   }
   // ************************ (end) Printer Commands ************************
 }
