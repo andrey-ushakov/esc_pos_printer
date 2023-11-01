@@ -7,21 +7,27 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  charset_converter: ^1.0.3
-  cupertino_icons: ^0.1.2
-  esc_pos_printer:
-    path: ../../
-  esc_pos_utils: ^1.0.0
   flutter:
     sdk: flutter
-  image: ^2.1.4
-  intl: ^0.16.1
-  path_provider: ^1.6.5
-  ping_discover_network: ^0.2.0+1
-  qr_flutter: ^3.2.0
-  wifi: ^0.1.5
+  charset_converter: ^2.1.1
+  cupertino_icons: ^1.0.6
+  esc_pos_printer:
+    path: ../../
+  flutter_esc_pos_utils:
+    git:
+      url: https://github.com/Bilonik/flutter_esc_pos_utils
+      ref: main
+  image: ^4.1.3
+  intl: ^0.18.1
+  path_provider: ^2.1.1
+  path_provider_foundation: ^2.3.1
+  qr_flutter: ^4.1.0
+  ping_discover_network_forked: ^0.0.1
+  network_info_plus: ^4.1.0
   # esc_pos_utils:
   # path: ../../../esc_pos_utils
+dependency_overrides:
+  image: ^4.1.3
 
 dev_dependencies:
   flutter_test:
