@@ -7,7 +7,11 @@ class NotSupportedCharacter {
   final String replacteTo;
 }
 
-List<NotSupportedCharacter> notSupportedCharacters = [
+List<NotSupportedCharacter> notSupportedCharactersForBidi = [
+  NotSupportedCharacter(asci: 8207, replacteTo: ''),
+];
+
+List<NotSupportedCharacter> notSupportedCharactersForPrint = [
   NotSupportedCharacter(asci: 8364),
   NotSupportedCharacter(asci: 8218),
   NotSupportedCharacter(asci: 402),

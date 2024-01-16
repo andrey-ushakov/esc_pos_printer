@@ -71,9 +71,13 @@ class Generator {
   }
 
   Uint8List _encode(String text, {bool isKanji = false}) {
-    final visual = bidi.logicalToVisual(text);
+    var textToEncode = text;
+    notSupportedCharactersForBidi.forEach((element) {
+      textToEncode = textToEncode.replaceAll(String.fromCharCode(element.asci), element.replacteTo);
+    });
+    final visual = bidi.logicalToVisual(textToEncode);
     var decoded = String.fromCharCodes(visual);
-    notSupportedCharacters.forEach((element) {
+    notSupportedCharactersForPrint.forEach((element) {
       decoded = decoded.replaceAll(String.fromCharCode(element.asci), element.replacteTo);
     });
 
