@@ -28,27 +28,70 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.220");
+  final NetworkPrinter printer = NetworkPrinter(host: "192.168.1.43");
   // final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.54");
 
   Future<void> testReceipt() async {
+    const leftMargin = 5;
+    const maxCharsPerLine = 41;
+    final paperSize = PaperSize.custom(510);
+
     final commands = EscPosGenerator.generateCommands(
       [
         InitCommand(
-          leftMargin: 0,
+          leftMargin: leftMargin,
           dpi: 203,
           globalCodeTable: "CP1255",
           characterSet: PrinterCharacterSet.hebrew,
         ),
-        RowCommand(cols: [
-          PosColumn(text: "test1", styles: const PosStyles(align: PosAlign.left), width: 2),
-          PosColumn(text: "test2 ", styles: const PosStyles(align: PosAlign.right), width: 10),
-        ]),
-        HrCommand(),
+        RowCommand(
+          cols: [
+            PosColumn(text: "test-1-left", styles: const PosStyles(align: PosAlign.left), width: 6),
+            PosColumn(
+                text: "test-2-right ", styles: const PosStyles(align: PosAlign.right), width: 6),
+          ],
+        ),
+        RowCommand(
+          cols: [
+            PosColumn(text: "test-1-left", styles: const PosStyles(align: PosAlign.left), width: 6),
+            PosColumn(
+                text: "test-2-left ", styles: const PosStyles(align: PosAlign.left), width: 6),
+          ],
+        ),
+        RowCommand(
+          cols: [
+            PosColumn(
+                text: "test-1-right", styles: const PosStyles(align: PosAlign.right), width: 6),
+            PosColumn(
+                text: "test-2-right ", styles: const PosStyles(align: PosAlign.right), width: 6),
+          ],
+        ),
+        TextCommand(
+          text: "--left--",
+          styles: const PosStyles(
+            align: PosAlign.left,
+          ),
+        ),
+        TextCommand(
+          text: "--right--",
+          styles: const PosStyles(
+            align: PosAlign.right,
+          ),
+        ),
+        HrCommand(
+          styles: const PosStyles(
+            align: PosAlign.right,
+          ),
+        ),
+        HrCommand(
+          styles: const PosStyles(
+            align: PosAlign.left,
+          ),
+        ),
         CutCommand(),
       ],
-      paperSize: PaperSize.custom(510),
-      maxCharsPerLine: 42,
+      paperSize: paperSize,
+      maxCharsPerLine: maxCharsPerLine,
     );
 
     printer.sendCommands(commands);

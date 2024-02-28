@@ -44,6 +44,10 @@ class EscPosGenerator {
           final nH = (dots / 256).floor();
           // set left margin
           commands.add([29, 76, nL, nH]);
+          // set print area width
+          final areaWidthL = paperSize.value % 256;
+          final areaWidthH = paperSize.value ~/ 256;
+          commands.add([29, 87, areaWidthL, areaWidthH]);
 
         case OpenCashDrawerCommand(pin: final int pin):
           commands.add(generator.openCashDrawer(pin: pin));
