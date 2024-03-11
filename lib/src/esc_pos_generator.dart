@@ -1,21 +1,23 @@
 import 'package:esc_pos_printer/esc_pos_utils/src/capability_profile.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/enums.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/font_config/font_size_config.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/generator.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/pos_styles.dart';
 import 'package:esc_pos_printer/src/models.dart';
-import './enums.dart';
+
 import '../esc_pos_utils/src/barcode.dart';
 import '../esc_pos_utils/src/pos_column.dart';
 import '../esc_pos_utils/src/qrcode.dart';
+import './enums.dart';
 
 class EscPosGenerator {
   static List<List<int>> generateCommands(
     List<PrinterCommand> printerCommands, {
     PaperSize paperSize = PaperSize.mm80,
-    int maxCharsPerLine = 44,
+    FontSizeConfig fontSizeConfig = PosTextSize.defaultFontSizeConfig,
   }) {
     final List<List<int>> commands = [];
-    final generator = Generator(paperSize, CapabilityProfile.load(), maxCharsPerLine);
+    final generator = Generator(paperSize, CapabilityProfile.load(), fontSizeConfig);
 
     for (var command in printerCommands) {
       switch (command) {
@@ -31,6 +33,7 @@ class EscPosGenerator {
           commands.add([27, 64]);
           // enter standard mode
           commands.add([27, 83]);
+
           // character set
           commands.add([27, 82, characterSet.value]);
           // set global code table
@@ -111,14 +114,12 @@ class EscPosGenerator {
             styles: final PosStyles styles,
             linesAfter: final int linesAfter,
             containsChinese: final bool containsChinese,
-            maxCharsPerLine: final int? maxCharsPerLine,
           ):
           commands.add(generator.text(
             text,
             styles: styles,
             linesAfter: linesAfter,
             containsChinese: containsChinese,
-            maxCharsPerLine: maxCharsPerLine,
           ));
       }
     }

@@ -6,6 +6,8 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'package:esc_pos_printer/esc_pos_utils/src/font_config/font_size_config.dart';
+
 enum PosAlign { left, center, right }
 
 enum PosCutMode { full, partial }
@@ -21,6 +23,7 @@ enum PosImageFn { bitImageRaster, graphics }
 
 class PosTextSize {
   const PosTextSize._internal(this.value);
+
   final int value;
   static const size1 = PosTextSize._internal(1);
   static const size2 = PosTextSize._internal(2);
@@ -31,22 +34,28 @@ class PosTextSize {
   static const size7 = PosTextSize._internal(7);
   static const size8 = PosTextSize._internal(8);
 
-  static int decSize(PosTextSize height, PosTextSize width) =>
-      16 * (width.value - 1) + (height.value - 1);
+  static const defaultFontSizeConfig =
+      FontSizeConfig(maxCharsPerLineSmall: 41, maxCharsPerLineLarge: 27);
+
+  static int decSize(Size fontSize) => 16 * (fontSize.value - 1) + (fontSize.value - 1);
 }
 
 class PaperSize {
   factory PaperSize.custom(int value) => PaperSize._internal(value);
+
   const PaperSize._internal(this.value);
+
   final int value;
 
   static const mm58 = PaperSize._internal(372);
   static const mm80 = PaperSize._internal(558);
+
   int get width => value;
 }
 
 class PosBeepDuration {
   const PosBeepDuration._internal(this.value);
+
   final int value;
   static const beep50ms = PosBeepDuration._internal(1);
   static const beep100ms = PosBeepDuration._internal(2);

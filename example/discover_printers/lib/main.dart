@@ -1,7 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api, import_of_legacy_library_into_null_safe, depend_on_referenced_packages
 
-import 'package:flutter/material.dart' hide Image;
 import 'package:esc_pos_printer/esc_pos_printer.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/font_config/font_size_config.dart';
+import 'package:flutter/material.dart' hide Image;
 
 void main() => runApp(const MyApp());
 
@@ -28,13 +29,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final NetworkPrinter printer = NetworkPrinter(host: "192.168.1.43");
-  // final NetworkPrinter printer = NetworkPrinter(host: "192.168.0.54");
+  final NetworkPrinter printer = NetworkPrinter(host: "YOUR PRINTER IP ADDRESS");
 
   Future<void> testReceipt() async {
-    const leftMargin = 5;
-    const maxCharsPerLine = 41;
-    final paperSize = PaperSize.custom(510);
+    const leftMargin = 0;
+    final paperSize = PaperSize.custom(500);
 
     final commands = EscPosGenerator.generateCommands(
       [
@@ -44,57 +43,101 @@ class _MyHomePageState extends State<MyHomePage> {
           globalCodeTable: "CP1255",
           characterSet: PrinterCharacterSet.hebrew,
         ),
-        RowCommand(
-          cols: [
-            PosColumn(text: "test-1-left", styles: const PosStyles(align: PosAlign.left), width: 6),
-            PosColumn(
-                text: "test-2-right ", styles: const PosStyles(align: PosAlign.right), width: 6),
-          ],
-        ),
-        RowCommand(
-          cols: [
-            PosColumn(text: "test-1-left", styles: const PosStyles(align: PosAlign.left), width: 6),
-            PosColumn(
-                text: "test-2-left ", styles: const PosStyles(align: PosAlign.left), width: 6),
-          ],
-        ),
-        RowCommand(
-          cols: [
-            PosColumn(
-                text: "test-1-right", styles: const PosStyles(align: PosAlign.right), width: 6),
-            PosColumn(
-                text: "test-2-right ", styles: const PosStyles(align: PosAlign.right), width: 6),
-          ],
-        ),
-        TextCommand(
-          text: "--left--",
-          styles: const PosStyles(
-            align: PosAlign.left,
-          ),
-        ),
-        TextCommand(
-          text: "--right--",
-          styles: const PosStyles(
-            align: PosAlign.right,
-          ),
-        ),
-        HrCommand(
-          styles: const PosStyles(
-            align: PosAlign.right,
-          ),
-        ),
-        HrCommand(
-          styles: const PosStyles(
-            align: PosAlign.left,
-          ),
-        ),
+        ..._generateTestPage(Size.small),
+        ..._generateTestPage(Size.large),
         CutCommand(),
       ],
       paperSize: paperSize,
-      maxCharsPerLine: maxCharsPerLine,
+      fontSizeConfig: const FontSizeConfig(maxCharsPerLineSmall: 41, maxCharsPerLineLarge: 27),
     );
 
     printer.sendCommands(commands);
+  }
+
+  List<PrinterCommand> _generateTestPage(Size fontSize) {
+    return [
+      TextCommand(
+        text: fontSize.name,
+        styles: PosStyles(
+          align: PosAlign.center,
+          fontSize: fontSize,
+        ),
+      ),
+      RowCommand(
+        cols: [
+          PosColumn(
+              text: "test-1-left",
+              styles: PosStyles(
+                align: PosAlign.left,
+                fontSize: fontSize,
+              ),
+              width: 6),
+          PosColumn(
+              text: "test-2-right ",
+              styles: PosStyles(
+                align: PosAlign.right,
+                fontSize: fontSize,
+              ),
+              width: 6),
+        ],
+      ),
+      RowCommand(
+        cols: [
+          PosColumn(
+              text: "test-1-left",
+              styles: PosStyles(
+                align: PosAlign.left,
+                fontSize: fontSize,
+              ),
+              width: 6),
+          PosColumn(
+              text: "test-2-left ",
+              styles: PosStyles(
+                align: PosAlign.left,
+                fontSize: fontSize,
+              ),
+              width: 6),
+        ],
+      ),
+      RowCommand(
+        cols: [
+          PosColumn(
+              text: "test-1-right",
+              styles: PosStyles(
+                align: PosAlign.right,
+                fontSize: fontSize,
+              ),
+              width: 6),
+          PosColumn(
+              text: "test-2-right ",
+              styles: PosStyles(
+                align: PosAlign.right,
+                fontSize: fontSize,
+              ),
+              width: 6),
+        ],
+      ),
+      TextCommand(
+        text: "--left--",
+        styles: PosStyles(
+          align: PosAlign.left,
+          fontSize: fontSize,
+        ),
+      ),
+      TextCommand(
+        text: "--right--",
+        styles: PosStyles(
+          align: PosAlign.right,
+          fontSize: fontSize,
+        ),
+      ),
+      HrCommand(
+        styles: PosStyles(
+          align: PosAlign.center,
+          fontSize: fontSize,
+        ),
+      ),
+    ];
   }
 
   void connectAndPrint() async {

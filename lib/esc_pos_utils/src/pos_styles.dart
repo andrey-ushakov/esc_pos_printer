@@ -6,6 +6,8 @@
  * See LICENSE for distribution and usage details.
  */
 
+import 'package:esc_pos_printer/esc_pos_utils/src/font_config/font_size_config.dart';
+
 import 'enums.dart';
 
 /// Text styles
@@ -16,9 +18,7 @@ class PosStyles {
     this.underline = false,
     this.turn90 = false,
     this.align = PosAlign.left,
-    this.height = PosTextSize.size1,
-    this.width = PosTextSize.size1,
-    this.fontType,
+    this.fontSize = Size.small,
     this.codeTable,
   });
 
@@ -29,9 +29,7 @@ class PosStyles {
     this.underline = false,
     this.turn90 = false,
     this.align = PosAlign.left,
-    this.height = PosTextSize.size1,
-    this.width = PosTextSize.size1,
-    this.fontType = PosFontType.fontA,
+    this.fontSize = Size.small,
     this.codeTable = 'CP437',
   });
 
@@ -40,9 +38,8 @@ class PosStyles {
   final bool underline;
   final bool turn90;
   final PosAlign align;
-  final PosTextSize height;
-  final PosTextSize width;
-  final PosFontType? fontType;
+  final Size fontSize;
+
   final String? codeTable;
 
   PosStyles copyWith({
@@ -51,9 +48,7 @@ class PosStyles {
     bool? underline,
     bool? turn90,
     PosAlign? align,
-    PosTextSize? height,
-    PosTextSize? width,
-    PosFontType? fontType,
+    Size? fontSize,
     String? codeTable,
   }) {
     return PosStyles(
@@ -62,9 +57,7 @@ class PosStyles {
       underline: underline ?? this.underline,
       turn90: turn90 ?? this.turn90,
       align: align ?? this.align,
-      height: height ?? this.height,
-      width: width ?? this.width,
-      fontType: fontType ?? this.fontType,
+      fontSize: fontSize ?? this.fontSize,
       codeTable: codeTable ?? this.codeTable,
     );
   }

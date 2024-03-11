@@ -9,45 +9,50 @@
  */
 
 import 'dart:typed_data' show Uint8List;
+
 import 'package:bidi/bidi.dart' as bidi;
 import 'package:enough_convert/latin.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/barcode.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/capability_profile.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/enums.dart';
+import 'package:esc_pos_printer/esc_pos_utils/src/font_config/font_size_config.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/pos_column.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/pos_styles.dart';
 import 'package:esc_pos_printer/esc_pos_utils/src/qrcode.dart';
 import 'package:hex/hex.dart';
+
 import 'commands.dart';
 import 'not_supported_characters.dart';
 
 class Generator {
-  Generator(this._paperSize, this._profile, this._maxCharsPerLine, {this.spaceBetweenRows = 5});
+  Generator(this._paperSize, this._profile, this._fontSizeConfig, {this.spaceBetweenRows = 4});
 
   // Ticket config
   final PaperSize _paperSize;
   final CapabilityProfile _profile;
-  int? _maxCharsPerLine;
+  final FontSizeConfig _fontSizeConfig;
+
   // Global styles
   String? _codeTable;
-  PosFontType? _font;
+
   // Current styles
   PosStyles _styles = PosStyles();
   int spaceBetweenRows;
 
   // ************************ Internal helpers ************************
-  int _getMaxCharsPerLine(PosFontType? font) {
-    if (_paperSize == PaperSize.mm58) {
-      return (font == null || font == PosFontType.fontA) ? 32 : 42;
-    } else {
-      return (font == null || font == PosFontType.fontA) ? 48 : 64;
+  int _getMaxCharsPerLine(Size fontSize) {
+    switch (fontSize) {
+      case Size.small:
+        return _fontSizeConfig.maxCharsPerLineSmall;
+      case Size.large:
+        return _fontSizeConfig.maxCharsPerLineLarge;
     }
   }
 
   // charWidth = default width * text size multiplier
-  double _getCharWidth(PosStyles styles, {int? maxCharsPerLine}) {
-    int charsPerLine = _getCharsPerLine(styles, maxCharsPerLine);
-    double charWidth = (_paperSize.width / charsPerLine) * styles.width.value;
+  double _getCharWidth(PosStyles styles) {
+    int charsPerLine = _getCharsPerLine(styles);
+    double charWidth = _paperSize.width / charsPerLine;
     return charWidth;
   }
 
@@ -56,17 +61,8 @@ class Generator {
     return colInd == 0 ? 0 : (width * colInd / 12 - 1);
   }
 
-  int _getCharsPerLine(PosStyles styles, int? maxCharsPerLine) {
-    int charsPerLine;
-    if (maxCharsPerLine != null) {
-      charsPerLine = maxCharsPerLine;
-    } else {
-      if (styles.fontType != null) {
-        charsPerLine = _getMaxCharsPerLine(styles.fontType);
-      } else {
-        charsPerLine = _maxCharsPerLine ?? _getMaxCharsPerLine(_styles.fontType);
-      }
-    }
+  int _getCharsPerLine(PosStyles styles) {
+    final int charsPerLine = _getMaxCharsPerLine(styles.fontSize);
     return charsPerLine;
   }
 
@@ -93,7 +89,6 @@ class Generator {
     bytes += cInit.codeUnits;
     _styles = PosStyles();
     bytes += setGlobalCodeTable(_codeTable);
-    bytes += setGlobalFont(_font);
     return bytes;
   }
 
@@ -107,19 +102,6 @@ class Generator {
         List.from(cCodeTable.codeUnits)..add(_profile.getCodePageId(codeTable)),
       );
       _styles = _styles.copyWith(codeTable: codeTable);
-    }
-    return bytes;
-  }
-
-  /// Set global font which will be used instead of the default printer's font
-  /// (even after resetting)
-  List<int> setGlobalFont(PosFontType? font, {int? maxCharsPerLine}) {
-    List<int> bytes = [];
-    _font = font;
-    if (font != null) {
-      _maxCharsPerLine = maxCharsPerLine ?? _getMaxCharsPerLine(font);
-      bytes += font == PosFontType.fontB ? cFontB.codeUnits : cFontA.codeUnits;
-      _styles = _styles.copyWith(fontType: font);
     }
     return bytes;
   }
@@ -152,20 +134,27 @@ class Generator {
     }
 
     // Set font
-    if (styles.fontType != null && styles.fontType != _styles.fontType) {
-      bytes += styles.fontType == PosFontType.fontB ? cFontB.codeUnits : cFontA.codeUnits;
-      _styles = _styles.copyWith(fontType: styles.fontType);
-    } else if (_font != null && _font != _styles.fontType) {
-      bytes += _font == PosFontType.fontB ? cFontB.codeUnits : cFontA.codeUnits;
-      _styles = _styles.copyWith(fontType: _font);
-    }
-
     // Characters size
-    if (styles.height.value != _styles.height.value || styles.width.value != _styles.width.value) {
-      bytes += Uint8List.fromList(
-        List.from(cSizeGSn.codeUnits)..add(PosTextSize.decSize(styles.height, styles.width)),
-      );
-      _styles = _styles.copyWith(height: styles.height, width: styles.width);
+    switch (styles.fontSize) {
+      case Size.small:
+        if (_styles.fontSize != Size.small) {
+          bytes += cFontA.codeUnits;
+          bytes += Uint8List.fromList(
+            List.from(cSizeGSn.codeUnits)..add(PosTextSize.decSize(styles.fontSize)),
+          );
+          _styles = _styles.copyWith(fontSize: styles.fontSize);
+        }
+        break;
+      case Size.large:
+        if (_styles.fontSize != Size.large) {
+          _setLinesSpacing(bytes);
+          bytes += cFontB.codeUnits;
+          bytes += Uint8List.fromList(
+            List.from(cSizeGSn.codeUnits)..add(PosTextSize.decSize(styles.fontSize)),
+          );
+          _styles = _styles.copyWith(fontSize: Size.large);
+        }
+        break;
     }
 
     // Set Kanji mode
@@ -191,6 +180,10 @@ class Generator {
     return bytes;
   }
 
+  void _setLinesSpacing(List<int> bytes) {
+    bytes.addAll([27, 51, 90]);
+  }
+
   /// Sens raw command(s)
   List<int> rawBytes(List<int> cmd, {bool isKanji = false}) {
     List<int> bytes = [];
@@ -206,14 +199,12 @@ class Generator {
     PosStyles styles = const PosStyles(),
     int linesAfter = 0,
     bool containsChinese = false,
-    int? maxCharsPerLine,
   }) {
     List<int> bytes = [];
     bytes += _text(
       _encode(text, isKanji: containsChinese),
       styles: styles,
       isKanji: containsChinese,
-      maxCharsPerLine: maxCharsPerLine,
     );
     // Ensure at least one line break after the text
     bytes += emptyLines(linesAfter + 1);
@@ -435,7 +426,7 @@ class Generator {
     PosStyles styles = const PosStyles(),
   }) {
     List<int> bytes = [];
-    int n = len ?? _maxCharsPerLine ?? _getMaxCharsPerLine(_styles.fontType);
+    int n = len ?? _getMaxCharsPerLine(styles.fontSize);
     String ch1 = ch.length == 1 ? ch : ch[0];
     bytes += text(List.filled(n, ch1).join(), linesAfter: linesAfter, styles: styles);
     return bytes;
@@ -448,7 +439,7 @@ class Generator {
     int? maxCharsPerLine,
   }) {
     List<int> bytes = [];
-    bytes += _text(textBytes, styles: styles, maxCharsPerLine: maxCharsPerLine);
+    bytes += _text(textBytes, styles: styles);
     // Ensure at least one line break after the text
     bytes += emptyLines(linesAfter + 1);
     return bytes;
@@ -480,11 +471,10 @@ class Generator {
     int? colInd = 0,
     bool isKanji = false,
     int colWidth = 12,
-    int? maxCharsPerLine,
   }) {
     List<int> bytes = [];
     if (colInd != null) {
-      double charWidth = _getCharWidth(styles, maxCharsPerLine: maxCharsPerLine);
+      double charWidth = _getCharWidth(styles);
       double fromPos = _colIndToPosition(colInd);
 
       // Align
@@ -518,5 +508,5 @@ class Generator {
     return bytes;
   }
 
-  // ************************ (end) Internal command generators ************************
+// ************************ (end) Internal command generators ************************
 }
