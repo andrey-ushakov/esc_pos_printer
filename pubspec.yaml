@@ -4,7 +4,7 @@ version: 4.1.0
 homepage: https://github.com/andrey-ushakov/esc_pos_printer
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
   bidi: ^2.0.9
